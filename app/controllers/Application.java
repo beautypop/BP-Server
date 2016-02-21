@@ -131,7 +131,7 @@ public class Application extends Controller {
 	
 	public static String generateHeaderMeta(String title, String description, String image) {
 	    if (StringUtils.isEmpty(description)) {
-	        description = "Everymom is a Seller!";
+	        description = "Loves beauty";
 	    }
 	    
 	    title = HtmlEscapers.htmlEscaper().escape(title);
@@ -706,7 +706,7 @@ public class Application extends Controller {
         return ok(views.html.beautypop.web.apps.render(
                 "https://itunes.apple.com/app/idxxx",
                 "https://play.google.com/store/apps/details?id=com.beautypop.app",
-                "http://www.baby-box.hk"));
+                "http://www.beautypop.hk"));
     }
 	
 	@Transactional
@@ -714,7 +714,7 @@ public class Application extends Controller {
         return ok(views.html.beautypop.web.getstarted.render(
                 "https://itunes.apple.com/app/idxxx",
                 "https://play.google.com/store/apps/details?id=com.beautypop.app",
-                "http://www.baby-box.hk"));
+                "http://www.beautypop.hk"));
     }
     
 	@Transactional

@@ -1,7 +1,7 @@
 var DefaultValues = new function() {
 
 	// Application info
-	this.BASE_URL = "http://www.baby-box.hk";
+	this.BASE_URL = "http://www.beautypop.hk";
 	
     this.LATEST_COMMENTS_COUNT = 3;
     this.MAX_SELLER_PRODUCTS_FOR_FEED = 4;

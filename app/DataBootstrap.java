@@ -314,29 +314,37 @@ public class DataBootstrap {
         
         logger.underlyingLogger().info("bootstrapCategory()");
         
-        String name = "童裝童鞋";
-        String desc = "童裝童鞋";
-        createCategory(name, desc, "/assets/app/images/category/cat_clothes.jpg", 1);
+        String name = "Fashion";
+        String desc = "Fashion";
+        createCategory(name, desc, "http://localhost:9000/image/static/category/fashion.jpg", 1);
         
-        name = "玩具教材";
-        desc = "玩具教材";
-        createCategory(name, desc, "/assets/app/images/category/cat_toys.jpg", 2);
+        name = "Beauty";
+        desc = "Beauty";
+        createCategory(name, desc, "http://localhost:9000/image/static/category/beauty.jpg", 2);
                
-        name = "BB用品";
-        desc = "BB用品";
-        createCategory(name, desc, "/assets/app/images/category/cat_utils.jpg", 3);
+        name = "Skincare";
+        desc = "Skincare";
+        createCategory(name, desc, "http://localhost:9000/image/static/category/skincare.jpg", 3);
         
-        name = "生活家居";
-        desc = "生活家居";
-        createCategory(name, desc, "/assets/app/images/category/cat_home.jpg", 4);
+        name = "Bags";
+        desc = "Bags";
+        createCategory(name, desc, "http://localhost:9000/image/static/category/bags.jpg", 4);
         
-        name = "奶粉尿片";
-        desc = "奶粉尿片";
-        createCategory(name, desc, "/assets/app/images/category/cat_diaper.jpg", 5);
+        name = "Shoes";
+        desc = "Shoes";
+        createCategory(name, desc, "http://localhost:9000/image/static/category/shoes.jpg", 5);
         
-        name = "其它";
-        desc = "其它";
-        createCategory(name, desc, "/assets/app/images/category/cat_other.jpg", 6);
+        name = "Accessories";
+        desc = "Accessories";
+        createCategory(name, desc, "http://localhost:9000/image/static/category/accessories.jpg", 6);
+        
+        name = "Sportswear";
+        desc = "Sportswear";
+        createCategory(name, desc, "http://localhost:9000/image/static/category/sportswear.jpg", 7);
+        
+        name = "Other";
+        desc = "Other";
+        createCategory(name, desc, "http://localhost:9000/image/static/category/other.jpg", 8);
     }
 
     private static Category createCategory(String name, String desc, String icon, int seq) {

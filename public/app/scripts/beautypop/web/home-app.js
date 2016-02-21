@@ -151,7 +151,7 @@ beautypop.config(['$translateProvider', function ($translateProvider) {
 	    "LIKES":"Likes",
 	    "LOGOUT":"Logout",
 	    // Other
-	    "APP_DOWNLOAD_MESSAGE":"Download BeautyPop for free now and list your product in 30 seconds. Everymom is a Seller!",
+	    "APP_DOWNLOAD_MESSAGE":"Download BeautyPop for free now and list your product in 30 seconds. Loves beauty",
 	    "APP_IOS_COMING_SOON":"BeautyPop iPhone App is coming very soon!",
 	    "DOWNLOAD_NOW":"Download Now"
 	});
@@ -159,7 +159,7 @@ beautypop.config(['$translateProvider', function ($translateProvider) {
 	// http://angular-translate.github.io/docs/#/guide/19_security
 	$translateProvider.useSanitizeValueStrategy('escape');
 	
-	$translateProvider.preferredLanguage('zh');
+	$translateProvider.preferredLanguage('en');
 	//$translateProvider.useLocalStorage();		// use cookies setting
 }]);
 

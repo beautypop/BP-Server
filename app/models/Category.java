@@ -24,9 +24,7 @@ import domain.SocialObjectType;
 import play.db.jpa.JPA;
 
 /**
- * insert into category (CREATED_DATE,deleted,name,objectType,system,categoryType,description,icon,seq,owner_id) values (now(),0,'嬰兒食品','CATEGORY',1,'PUBLIC','嬰兒食品','http://www.baby-box.com.hk/image/static/category/cat_food.jpg',7,1);
- * insert into category (CREATED_DATE,deleted,name,objectType,system,categoryType,description,icon,seq,owner_id) values (now(),0,'媽媽時裝','CATEGORY',1,'PUBLIC','媽媽時裝','http://www.baby-box.com.hk/image/static/category/cat_fashion.jpg',8,1);
- * insert into category (CREATED_DATE,deleted,name,objectType,system,categoryType,description,icon,seq,owner_id) values (now(),0,'美容護理','CATEGORY',1,'PUBLIC','美容護理','http://www.baby-box.com.hk/image/static/category/cat_beauty.jpg',9,1);
+ * insert into category (CREATED_DATE,deleted,name,objectType,system,categoryType,description,icon,seq,owner_id) values (now(),0,'Fashion','CATEGORY',1,'PUBLIC','Fashion','http://www.beautypop.hk/image/static/category/fashion.jpg',1,1);
  */
 @Entity
 public class Category extends SocialObject implements Likeable, Postable, Comparable<Category> {
