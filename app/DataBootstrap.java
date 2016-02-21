@@ -217,7 +217,7 @@ public class DataBootstrap {
         signup.fname = "BeautyPop";
         signup.lname = "HK";
         signup.password = "BeautyP0p";
-        signup.repeatPassword = "BeatyP0p";
+        signup.repeatPassword = "BeautyP0p";
         
         MyUsernamePasswordAuthUser authUser = new MyUsernamePasswordAuthUser(signup);
         User superAdmin = User.create(authUser);

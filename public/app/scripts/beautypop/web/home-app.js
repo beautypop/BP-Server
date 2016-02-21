@@ -123,6 +123,7 @@ beautypop.config(['$translateProvider', function ($translateProvider) {
 	$translateProvider.translations('en', {
 		// Home page
 		"HOME_EXPLORE":"Explore",
+		"HOME_SELLER":"Sellers",
 	    "HOME_FOLLOWING":"Following",
 	    // Category page
 	    "POPULAR":"Popular",
@@ -142,6 +143,9 @@ beautypop.config(['$translateProvider', function ($translateProvider) {
 	    "YOU_MAY_ALSO_LIKE":"You may also like",
 	    "CHAT_NOW":"Chat Now",
 	    "BUY_NOW":"Buy Now",
+	    // Story page
+	    "STORY_DETAILS":"Story Details",
+	    "STORY_CATEGORY":"Category",
 	    // Profile page
 	    "FOLLOW":"+ Follow",
 	    "FOLLOWING":"Following",

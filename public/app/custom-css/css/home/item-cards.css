@@ -247,7 +247,7 @@ label {
 }
 
 .badge-promotion-percent {
-    color: #FF76A4
+    color: #FF2742
 }
 
 .badge-promotion-off-label {
@@ -259,7 +259,7 @@ label {
 .badge-promotion-off-label.promotion-tw {
     line-height: 31px;
     display: inline !important;
-    color: #FF76A4 !important
+    color: #FF2742 !important
 }
 
 .item-list {
@@ -640,7 +640,7 @@ body {
 
 .item-card .bottom .action-text {
     position: absolute;
-    color: #FF76A4;
+    color: #FF2742;
     display: none
 }
 
@@ -723,7 +723,7 @@ body {
     padding: 3px;
     border-radius: 50%;
     background: #424864;
-    background: #FF76A4;
+    background: #FF2742;
     -webkit-animation: animIn 1s ease-in-out 0s infinite;
     animation: animIn 1s ease-in-out 0s infinite
 }
@@ -780,7 +780,7 @@ body {
     padding: 20px 0 40px 0;
     text-align: center;
     font-weight: 500;
-    color: #FF76A4
+    color: #FF2742
 }
 
 .nomore {
@@ -788,7 +788,7 @@ body {
     padding: 20px 0 40px 0;
     text-align: center;
     font-weight: 500;
-    color: #FF76A4;
+    color: #FF2742;
     display: none
 }
 

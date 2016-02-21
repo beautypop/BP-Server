@@ -605,7 +605,7 @@ label {
     background-color: white;
     text-align: center;
     line-height: 43px;
-    color: #FF76A4;
+    color: #FF2742;
     width: 100%;
     -webkit-box-pack: justify;
     -webkit-justify-content: center;
@@ -740,7 +740,7 @@ label {
 }
 
 .badge-promotion-percent {
-    color: #FF76A4
+    color: #FF2742
 }
 
 .badge-promotion-off-label {
@@ -752,7 +752,7 @@ label {
 .badge-promotion-off-label.promotion-tw {
     line-height: 31px;
     display: inline !important;
-    color: #FF76A4 !important
+    color: #FF2742 !important
 }
 
 ul.header_tabs,
@@ -795,8 +795,8 @@ ul.header_tabs_fixed li.header_tab_item {
 
 ul.header_tabs li.header_tab_item.active,
 ul.header_tabs_fixed li.header_tab_item.active {
-    color: #FF76A4;
-    border-bottom: 2px solid #FF76A4;
+    color: #FF2742;
+    border-bottom: 2px solid #FF2742;
     font-weight: normal;
 }
 
@@ -807,7 +807,7 @@ ul.header_tabs_fixed li.header_tab_item a {
 
 ul.header_tabs li.header_tab_item.active a,
 ul.header_tabs_fixed li.header_tab_item.active a {
-    color: #FF76A4;
+    color: #FF2742;
     font-weight: normal;
 }
 
