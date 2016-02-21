@@ -1,0 +1,11 @@
+@(verificationUrl: String, token: String, name: String, email: String)
+@name 您好!
+
+您已成功登記成為 BeautyPop 會員，請立即按以下連結完成登記:
+@verificationUrl
+
+
+BeautyPop App
+
+-------------------
+立即登入 BeautyPop 查看

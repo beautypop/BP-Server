@@ -1,0 +1,331 @@
+# Routes
+# This file defines all application routes (Higher priority routes first)
+# ~~~~
+
+# Routes
+# This file defines all application routes (Higher priority routes first)
+# ~~~~
+
+# Map static resources from the /public folder to the /assets URL path
+GET     /assets/*file               controllers.Assets.versioned(path="/public", file)
+
+GET     /sitemap.xml                controllers.Assets.at(path="/public",file="app/sitemap.xml")
+GET     /robots.txt                 controllers.Assets.at(path="/public",file="app/robots.txt")
+
+# Google Webmaster
+GET     /googlee42c6d2bf91e90b7.html    controllers.Application.googleWebmaster
+
+GET     /favicon.ico                controllers.Assets.at(path="/public", file="app/images/favicon-1.ico")
+GET     /assets/javascript/routes.js    controllers.Application.jsRoutes
+GET     /privacy                    controllers.Application.privacy
+GET     /terms                      controllers.Application.terms
+GET     /apps                       controllers.Application.apps
+GET     /getstarted                 controllers.Application.getStarted
+
+GET     /restricted                 controllers.Application.restricted
+GET     /profile                    controllers.Application.profile()
+
+#
+# Web
+#
+
+# Main
+GET     /                                           @controllers.Application.index
+GET     /home                                       @controllers.Application.home
+GET     /login                                      controllers.Application.login
+GET     /signup                                     controllers.Application.signup
+
+# Login
+POST    /login                                      controllers.Application.doLogin
+POST    /login/popup                                controllers.Application.doLoginPopup
+POST    /signup                                     controllers.Application.doSignup
+POST    /saveSignupInfo                             controllers.Application.saveSignupInfo
+POST    /saveSignupInfoFb                           controllers.Application.saveSignupInfoFb
+
+GET     /signup/promo-code/:promoCode               controllers.Application.signupWithPromoCode(promoCode:String)
+GET     /signup/promo-details/:promoCode            controllers.Application.detailsForPromoCode(promoCode:String)
+
+GET     /logout                                     com.feth.play.module.pa.controllers.Authenticate.logout
+GET     /authenticate/:provider                     com.feth.play.module.pa.controllers.Authenticate.authenticate(provider: String)
+POST    /authenticate/mobile/:provider              com.feth.play.module.pa.controllers.Authenticate.authenticateMobile(provider: String)
+#GET    /authenticatePopup/:provider                com.feth.play.module.pa.controllers.Authenticate.authenticatePopup(provider: String)
+ 
+GET     /accounts/unverified                        controllers.Signup.unverified
+GET     /authenticate/:provider/denied              controllers.Signup.oAuthDenied(provider: String)
+
+GET     /accounts/verify/:token                     controllers.Signup.verify(token: String)
+GET     /accounts/exists                            controllers.Signup.exists
+
+GET     /accounts/password/reset/:token             controllers.Signup.resetPassword(token: String)
+POST    /accounts/password/reset                    controllers.Signup.doResetPassword
+
+GET     /accounts/password/change                   controllers.Account.changePassword
+POST    /accounts/password/change                   controllers.Account.doChangePassword
+
+GET     /accounts/verify                            controllers.Account.verifyEmail
+
+GET     /accounts/add                               controllers.Account.link
+
+GET     /accounts/link                              controllers.Account.askLink
+POST    /accounts/link                              controllers.Account.doLink
+
+GET     /accounts/merge                             controllers.Account.askMerge
+POST    /accounts/merge                             controllers.Account.doMerge
+
+GET     /login/password/forgot                      controllers.Signup.forgotPassword(email: String ?= "")
+POST    /login/password/forgot                      controllers.Signup.doForgotPassword
+
+# Category
+GET     /category/:id/:catagoryFilter               @controllers.CategoryController.viewCategory(id:Long, catagoryFilter:String)
+
+# Product
+GET     /product/:id                                @controllers.ProductController.viewProduct(id:Long)
+POST    /product/new                                controllers.ProductController.newProductWithForm()
+POST    /product/edit                               controllers.ProductController.editProductWithForm()
+
+GET     /story/:id                                  @controllers.ProductController.viewStory(id:Long)
+POST    /story/new                                  controllers.ProductController.newStoryWithForm()
+POST    /story/edit                                 controllers.ProductController.editStoryWithForm()
+
+GET     /comments/:postId                           @controllers.ProductController.viewComments(postId:Long)
+
+# User
+GET     /seller/:id                                 controllers.UserController.viewProfile(id:Long)
+GET     /profile/:id                                controllers.UserController.viewProfile(id:Long)
+GET     /followings/:id                             @controllers.UserController.viewFollowings(id:Long)
+GET     /followers/:id                              @controllers.UserController.viewFollowers(id:Long)
+
+# image upload
+POST    /image/upload-profile-photo                 controllers.UserController.uploadProfilePhoto
+POST    /image/upload-cover-photo                   controllers.UserController.uploadCoverPhoto
+POST    /image/upload-message-photo                 controllers.UserController.uploadMessagePhoto
+
+# image get
+GET     /image/static/*path                         controllers.Application.getStaticImage(path:String)
+GET     /image/get-profile-image                    controllers.UserController.getProfileImage
+GET     /image/get-profile-image-by-id/:id          controllers.UserController.getProfileImageById(id:Long)
+GET     /image/get-thumbnail-profile-image-by-id/:id    controllers.UserController.getThumbnailProfileImageById(id :Long)
+GET     /image/get-mini-profile-image-by-id/:id     controllers.UserController.getMiniProfileImageById(id :Long)
+GET     /image/get-cover-image-by-id/:id            controllers.UserController.getCoverImageById(id :Long)
+GET     /image/get-thumbnail-cover-image-by-id/:id  controllers.UserController.getThumbnailCoverImageById(id :Long)
+GET     /image/get-post-image-by-id/:id             controllers.ProductController.getProductImageById(id :Long)
+GET     /image/get-original-post-image-by-id/:id    controllers.ProductController.getOriginalProductImageById(id :Long)
+GET     /image/get-mini-post-image-by-id/:id        controllers.ProductController.getMiniProductImageById(id :Long)
+GET     /image/get-message-image-by-id/:id          controllers.UserController.getMessageImageById(id :Long)
+GET     /image/get-original-message-image-by-id/:id controllers.UserController.getOriginalMessageImageById(id :Long)
+GET     /image/get-mini-message-image-by-id/:id     controllers.UserController.getMiniMessageImageById(id :Long)
+
+#
+# API
+#
+
+# Login
+POST    /api/login/mobile                           controllers.Application.doLoginMobile
+POST    /login/mobile                               controllers.Application.doLoginMobile
+POST    /mobile/login                               controllers.Application.doLoginMobile
+
+GET     /api/init-new-user                          @controllers.Application.initNewUser
+GET     /init-new-user                              @controllers.Application.initNewUser
+
+# Feeds
+GET     /api/get-category-popular-feed/:id/:conditionType/:offset       @controllers.CategoryController.getCategoryPopularFeed(id :Long, conditionType: String, offset: Long)
+GET     /get-category-popular-feed/:id/:conditionType/:offset           @controllers.CategoryController.getCategoryPopularFeed(id :Long, conditionType: String, offset: Long)
+
+GET     /api/get-category-newest-feed/:id/:postType/:offset             @controllers.CategoryController.getCategoryNewestFeed(id :Long, postType: String, offset: Long)
+GET     /get-category-newest-feed/:id/:postType/:offset                 @controllers.CategoryController.getCategoryNewestFeed(id :Long, postType: String, offset: Long)
+
+GET     /api/get-category-price-low-high-feed/:id/:postType/:offset     @controllers.CategoryController.getCategoryPriceLowHighFeed(id :Long, postType: String, offset: Long)
+GET     /get-category-price-low-high-feed/:id/:postType/:offset         @controllers.CategoryController.getCategoryPriceLowHighFeed(id :Long, postType: String, offset: Long)
+
+GET     /api/get-category-price-high-low-feed/:id/:postType/:offset     @controllers.CategoryController.getCategoryPriceHighLowFeed(id :Long, postType: String, offset: Long)
+GET     /get-category-price-high-low-feed/:id/:postType/:offset         @controllers.CategoryController.getCategoryPriceHighLowFeed(id :Long, postType: String, offset: Long)
+
+GET     /api/get-home-explore-feed/:offset                              @controllers.UserController.getHomeExploreFeed(offset: Long)
+GET     /get-home-explore-feed/:offset                                  @controllers.UserController.getHomeExploreFeed(offset: Long)
+
+GET     /api/get-home-following-feed/:offset                            @controllers.UserController.getHomeFollowingFeed(offset: Long)
+GET     /get-home-following-feed/:offset                                @controllers.UserController.getHomeFollowingFeed(offset: Long)
+
+GET     /api/get-user-posted-feed/:id/:offset                           @controllers.UserController.getUserPostedFeed(id: Long, offset:Long)
+GET     /get-user-posted-feed/:id/:offset                               @controllers.UserController.getUserPostedFeed(id: Long, offset:Long)
+
+GET     /api/get-user-liked-feed/:id/:offset                            @controllers.UserController.getUserLikedFeed(id: Long,offset:Long)
+GET     /get-user-liked-feed/:id/:offset                                @controllers.UserController.getUserLikedFeed(id: Long,offset:Long)
+
+GET     /api/get-recommended-sellers                                    @controllers.UserController.getRecommendedSellers()
+GET     /api/get-recommended-sellers-feed/:offset                       @controllers.UserController.getRecommendedSellersFeed(offset:Long)
+
+GET     /api/get-suggested-products/:id                                 @controllers.ProductController.getSuggestedProducts(id :Long)                       
+GET     /get-suggested-products/:id                                     @controllers.ProductController.getSuggestedProducts(id :Long)                       
+
+GET     /api/get-hashtag-popular-feed/:id/:postType/:offset             @controllers.HashtagController.getHashtagPopularFeed(id :Long, postType: String, offset: Long)
+GET     /api/get-hashtag-newest-feed/:id/:postType/:offset              @controllers.HashtagController.getHashtagNewestFeed(id :Long, postType: String, offset: Long)
+GET     /api/get-hashtag-price-low-high-feed/:id/:postType/:offset      @controllers.HashtagController.getHashtagPriceLowHighFeed(id :Long, postType: String, offset: Long)
+GET     /api/get-hashtag-price-high-low-feed/:id/:postType/:offset      @controllers.HashtagController.getHashtagPriceHighLowFeed(id :Long, postType: String, offset: Long)
+
+# User
+GET     /api/get-user-info                          @controllers.UserController.getUserInfo
+GET     /get-user-info                              @controllers.UserController.getUserInfo
+
+POST    /api/user-info/edit                         controllers.UserController.editUserInfo
+POST    /updateUserProfileData                      controllers.UserController.editUserInfo
+
+GET     /api/follow-user/:id                        controllers.UserController.followUser(id:Long)
+GET     /follow-user/:id                            controllers.UserController.followUser(id:Long)
+
+GET     /api/unfollow-user/:id                      controllers.UserController.unfollowUser(id:Long)
+GET     /unfollow-user/:id                          controllers.UserController.unfollowUser(id:Long)
+
+GET     /api/get-user/:id                           controllers.UserController.getUserInfoById(id:Long)
+GET     /get-user/:id                               controllers.UserController.getUserInfoById(id:Long)
+
+GET     /api/get-followings/:id/:offset             @controllers.UserController.getFollowings(id:Long,offset:Long)
+GET     /get-followings/:id/:offset                 @controllers.UserController.getFollowings(id:Long,offset:Long)
+
+GET     /api/get-followers/:id/:offset              @controllers.UserController.getFollowers(id:Long,offset:Long)
+GET     /get-followers/:id/:offset                  @controllers.UserController.getFollowers(id:Long,offset:Long)
+
+GET     /api/notification-counter                   controllers.UserController.getNotificationCounter
+GET     /notification-counter                       controllers.UserController.getNotificationCounter
+
+GET     /api/reset-activities-count                 controllers.UserController.resetActivitiesCount
+GET     /reset-activities-count                     controllers.UserController.resetActivitiesCount
+
+GET     /api/reset-conversations-count              controllers.UserController.resetConversationsCount
+GET     /reset-conversations-count                  controllers.UserController.resetConversationsCount
+
+GET     /api/get-activities/:offset                 controllers.UserController.getActivities(offset:Long)
+GET     /get-activities/:offset                     controllers.UserController.getActivities(offset:Long)
+
+GET     /api/get-user-collections/:id               controllers.UserController.getUserCollections(id: Long)
+GET     /api/get-collection/:id                     controllers.UserController.getCollection(id: Long)
+POST    /api/collection/new                         controllers.ProductController.createCollection
+POST    /api/collection/add-product                 controllers.ProductController.addToCollection
+
+# Category
+GET     /api/get-categories                         controllers.CategoryController.getCategories()
+GET     /get-categories                             controllers.CategoryController.getCategories()
+GET     /categories                                 controllers.CategoryController.getCategories()
+
+GET     /api/get-category/:id                       controllers.CategoryController.getCategory(id:Long)
+GET     /get-category/:id                           controllers.CategoryController.getCategory(id:Long)
+GET     /category/:id                               controllers.CategoryController.getCategory(id:Long)
+
+# Post
+GET     /api/get-post/:id                           @controllers.ProductController.getProductInfo(id:Long)
+GET     /post/:id                                   @controllers.ProductController.getProductInfo(id:Long)
+
+POST    /api/post/new                               controllers.ProductController.newProduct()
+POST    /post/new                                   controllers.ProductController.newProduct()
+
+POST    /api/post/edit                              controllers.ProductController.editProduct()
+POST    /post/edit                                  controllers.ProductController.editProduct()
+
+POST    /api/story/new                              controllers.ProductController.newStory()
+POST    /api/story/edit                             controllers.ProductController.editStory()
+
+GET     /api/post/delete/:id                        controllers.ProductController.deletePost(id:Long)
+GET     /post/delete/:id                            controllers.ProductController.deletePost(id:Long)
+
+GET     /api/like-post/:id                          controllers.ProductController.likePost(id:Long)
+GET     /like-post/:id                              controllers.ProductController.likePost(id:Long)
+
+GET     /api/unlike-post/:id                        controllers.ProductController.unlikePost(id:Long)
+GET     /unlike-post/:id                            controllers.ProductController.unlikePost(id:Long)
+
+GET     /api/sold-post/:id                          controllers.ProductController.soldPost(id:Long)
+GET     /sold-post/:id                              controllers.ProductController.soldPost(id:Long)
+
+POST    /api/comment/new                            controllers.ProductController.newComment
+POST    /comment/new                                controllers.ProductController.newComment
+
+GET     /api/comment/delete/:id                     controllers.ProductController.deleteComment(id:Long)
+GET     /comment/delete/:id                         controllers.ProductController.deleteComment(id:Long)
+
+GET     /api/get-comments/:postId/:offset           controllers.ProductController.getPostComments(postId: Long,offset:Long)
+GET     /comments/:postId/:offset                   controllers.ProductController.getPostComments(postId: Long,offset:Long) 
+
+# Conversation
+GET     /api/get-conversations                      controllers.UserController.getConversations()
+GET     /get-all-conversations                      controllers.UserController.getConversations()
+
+GET     /api/get-post-conversations/:id             controllers.ProductController.getConversations(id:Long)
+GET     /get-post-conversations/:id                 controllers.ProductController.getConversations(id:Long)
+
+GET     /api/open-conversation/:postId              controllers.UserController.openConversation(postId: Long)
+GET     /open-conversation/:postId                  controllers.UserController.openConversation(postId: Long)
+
+GET     /api/get-conversation/:id                   controllers.UserController.getConversation(id:Long)
+GET     /get-conversation/:id                       controllers.UserController.getConversation(id:Long)
+
+GET     /api/delete-conversation/:id                controllers.UserController.deleteConversation(id: Long)
+GET     /delete-conversation/:id                    controllers.UserController.deleteConversation(id: Long)
+
+GET     /api/get-messages/:conversationId/:offset   controllers.UserController.getMessages(conversationId: Long, offset: Long)
+GET     /get-messages/:conversationId/:offset       controllers.UserController.getMessages(conversationId: Long, offset: Long)
+
+POST    /api/message/new                            controllers.UserController.newMessage()
+POST    /message/new                                controllers.UserController.newMessage()
+
+POST    /api/update-conversation-note               controllers.UserController.updateConversationNote()
+POST    /update-conversation-note                   controllers.UserController.updateConversationNote()
+
+GET     /api/update-conversation-order-transaction-state/:id/:state     controllers.UserController.updateConversationOrderTransactionState(id:Long,state:String)
+GET     /update-conversation-order-transaction-state/:id/:state         controllers.UserController.updateConversationOrderTransactionState(id:Long,state:String)
+
+GET     /api/highlight-conversation/:id/:color      controllers.UserController.highlightConversation(id:Long,color:String)
+GET     /highlight-conversation/:id/:color          controllers.UserController.highlightConversation(id:Long,color:String)
+
+# ConversationOrder
+POST    /api/conversation-order/new                 controllers.UserController.newConversationOrder()
+GET     /api/conversation-order/new/:conversationId controllers.UserController.newConversationOrder2(conversationId:Long)
+GET     /conversation-order/new/:conversationId     controllers.UserController.newConversationOrder2(conversationId:Long)
+
+GET     /api/conversation-order/cancel/:id          controllers.UserController.cancelConversationOrder(id:Long)
+GET     /conversation-order/cancel/:id              controllers.UserController.cancelConversationOrder(id:Long)
+
+GET     /api/conversation-order/accept/:id          controllers.UserController.acceptConversationOrder(id:Long)
+GET     /conversation-order/accept/:id              controllers.UserController.acceptConversationOrder(id:Long)
+
+GET     /api/conversation-order/decline/:id         controllers.UserController.declineConversationOrder(id:Long)
+GET     /conversation-order/decline/:id             controllers.UserController.declineConversationOrder(id:Long)
+
+# Game
+GET     /api/get-game-badges/:id                    controllers.UserController.getGameBadges(id:Long)
+GET     /game-badges/:id                            controllers.UserController.getGameBadges(id:Long)
+
+GET     /api/get-game-badges-awarded/:id            controllers.UserController.getGameBadgesAwarded(id:Long)
+GET     /game-badges-awarded/:id                    controllers.UserController.getGameBadgesAwarded(id:Long)
+
+# Report post
+POST    /api/report-post                            controllers.ProductController.reportPost()
+GET     /api/get-reported-posts                     controllers.ProductController.getReportedPosts()
+GET     /api/reported-post/delete/:id               controllers.ProductController.deleteReportedPost(id:Long)
+POST    /api/update-reported-post-note              controllers.ProductController.updateReportedPostNote()
+
+# GCM
+POST    /api/save-gcm-key/:key/:versionCode        controllers.UserController.saveGcmKey(key:String, versionCode:Long)
+POST    /save-gcm-key/:key/:versionCode            controllers.UserController.saveGcmKey(key:String, versionCode:Long)
+
+# Other
+GET     /api/get-districts                          controllers.Application.getDistricts
+GET     /get-all-districts                          controllers.Application.getDistricts
+
+GET     /api/get-countries                          controllers.Application.getCountries
+GET     /get-countries                              controllers.Application.getCountries
+
+GET     /api/get-featured-items/:itemType           controllers.Application.getFeaturedItems(itemType:String)
+GET     /get-featured-items/:itemType               controllers.Application.getFeaturedItems(itemType:String)
+
+# admin
+GET     /api/delete-account/:id                     controllers.UserController.deleteAccount(id:Long)
+GET     /api/adjust-up-post-score/:id               controllers.ProductController.adjustUpPostScore(id:Long)
+GET     /api/adjust-down-post-score/:id             controllers.ProductController.adjustDownPostScore(id:Long)
+GET     /api/reset-adjust-post-score/:id            controllers.ProductController.resetAdjustPostScore(id:Long)
+GET     /api/get-users-by-signup/:offset            controllers.UserController.getUsersBySignup(offset:Long)
+GET     /api/get-users-by-login/:offset             controllers.UserController.getUsersByLogin(offset:Long)
+GET     /api/get-latest-conversations/:offset       controllers.UserController.getLatestConversations(offset:Long)
+GET     /api/get-messages-for-admin/:conversationId/:offset   controllers.UserController.getMessagesForAdmin(conversationId: Long, offset: Long)
+
+# Dead Links
+GET		/*path                                      controllers.Application.pathNotFound(path: String)

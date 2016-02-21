@@ -1,0 +1,69 @@
+<div class="header">
+ <div class='inner middle-centered-div'>
+  <div ng-click="doBack()"
+   class="icon_left ic_icon  ic_arrow_back clickable_area"></div>
+  <div class="no-search-bar-holder flex1"></div>
+  <div class='page_name L16'><a href="/"><div class='ic_logo_shortcut clickable_area'></div></a></div>
+  <span ng-if="!userInfo.isLoggedIn" style="padding-right: 15px;">
+   <a href="/login">
+    <div class='hold user_avatar ic_web_profile clickable_area'></div>
+  </a>
+  </span> <span ng-if="userInfo.isLoggedIn"
+   style="padding-right: 15px; padding-top: 0px;"> <a
+   href="/seller/{{userInfo.id}}">
+    <div class="hold user_avatar clickable_area"
+     style="background-image: url(/image/get-mini-profile-image-by-id/{{userInfo.id}});"></div>
+  </a>
+  </span>
+  <div class='second-panel'>
+   <div class='signup-btn' data-i18n='label_signup'></div>
+   <div class='login-btn' data-i18n='label_login'></div>
+  </div>
+  <div class="clearfix"></div>
+ </div>
+</div>
+
+<div class='header-holder'></div>
+
+<div id="category-page" class="has-toolbar page-holder center-container">
+ <header>
+  <div class="mask"></div>
+  <div class="flex-it header-container">
+   <div class='avatar-container'>
+    <div class="avatar" style="background-image: url({{cat.icon}});"></div>
+   </div>
+   <div class="flex1 categoryname-wrapper">
+    <div class="categoryname truncate m18 flex1">{{cat.name}}</div>
+   </div>
+  </div>
+ </header>
+ 
+ <div class="center-container">
+  <div id="category-items" class='page-holder'>
+   <ul class='header_tabs M14 center-container'>
+    <li ng-class="catType=='popular'? 'active':'' "
+     class='header_tab_item popular clickable_area'
+     data-sorttype='popular'><a data-ng-href="/category/{{cat.id}}/popular">{{'POPULAR'|translate}}</a></li>
+    <li ng-class="catType=='newest'? 'active':'' "
+     class='header_tab_item latest  clickable_area'
+     data-sorttype='latest'><a data-ng-href="/category/{{cat.id}}/newest">{{'NEWEST'|translate}}</a></li>
+    <li ng-class="catType=='low2high'? 'active':''"
+     class='header_tab_item location  clickable_area'
+     data-sorttype='low2high'><a data-ng-href="/category/{{cat.id}}/low2high">$->$$</a></li>
+    <li ng-class="catType=='high2low'? 'active':'' "
+     class='header_tab_item location  clickable_area'
+     data-sorttype='high2low'><a data-ng-href="/category/{{cat.id}}/high2low">$$->$</a></li>
+   </ul>
+  </div>
+
+  <div class="popular_products_wrapper center-container swiper-container-horizontal">
+   <div infinite-scroll='loadMoreProducts()' infinite-scroll-distance='2'>
+    <ul class="item-list-pop" data-cate="pop" style="min-height: 629px; text-align: left; width: 102%;">
+     <li class="item-card simple" ng-repeat="product in products track by $index">
+       <div data-ng-include style="width: 100%;" data-src="'/assets/app/views/beautypop/web/product-feed.html'"></div>
+     </li>
+   </div>
+  </div>
+ </div>
+</div>
+<div id="back-to-top" data-ng-click="gotoTop()" class="gtop ic_maketop None" style="z-index: 10; display: none;"></div>
