@@ -85,6 +85,7 @@ beautypop.config(['$translateProvider', function ($translateProvider) {
 	    "HOME_EXPLORE":"逛逛",
 	    "HOME_SELLER":"推薦賣家",
 	    "HOME_FOLLOWING":"我的關注",
+	    "HOME_CATEGORY":"商品分類",
 	    // Category page
 	    "POPULAR":"熱門商品",
 	    "NEWEST":"最新上架",
@@ -96,7 +97,7 @@ beautypop.config(['$translateProvider', function ($translateProvider) {
 	    "NEW_WITH_TAG":"全新(未開封/有價錢牌)",
 	    "NEW_WITHOUT_TAG":"全新(已開封/沒有價錢牌)",
 	    "USED":"二手",
-	    "CATEGORY":"商品分類",
+	    "CATEGORIES":"商品分類",
 	    "VIEW_SELLER":"看看商店",
 	    "SELLER_FOLLOWERS":"關注",
 	    "VIEW_ALL":"看所有",
@@ -125,6 +126,7 @@ beautypop.config(['$translateProvider', function ($translateProvider) {
 		"HOME_EXPLORE":"Explore",
 		"HOME_SELLER":"Sellers",
 	    "HOME_FOLLOWING":"Following",
+	    "CATEGORIES":"CATEGORIES",
 	    // Category page
 	    "POPULAR":"Popular",
 	    "NEWEST":"Newest",

@@ -1,4 +1,4 @@
- <ul class='header_tabs M14 center-container'>
+ <ul class='header_tabs L13 center-container'>
   <li ng-class="homeExplore? 'active' :'' " 
    class='header_tab_item popular clickable_area swiper-pagination-switch swiper-pagination-switch-0'
    ng-click="getHomeExploreProducts()" data-sorttype='popular'>
@@ -25,7 +25,7 @@
 	  <div class="swiper-pagination"></div>
 	 </div>
 	
-	 <div class="heading r14" style="margin-top:5px;text-align:center">{{'CATEGORY'|translate}}</div>
+	 <div class="L12" style="margin:10px 10px;color:rgba(0, 0, 0, 0.54)">{{'CATEGORIES'|translate}}</div>
 	 <div class="category-grids subcat-container row categories-wrapper center-container">
 	  <div data-ng-repeat="cat in categories"
 	   class="col-xs-4 category-grid clickable_area ">
@@ -33,7 +33,7 @@
 	    <div class="ratio_8_7_box category-wrapper"
 	     style="background-image: url({{cat.icon}})"></div>
 	    <div class="middle-centered-div subcat-title">
-	     <div class="title r14 category-grid-title">{{cat.name}}</div>
+	     <div class="title L12 category-grid-title">{{cat.name}}</div>
 	    </div>
 	   </a>
 	  </div>
