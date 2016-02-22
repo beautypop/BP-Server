@@ -31,6 +31,7 @@ import models.Message;
 import models.NotificationCounter;
 import models.Post;
 import models.Resource;
+import models.Settings;
 import models.SocialRelation;
 import models.User;
 import models.Conversation.OrderTransactionState;
@@ -82,187 +83,187 @@ public class UserController extends Controller {
     FeedHandler feedHandler;
     
     public static String getMobileUserKey(final play.mvc.Http.Request r, final Object key) {
-		final String[] m = r.queryString().get(key);
-		if(m != null && m.length > 0) {
-			try {
-				return URLDecoder.decode(m[0], "UTF-8");
-			} catch (UnsupportedEncodingException e) {
-				e.printStackTrace();
-			}
-		}
-		return null;
-	}
+        final String[] m = r.queryString().get(key);
+        if(m != null && m.length > 0) {
+            try {
+                return URLDecoder.decode(m[0], "UTF-8");
+            } catch (UnsupportedEncodingException e) {
+                logger.underlyingLogger().error("Error in getMobileUserKey", e);
+            }
+        }
+        return null;
+    }
     
-	@Transactional
-	public Result getUserInfo() {
-	    NanoSecondStopWatch sw = new NanoSecondStopWatch();
-	    
-		final User localUser = Application.getLocalUser(session());
-		if (localUser == null) {
-			return notFound();
-		}
-		
-		// update last login and user agent
-		localUser.updateLastLoginDate();
-		Application.setMobileUserAgent(localUser);
-		
-		UserVM userInfo = new UserVM(localUser);
-		
-		sw.stop();
+    @Transactional
+    public Result getUserInfo() {
+        NanoSecondStopWatch sw = new NanoSecondStopWatch();
+        
+        final User localUser = Application.getLocalUser(session());
+        if (localUser == null) {
+            return notFound();
+        }
+        
+        // update last login and user agent
+        localUser.updateLastLoginDate();
+        Application.setMobileUserAgent(localUser);
+        
+        UserVM userInfo = new UserVM(localUser);
+        
+        sw.stop();
         if (logger.underlyingLogger().isDebugEnabled()) {
             logger.underlyingLogger().debug("[u="+localUser.getId()+"] getUserInfo(). Took "+sw.getElapsedMS()+"ms");
         }
-		return ok(Json.toJson(userInfo));
-	}
-	
-	@Transactional
-	public static Result getUserInfoById(Long id) {
-	    NanoSecondStopWatch sw = new NanoSecondStopWatch();
-	    
-		final User localUser = Application.getLocalUser(session());
-		final User user = User.findById(id);
-		if (localUser == null || user == null) {
-			return notFound();
-		}
-		
-		UserVM userVM = new UserVM(user, localUser);
-		
-		sw.stop();
+        return ok(Json.toJson(userInfo));
+    }
+    
+    @Transactional
+    public static Result getUserInfoById(Long id) {
+        NanoSecondStopWatch sw = new NanoSecondStopWatch();
+        
+        final User localUser = Application.getLocalUser(session());
+        final User user = User.findById(id);
+        if (localUser == null || user == null) {
+            return notFound();
+        }
+        
+        UserVM userVM = new UserVM(user, localUser);
+        
+        sw.stop();
         if (logger.underlyingLogger().isDebugEnabled()) {
             logger.underlyingLogger().debug("[u="+localUser.getId()+"] getUserInfo(). Took "+sw.getElapsedMS()+"ms");
         }
-		return ok(Json.toJson(userVM));
-	}
-	
-	@Transactional
-	public static Result uploadProfilePhoto() {
-		final User localUser = Application.getLocalUser(session());
-		if (!localUser.isLoggedIn()) {
+        return ok(Json.toJson(userVM));
+    }
+    
+    @Transactional
+    public static Result uploadProfilePhoto() {
+        final User localUser = Application.getLocalUser(session());
+        if (!localUser.isLoggedIn()) {
             logger.underlyingLogger().error(String.format("[u=%d] User not logged in", localUser.id));
             return notFound();
         }
-		logger.underlyingLogger().info("STS [u="+localUser.id+"] uploadProfilePhoto");
+        logger.underlyingLogger().info("STS [u="+localUser.id+"] uploadProfilePhoto");
 
-		FilePart image = HttpUtil.getMultipartFormDataFile(request().body().asMultipartFormData(), "profile-photo");
-		String fileName = image.getFilename();
-	    try {
-	        boolean firstTimeUploadProfilePhoto = (localUser.getPhotoProfile() == null);
-	        
+        FilePart image = HttpUtil.getMultipartFormDataFile(request().body().asMultipartFormData(), "profile-photo");
+        String fileName = image.getFilename();
+        try {
+            boolean firstTimeUploadProfilePhoto = (localUser.getPhotoProfile() == null);
+            
             File fileTo = ImageFileUtil.copyImageFileToTemp(image.getFile(), fileName);
-			localUser.setPhotoProfile(fileTo);
-			
-			if (firstTimeUploadProfilePhoto) {
-    			// game badge
-    	        GameBadgeAwarded.recordGameBadge(localUser, BadgeType.PROFILE_PHOTO);
-			}
-		} catch (IOException e) {
-		    logger.underlyingLogger().error("Error in uploadProfilePhoto", e);
-			return badRequest();
-		}
-		return ok();
-	}
-	
-	@Transactional
-	public static Result uploadCoverPhoto() {
-		final User localUser = Application.getLocalUser(session());
-		if (!localUser.isLoggedIn()) {
+            localUser.setPhotoProfile(fileTo);
+            
+            if (firstTimeUploadProfilePhoto) {
+                // game badge
+                GameBadgeAwarded.recordGameBadge(localUser, BadgeType.PROFILE_PHOTO);
+            }
+        } catch (IOException e) {
+            logger.underlyingLogger().error("["+localUser.id+"] Error in uploadProfilePhoto", e);
+            return badRequest();
+        }
+        return ok();
+    }
+    
+    @Transactional
+    public static Result uploadCoverPhoto() {
+        final User localUser = Application.getLocalUser(session());
+        if (!localUser.isLoggedIn()) {
             logger.underlyingLogger().error(String.format("[u=%d] User not logged in", localUser.id));
             return notFound();
         }
-		
-		logger.underlyingLogger().info("STS [u="+localUser.id+"] uploadCoverPhoto");
+        
+        logger.underlyingLogger().info("STS [u="+localUser.id+"] uploadCoverPhoto");
 
-		FilePart image = HttpUtil.getMultipartFormDataFile(request().body().asMultipartFormData(), "profile-photo");
-		String fileName = image.getFilename();
-	    try {
-	    	File fileTo = ImageFileUtil.copyImageFileToTemp(image.getFile(), fileName);
-			localUser.setCoverPhoto(fileTo);
-		} catch (IOException e) {
-		    logger.underlyingLogger().error("Error in uploadCoverPhoto", e);
-			return badRequest();
-		}
-		return ok();
-	}
-	
-	@Transactional
-	public static Result getProfileImage() {
-	    response().setHeader("Cache-Control", "max-age=1");
-	    final User localUser = Application.getLocalUser(session());
-		
-		if(User.isLoggedIn(localUser) && localUser.getPhotoProfile() != null) {
-			return ok(localUser.getPhotoProfile().getRealFile());
-		}
-		
-		try {
-			return ok(User.getDefaultUserPhoto());
-		} catch (FileNotFoundException e) {
-			return ok("no image set");
-		}
-	}
-	
-	@Transactional
-	public static Result getCoverImage() {
-	    response().setHeader("Cache-Control", "max-age=1");
-	    final User localUser = Application.getLocalUser(session());
-		
-		if(User.isLoggedIn(localUser) && localUser.getCoverProfile() != null) {
-			return ok(localUser.getCoverProfile().getRealFile());
-		}
-		
-		try {
-			return ok(User.getDefaultCoverPhoto());
-		} catch (FileNotFoundException e) {
-			return ok("no image set");
-		}
-	}
+        FilePart image = HttpUtil.getMultipartFormDataFile(request().body().asMultipartFormData(), "profile-photo");
+        String fileName = image.getFilename();
+        try {
+            File fileTo = ImageFileUtil.copyImageFileToTemp(image.getFile(), fileName);
+            localUser.setCoverPhoto(fileTo);
+        } catch (IOException e) {
+            logger.underlyingLogger().error("["+localUser.id+"] Error in uploadCoverPhoto", e);
+            return badRequest();
+        }
+        return ok();
+    }
+    
+    @Transactional
+    public static Result getProfileImage() {
+        response().setHeader("Cache-Control", "max-age=1");
+        final User localUser = Application.getLocalUser(session());
+        
+        if(User.isLoggedIn(localUser) && localUser.getPhotoProfile() != null) {
+            return ok(localUser.getPhotoProfile().getRealFile());
+        }
+        
+        try {
+            return ok(User.getDefaultUserPhoto());
+        } catch (FileNotFoundException e) {
+            return ok("no image set");
+        }
+    }
+    
+    @Transactional
+    public static Result getCoverImage() {
+        response().setHeader("Cache-Control", "max-age=1");
+        final User localUser = Application.getLocalUser(session());
+        
+        if(User.isLoggedIn(localUser) && localUser.getCoverProfile() != null) {
+            return ok(localUser.getCoverProfile().getRealFile());
+        }
+        
+        try {
+            return ok(User.getDefaultCoverPhoto());
+        } catch (FileNotFoundException e) {
+            return ok("no image set");
+        }
+    }
 
-	@Transactional
-	public static Result editUserInfo() {
-	    final User localUser = Application.getLocalUser(session());
-	    
-	    logger.underlyingLogger().info(String.format("[u=%d] editUserInfo", localUser.id));
-	    
-	    // Basic info
-	    DynamicForm form = DynamicForm.form().bindFromRequest();
-	    String email = form.get("email");
-	    String displayName = form.get("displayName");
-	    String firstName = form.get("firstName");
-	    String lastName = form.get("lastName");
-	    String aboutMe = form.get("aboutMe");
-	    if (StringUtils.isEmpty(displayName) || StringUtils.isEmpty(firstName) || StringUtils.isEmpty(lastName)) {
-	        logger.underlyingLogger().error(String.format(
-	                "[u=%d][displayName=%s][firstName=%s][lastName=%s] displayName, firstName or lastName missing", 
-	                localUser.id, displayName, firstName, lastName));
+    @Transactional
+    public static Result editUserInfo() {
+        final User localUser = Application.getLocalUser(session());
+        
+        logger.underlyingLogger().info(String.format("[u=%d] editUserInfo", localUser.id));
+        
+        // Basic info
+        DynamicForm form = DynamicForm.form().bindFromRequest();
+        String email = form.get("email");
+        String displayName = form.get("displayName");
+        String firstName = form.get("firstName");
+        String lastName = form.get("lastName");
+        String aboutMe = form.get("aboutMe");
+        if (StringUtils.isEmpty(displayName) || StringUtils.isEmpty(firstName) || StringUtils.isEmpty(lastName)) {
+            logger.underlyingLogger().error(String.format(
+                    "[u=%d][displayName=%s][firstName=%s][lastName=%s] displayName, firstName or lastName missing", 
+                    localUser.id, displayName, firstName, lastName));
             return badRequest("請填寫您的顯示名稱與姓名");
         }
-	    
-	    displayName = displayName.trim();
-	    firstName = firstName.trim();
-	    lastName = lastName.trim();
-	    if (aboutMe != null) {
-	        aboutMe = aboutMe.trim();
-	    }
-	    
-	    if (!localUser.displayName.equals(displayName)) {
-	        if (StringUtil.hasWhitespace(displayName)) {
+        
+        displayName = displayName.trim();
+        firstName = firstName.trim();
+        lastName = lastName.trim();
+        if (aboutMe != null) {
+            aboutMe = aboutMe.trim();
+        }
+        
+        if (!localUser.displayName.equals(displayName)) {
+            if (StringUtil.hasWhitespace(displayName)) {
                 logger.underlyingLogger().error(String.format(
                         "[u=%d][displayName=%s] displayName contains whitespace", localUser.id, displayName));
                 return badRequest("\""+displayName+"\" 不可有空格");
             }
-	        if (!ValidationUtil.isDisplayNameValid(displayName)) {
+            if (!ValidationUtil.isDisplayNameValid(displayName)) {
                 logger.underlyingLogger().error(String.format(
                         "[u=%d][displayName=%s] displayName incorrect format", localUser.id, displayName));
                 return badRequest("\""+displayName+"\" 格式不正確");
-	        }
-	        if (User.isDisplayNameExists(displayName)) {
+            }
+            if (User.isDisplayNameExists(displayName)) {
                 logger.underlyingLogger().error(String.format(
                         "[u=%d][displayName=%s] displayName already exists", localUser.id, displayName));
                 return badRequest("\""+displayName+"\" 已被選用。請選擇另一個顯示名稱重試");
             }
         }
         
-	    // Email - handle email ONLY for fb signup with no email provided
-	    boolean emailAllowedToChange = localUser.fbLogin && !localUser.emailProvidedOnSignup;
+        // Email - handle email ONLY for fb signup with no email provided
+        boolean emailAllowedToChange = localUser.fbLogin && !localUser.emailProvidedOnSignup;
         if (emailAllowedToChange && 
                 (localUser.email == null || !localUser.email.equals(email))) {
             if (StringUtils.isEmpty(email)) {
@@ -291,7 +292,7 @@ public class UserController extends Controller {
             localUser.email = email;
         }
         
-		// UserInfo
+        // UserInfo
         Location location = Location.getLocationById(Integer.valueOf(form.get("location")));
         if (location == null) {
             logger.underlyingLogger().error(String.format(
@@ -313,111 +314,140 @@ public class UserController extends Controller {
             GameBadgeAwarded.recordGameBadge(localUser, BadgeType.PROFILE_INFO);
         }
         
-        return ok();
-	}
+        return ok(Json.toJson(new UserVM(localUser)));
+    }
     
     @Transactional
-	public static Result getProfileImageById(Long id) {
+    public static Result editUserNotificationSettings() {
+        final User localUser = Application.getLocalUser(session());
+        if (!localUser.isLoggedIn()) {
+            logger.underlyingLogger().error(String.format("[u=%d] User not logged in", localUser.id));
+            return notFound();
+        }
+        
+        Settings settings = Settings.findByUserId(localUser.id);
+        try {
+            DynamicForm form = form().bindFromRequest();
+            settings.emailNewPost = Boolean.parseBoolean(form.get("emailNewPost"));
+            settings.emailNewConversation = Boolean.parseBoolean(form.get("emailNewConversation"));
+            settings.emailNewComment = Boolean.parseBoolean(form.get("emailNewComment"));
+            settings.emailNewPromotions = Boolean.parseBoolean(form.get("emailNewPromotions"));
+            settings.pushNewConversation = Boolean.parseBoolean(form.get("pushNewConversation"));
+            settings.pushNewComment = Boolean.parseBoolean(form.get("pushNewComment"));
+            settings.pushNewFollow = Boolean.parseBoolean(form.get("pushNewFollow"));
+            settings.pushNewFeedback = Boolean.parseBoolean(form.get("pushNewFeedback"));
+            settings.pushNewPromotions = Boolean.parseBoolean(form.get("pushNewPromotions"));
+            settings.save();
+        } catch (Exception e) {
+            logger.underlyingLogger().error("["+localUser.id+"] Error in editUserNotificationSettings", e);
+            return badRequest();
+        }
+        
+        return ok(Json.toJson(new UserVM(localUser)));
+    }
+    
+    @Transactional
+    public static Result getProfileImageById(Long id) {
         response().setHeader("Cache-Control", "max-age=1");
         User user = User.findById(id);
-    	
-		if(User.isLoggedIn(user) && user.getPhotoProfile() != null) {
-			return ok(user.getPhotoProfile().getRealFile());
-		}
-		
-		try {
-			return ok(User.getDefaultUserPhoto());
-		} catch (FileNotFoundException e) {
-			return ok("no image set");
-		}
-	}
+        
+        if(User.isLoggedIn(user) && user.getPhotoProfile() != null) {
+            return ok(user.getPhotoProfile().getRealFile());
+        }
+        
+        try {
+            return ok(User.getDefaultUserPhoto());
+        } catch (FileNotFoundException e) {
+            return ok("no image set");
+        }
+    }
     
-	@Transactional
-	public static Result getCoverImageById(Long id) {
-	    response().setHeader("Cache-Control", "max-age=1");
-	    User user = User.findById(id);
+    @Transactional
+    public static Result getCoverImageById(Long id) {
+        response().setHeader("Cache-Control", "max-age=1");
+        User user = User.findById(id);
 
-	    if(User.isLoggedIn(user) && user.getCoverProfile() != null) {
-			return ok(user.getCoverProfile().getRealFile());
-		}
-		try {
-			return ok(User.getDefaultCoverPhoto());
-		} catch (FileNotFoundException e) {
-			return ok("no image set");
-		}
-	}
-	
-	@Transactional
-	public static Result getMiniProfileImageById(Long id) {
-	    response().setHeader("Cache-Control", "max-age=1");
-		final User user = User.findById(id);
-		
-		if(User.isLoggedIn(user) && user.getPhotoProfile() != null) {
-			return ok(user.getPhotoProfile().getMiniFile());
-		} 
-		
-		try {
-			return ok(User.getDefaultThumbnailUserPhoto());
-		} catch (FileNotFoundException e) {
-			return ok("no image set");
-		}
-	}
-	
-	@Transactional
-	public static Result getThumbnailProfileImageById(Long id) {
-	    response().setHeader("Cache-Control", "max-age=1");
-		final User user = User.findById(id);
-		
-		if(User.isLoggedIn(user) && user.getPhotoProfile() != null) {
-			return ok(new File(user.getPhotoProfile().getThumbnail()));
-		}
-		
-		try {
-			return ok(User.getDefaultThumbnailUserPhoto());
-		} catch (FileNotFoundException e) {
-			return ok("no image set");
-		}
-	}
-	
-	@Transactional
-	public static Result getThumbnailCoverImageById(Long id) {
-	    response().setHeader("Cache-Control", "max-age=1");
-		final User user = User.findById(id);
-		
-		if(User.isLoggedIn(user) && user.getCoverProfile() != null) {
-			return ok(new File(user.getCoverProfile().getThumbnail()));
-		}
-		
-		try {
-			return ok(User.getDefaultCoverPhoto());
-		} catch (FileNotFoundException e) {
-			return ok("no image set");
-		}
-	}
-	
-	@Transactional
-	public static Result getMessages(Long conversationId, Long offset) {
+        if(User.isLoggedIn(user) && user.getCoverProfile() != null) {
+            return ok(user.getCoverProfile().getRealFile());
+        }
+        try {
+            return ok(User.getDefaultCoverPhoto());
+        } catch (FileNotFoundException e) {
+            return ok("no image set");
+        }
+    }
+    
+    @Transactional
+    public static Result getMiniProfileImageById(Long id) {
+        response().setHeader("Cache-Control", "max-age=1");
+        final User user = User.findById(id);
+        
+        if(User.isLoggedIn(user) && user.getPhotoProfile() != null) {
+            return ok(user.getPhotoProfile().getMiniFile());
+        } 
+        
+        try {
+            return ok(User.getDefaultThumbnailUserPhoto());
+        } catch (FileNotFoundException e) {
+            return ok("no image set");
+        }
+    }
+    
+    @Transactional
+    public static Result getThumbnailProfileImageById(Long id) {
+        response().setHeader("Cache-Control", "max-age=1");
+        final User user = User.findById(id);
+        
+        if(User.isLoggedIn(user) && user.getPhotoProfile() != null) {
+            return ok(new File(user.getPhotoProfile().getThumbnail()));
+        }
+        
+        try {
+            return ok(User.getDefaultThumbnailUserPhoto());
+        } catch (FileNotFoundException e) {
+            return ok("no image set");
+        }
+    }
+    
+    @Transactional
+    public static Result getThumbnailCoverImageById(Long id) {
+        response().setHeader("Cache-Control", "max-age=1");
+        final User user = User.findById(id);
+        
+        if(User.isLoggedIn(user) && user.getCoverProfile() != null) {
+            return ok(new File(user.getCoverProfile().getThumbnail()));
+        }
+        
+        try {
+            return ok(User.getDefaultCoverPhoto());
+        } catch (FileNotFoundException e) {
+            return ok("no image set");
+        }
+    }
+    
+    @Transactional
+    public static Result getMessages(Long conversationId, Long offset) {
         NanoSecondStopWatch sw = new NanoSecondStopWatch();
 
-		final User localUser = Application.getLocalUser(session());
-		List<MessageVM> vms = new ArrayList<>();
-		Conversation conversation = Conversation.findById(conversationId); 
-		List<Message> messages =  conversation.getMessages(localUser, offset);
-		if (messages != null) {
-			for (Message message : messages) {
-				MessageVM vm = new MessageVM(message);
-				vms.add(vm);
-			}
-		}
-		Map<String, Object> map = new HashMap<>();
-		map.put("messages", vms);
+        final User localUser = Application.getLocalUser(session());
+        List<MessageVM> vms = new ArrayList<>();
+        Conversation conversation = Conversation.findById(conversationId); 
+        List<Message> messages =  conversation.getMessages(localUser, offset);
+        if (messages != null) {
+            for (Message message : messages) {
+                MessageVM vm = new MessageVM(message);
+                vms.add(vm);
+            }
+        }
+        Map<String, Object> map = new HashMap<>();
+        map.put("messages", vms);
 
         sw.stop();
         logger.underlyingLogger().info("[u="+localUser.id+"][c="+conversationId+"] getMessages(offset="+offset+") size="+vms.size()+". Took "+sw.getElapsedMS()+"ms");
-		return ok(Json.toJson(map));
-	}
-	
-	@Transactional
+        return ok(Json.toJson(map));
+    }
+    
+    @Transactional
     public static Result getMessagesForAdmin(Long conversationId, Long offset) {
         NanoSecondStopWatch sw = new NanoSecondStopWatch();
 
@@ -438,8 +468,8 @@ public class UserController extends Controller {
         logger.underlyingLogger().info("[u="+localUser.id+"][c="+conversationId+"] getMessagesForAdmin(offset="+offset+") size="+vms.size()+". Took "+sw.getElapsedMS()+"ms");
         return ok(Json.toJson(map));
     }
-	
-	@Transactional
+    
+    @Transactional
     public static Result newMessage() {
         final User localUser = Application.getLocalUser(session());
         if (!localUser.isLoggedIn()) {
@@ -448,63 +478,63 @@ public class UserController extends Controller {
         }
         
         try {
-	        Http.MultipartFormData multipartFormData = request().body().asMultipartFormData();
-			Long conversationId = HttpUtil.getMultipartFormDataLong(multipartFormData, "conversationId");
-		    String body = HttpUtil.getMultipartFormDataString(multipartFormData, "body");
-		    Boolean system = HttpUtil.getMultipartFormDataBoolean(multipartFormData, "system");
-	        
-		    if (system == null) {
-		        system = false;
-		    }
-		    
-	        Message message = newMessage(conversationId, localUser, body, system);
-	        
-	        List<FilePart> images = HttpUtil.getMultipartFormDataFiles(multipartFormData, "image", DefaultValues.MAX_MESSAGE_IMAGES);
-	        for (FilePart image : images) {
-				String fileName = image.getFilename();
-				File file = image.getFile();
-				File fileTo = ImageFileUtil.copyImageFileToTemp(file, fileName);
-				message.addMessagePhoto(fileTo, localUser);
-			}
-	        
-	        MessageVM vm = new MessageVM(message);
-	        return ok(Json.toJson(vm));
-		} catch (IOException e) {
-			logger.underlyingLogger().error("Error in newMessage", e);
-		}
+            Http.MultipartFormData multipartFormData = request().body().asMultipartFormData();
+            Long conversationId = HttpUtil.getMultipartFormDataLong(multipartFormData, "conversationId");
+            String body = HttpUtil.getMultipartFormDataString(multipartFormData, "body");
+            Boolean system = HttpUtil.getMultipartFormDataBoolean(multipartFormData, "system");
+            
+            if (system == null) {
+                system = false;
+            }
+            
+            Message message = newMessage(conversationId, localUser, body, system);
+            
+            List<FilePart> images = HttpUtil.getMultipartFormDataFiles(multipartFormData, "image", DefaultValues.MAX_MESSAGE_IMAGES);
+            for (FilePart image : images) {
+                String fileName = image.getFilename();
+                File file = image.getFile();
+                File fileTo = ImageFileUtil.copyImageFileToTemp(file, fileName);
+                message.addMessagePhoto(fileTo, localUser);
+            }
+            
+            MessageVM vm = new MessageVM(message);
+            return ok(Json.toJson(vm));
+        } catch (IOException e) {
+            logger.underlyingLogger().error("["+localUser.id+"] Error in newMessage", e);
+        }
         
         return badRequest();
     }
-	
-	@Transactional
-	public static Message newMessage(Long conversationId, User sender, String body, boolean system) {
+    
+    @Transactional
+    public static Message newMessage(Long conversationId, User sender, String body, boolean system) {
         Conversation conversation = Conversation.findById(conversationId);
         return conversation.addMessage(sender, body, system);
     }
-	
-	@Transactional
+    
+    @Transactional
     public static Result deleteConversation(Long id) {
-		final User localUser = Application.getLocalUser(session());
-		if (!localUser.isLoggedIn()) {
+        final User localUser = Application.getLocalUser(session());
+        if (!localUser.isLoggedIn()) {
             logger.underlyingLogger().error(String.format("[u=%d] User not logged in", localUser.id));
             return notFound();
         }
-		
+        
         Conversation.archiveConversation(id, localUser);
         return ok();
     }
 
-	@Transactional
-	public static Result getConversations() {
+    @Transactional
+    public static Result getConversations() {
         NanoSecondStopWatch sw = new NanoSecondStopWatch();
 
-		final User localUser = Application.getLocalUser(session());
+        final User localUser = Application.getLocalUser(session());
         if (!localUser.isLoggedIn()) {
             logger.underlyingLogger().error(String.format("[u=%d] User not logged in", localUser.id));
             return notFound();
         }
 
-		List<ConversationVM> vms = new ArrayList<>();
+        List<ConversationVM> vms = new ArrayList<>();
         List<Conversation> conversations = Conversation.getUserConversations(localUser);
         if (conversations != null && conversations.size() > 0) {
             Long count = 0L;
@@ -528,10 +558,10 @@ public class UserController extends Controller {
         
         sw.stop();
         logger.underlyingLogger().info("[u="+localUser.id+"] getConversations. Took "+sw.getElapsedMS()+"ms");
-		return ok(Json.toJson(vms));
-	}
-	
-	@Transactional
+        return ok(Json.toJson(vms));
+    }
+    
+    @Transactional
     public static Result getLatestConversations(Long offset) {
         NanoSecondStopWatch sw = new NanoSecondStopWatch();
 
@@ -559,36 +589,36 @@ public class UserController extends Controller {
         logger.underlyingLogger().info("[u="+localUser.id+"] getLatestConversations. Took "+sw.getElapsedMS()+"ms");
         return ok(Json.toJson(vms));
     }
-	
-	@Transactional
-	public static Result getConversation(Long id) {
+    
+    @Transactional
+    public static Result getConversation(Long id) {
         NanoSecondStopWatch sw = new NanoSecondStopWatch();
 
-		final User localUser = Application.getLocalUser(session());
+        final User localUser = Application.getLocalUser(session());
         if (!localUser.isLoggedIn()) {
             logger.underlyingLogger().error(String.format("[u=%d] User not logged in", localUser.id));
             return notFound();
         }
         
-		Conversation conversation = Conversation.findById(id);
-		if (conversation == null) {
-			return notFound();
-		}
+        Conversation conversation = Conversation.findById(id);
+        if (conversation == null) {
+            return notFound();
+        }
 
-		if (conversation.user1.id != localUser.id && conversation.user2.id != localUser.id && !localUser.isSuperAdmin()) {
+        if (conversation.user1.id != localUser.id && conversation.user2.id != localUser.id && !localUser.isSuperAdmin()) {
             logger.underlyingLogger().error(String.format("[u=%d][conv=%d] User is not owner of conversation. Failed to get conversation !!", localUser.id, conversation.id));
             return badRequest();
         }
-		
+        
         sw.stop();
         logger.underlyingLogger().info("[u="+localUser.id+"] getConversation. Took "+sw.getElapsedMS()+"ms");
-		return ok(Json.toJson(new ConversationVM(conversation, localUser)));
-	}
-	
-	@Transactional
+        return ok(Json.toJson(new ConversationVM(conversation, localUser)));
+    }
+    
+    @Transactional
     public static Result openConversation(Long postId) {
-		NanoSecondStopWatch sw = new NanoSecondStopWatch();
-		
+        NanoSecondStopWatch sw = new NanoSecondStopWatch();
+        
         final User localUser = Application.getLocalUser(session());
         if (!localUser.isLoggedIn()) {
             logger.underlyingLogger().error(String.format("[u=%d] User not logged in", localUser.id));
@@ -597,7 +627,7 @@ public class UserController extends Controller {
         
         Post post = Post.findById(postId);
         if (post == null) {
-        	logger.underlyingLogger().error(String.format("[p=%d][u1=%d][u2=%d] Post not exist. Will not open conversation", postId, localUser.id, post.owner.id));
+            logger.underlyingLogger().error(String.format("[p=%d][u1=%d][u2=%d] Post not exist. Will not open conversation", postId, localUser.id, post.owner.id));
             return notFound();
         }
         if (localUser.id == post.owner.id) {
@@ -613,51 +643,51 @@ public class UserController extends Controller {
         if (logger.underlyingLogger().isDebugEnabled()) {
             logger.underlyingLogger().debug(String.format("[p=%d][u1=%d][u2=%d] openConversation. Took "+sw.getElapsedMS()+"ms", postId, localUser.id, post.owner.id));
         }
-		
-		return ok(Json.toJson(conversationVM));
+        
+        return ok(Json.toJson(conversationVM));
     }
-	
-	@Transactional
-	public static Result uploadMessagePhoto() {
-		final User localUser = Application.getLocalUser(session());
-		if (!localUser.isLoggedIn()) {
+    
+    @Transactional
+    public static Result uploadMessagePhoto() {
+        final User localUser = Application.getLocalUser(session());
+        if (!localUser.isLoggedIn()) {
             logger.underlyingLogger().error(String.format("[u=%d] User not logged in", localUser.id));
             return notFound();
         }
-		
+        
         DynamicForm form = DynamicForm.form().bindFromRequest();
         try {
-        	Long messageId = Long.valueOf(form.get("messageId"));
-        	Message message = Message.findById(Long.valueOf(messageId));
-        	
-	        FilePart image = HttpUtil.getMultipartFormDataFile(request().body().asMultipartFormData(), "send-photo0");
-	        String fileName = image.getFilename();
+            Long messageId = Long.valueOf(form.get("messageId"));
+            Message message = Message.findById(Long.valueOf(messageId));
+            
+            FilePart image = HttpUtil.getMultipartFormDataFile(request().body().asMultipartFormData(), "send-photo0");
+            String fileName = image.getFilename();
             File fileTo = ImageFileUtil.copyImageFileToTemp(image.getFile(), fileName);
             Long id = message.addMessagePhoto(fileTo,localUser).id;
             return ok(id.toString());
         } catch (NumberFormatException e) {
-        	logger.underlyingLogger().error(ExceptionUtils.getStackTrace(e));
+            logger.underlyingLogger().error("["+localUser.id+"] Error in uploadMessagePhoto", e);
             return badRequest();
         } catch (IOException e) {
-            logger.underlyingLogger().error(ExceptionUtils.getStackTrace(e));
+            logger.underlyingLogger().error("["+localUser.id+"] Error in uploadMessagePhoto", e);
             return badRequest();
         }
     }
-	
-	@Transactional
-	public static Result getUnreadMessageCount() {
-		final User localUser = Application.getLocalUser(session());
-		if (!localUser.isLoggedIn()) {
+    
+    @Transactional
+    public static Result getUnreadMessageCount() {
+        final User localUser = Application.getLocalUser(session());
+        if (!localUser.isLoggedIn()) {
             logger.underlyingLogger().error(String.format("[u=%d] User not logged in", localUser.id));
             return notFound();
         }
-		
-		Map<String, Long> vm = new HashMap<>();
-		vm.put("count", Conversation.getUnreadConversationCount(localUser));
-		return ok(Json.toJson(vm));
-	}
-	
-	@Transactional
+        
+        Map<String, Long> vm = new HashMap<>();
+        vm.put("count", Conversation.getUnreadConversationCount(localUser));
+        return ok(Json.toJson(vm));
+    }
+    
+    @Transactional
     public static Result updateConversationNote() {
         final User localUser = Application.getLocalUser(session());
         if (!localUser.isLoggedIn()) {
@@ -678,15 +708,16 @@ public class UserController extends Controller {
             conversation.note = body;
             conversation.save();
         } catch (Exception e) {
+            logger.underlyingLogger().error("["+localUser.id+"] Error in updateConversationNote", e);
             return notFound();
         }
         
         return ok();
     }
-	
-	@Transactional
-	public static Result updateConversationOrderTransactionState(Long id, String state) {
-	    final User localUser = Application.getLocalUser(session());
+    
+    @Transactional
+    public static Result updateConversationOrderTransactionState(Long id, String state) {
+        final User localUser = Application.getLocalUser(session());
         if (!localUser.isLoggedIn()) {
             logger.underlyingLogger().error(String.format("[u=%d] User not logged in", localUser.id));
             return notFound();
@@ -702,15 +733,16 @@ public class UserController extends Controller {
             conversation.orderTransactionState = orderTransactionState;
             conversation.save();
         } catch (Exception e) {
+            logger.underlyingLogger().error("["+localUser.id+"] Error in updateConversationOrderTransactionState", e);
             return notFound();
         }
         
-	    return ok();
-	}
-	
-	@Transactional
-	public static Result highlightConversation(Long id, String color) {
-	    final User localUser = Application.getLocalUser(session());
+        return ok();
+    }
+    
+    @Transactional
+    public static Result highlightConversation(Long id, String color) {
+        final User localUser = Application.getLocalUser(session());
         if (!localUser.isLoggedIn()) {
             logger.underlyingLogger().error(String.format("[u=%d] User not logged in", localUser.id));
             return notFound();
@@ -726,17 +758,18 @@ public class UserController extends Controller {
             conversation.highlightColor = highlightColor;
             conversation.save();
         } catch (Exception e) {
+            logger.underlyingLogger().error("["+localUser.id+"] Error in highlightConversation", e);
             return notFound();
         }
         
-	    return ok();
-	}
+        return ok();
+    }
 
-	@Transactional
-	public static Result getMessageImageById(Long id) {
-	    response().setHeader("Cache-Control", "max-age=604800");
-	    final User localUser = Application.getLocalUser(session());
-	    if (localUser == null) {
+    @Transactional
+    public static Result getMessageImageById(Long id) {
+        response().setHeader("Cache-Control", "max-age=604800");
+        final User localUser = Application.getLocalUser(session());
+        if (localUser == null) {
             String userKey = UserController.getMobileUserKey(request(), Application.APP_USER_KEY);
             logger.underlyingLogger().error(String.format("[key=%s] getOriginalMessageImageById() User is null", userKey));
             return notFound();
@@ -754,7 +787,7 @@ public class UserController extends Controller {
         
         logger.underlyingLogger().error(String.format("[u=%d][res=%d] getMessageImageById() User not authorized", localUser.id, id));
         return unauthorized();
-	}
+    }
 
     @Transactional
     public static Result getOriginalMessageImageById(Long id) {
@@ -782,8 +815,8 @@ public class UserController extends Controller {
 
     @Transactional
     public static Result getMiniMessageImageById(Long id) {
-    	final User localUser = Application.getLocalUser(session());
-    	if (localUser == null) {
+        final User localUser = Application.getLocalUser(session());
+        if (localUser == null) {
             String userKey = UserController.getMobileUserKey(request(), Application.APP_USER_KEY);
             logger.underlyingLogger().error(String.format("[key=%s] getOriginalMessageImageById() User is null", userKey));
             return notFound();
@@ -802,10 +835,10 @@ public class UserController extends Controller {
         logger.underlyingLogger().error(String.format("[u=%d][res=%d] getMiniMessageImageById() User not authorized", localUser.id, id));
         return unauthorized();
     }
-	
+    
     @Transactional
     public static Result inviteByEmail(String email) {
-		final User localUser = Application.getLocalUser(session());
+        final User localUser = Application.getLocalUser(session());
 
         if (localUser.isLoggedIn()) {
             /*GameAccount gameAccount = GameAccount.findByUserId(localUser.id);
@@ -813,8 +846,8 @@ public class UserController extends Controller {
         } else {
             logger.underlyingLogger().info("Not signed in. Skipped signup invitation to: "+email);
         }
-		return ok();
-	}
+        return ok();
+    }
   
     @Transactional
     public static Result viewProfile(Long id) {
@@ -826,17 +859,17 @@ public class UserController extends Controller {
             logger.underlyingLogger().warn(String.format("[user=%d][u=%d] User not found", id, localUser.id));
             return Application.pathNotFound();
         }
-	    
-		sw.stop();
+        
+        sw.stop();
         if (logger.underlyingLogger().isDebugEnabled()) {
             logger.underlyingLogger().debug("[u="+id+"] viewProfile(). Took "+sw.getElapsedMS()+"ms");
         }
         
-		String metaTags = Application.generateHeaderMeta(user.displayName, "", "/image/get-profile-image-by-id/"+user.getId());
-		return ok(views.html.beautypop.web.profile.render(
-    	        Json.stringify(Json.toJson(new UserVM(user,localUser))), 
-    	        Json.stringify(Json.toJson(new UserVM(localUser))),
-    	        metaTags));
+        String metaTags = Application.generateHeaderMeta(user.displayName, "", "/image/get-profile-image-by-id/"+user.getId());
+        return ok(views.html.beautypop.web.profile.render(
+                Json.stringify(Json.toJson(new UserVM(user,localUser))), 
+                Json.stringify(Json.toJson(new UserVM(localUser))),
+                metaTags));
     }
     
     @Transactional 
@@ -853,29 +886,29 @@ public class UserController extends Controller {
         return ok(Json.toJson(vms));
     }
     
-	@Transactional 
-	public Result getHomeExploreFeed(Long offset) {
-		final User localUser = Application.getLocalUser(session());
-		List<PostVMLite> vms = feedHandler.getFeedPosts(localUser.id, offset, localUser, FeedType.HOME_EXPLORE);
-		return ok(Json.toJson(vms));
-	}
-	
-	@Transactional 
-	public Result getHomeFollowingFeed(Long offset) {
-		final User localUser = Application.getLocalUser(session());
-		if (!localUser.isLoggedIn()) {
-			logger.underlyingLogger().error(String.format("[u=%d] User not logged in", localUser.id));
-			return notFound();
-		}
-		List<PostVMLite> vms = feedHandler.getFeedPosts(localUser.id, offset, localUser, FeedType.HOME_FOLLOWING);
-		return ok(Json.toJson(vms));
-	}
-	
+    @Transactional 
+    public Result getHomeExploreFeed(Long offset) {
+        final User localUser = Application.getLocalUser(session());
+        List<PostVMLite> vms = feedHandler.getFeedPosts(localUser.id, offset, localUser, FeedType.HOME_EXPLORE);
+        return ok(Json.toJson(vms));
+    }
+    
+    @Transactional 
+    public Result getHomeFollowingFeed(Long offset) {
+        final User localUser = Application.getLocalUser(session());
+        if (!localUser.isLoggedIn()) {
+            logger.underlyingLogger().error(String.format("[u=%d] User not logged in", localUser.id));
+            return notFound();
+        }
+        List<PostVMLite> vms = feedHandler.getFeedPosts(localUser.id, offset, localUser, FeedType.HOME_FOLLOWING);
+        return ok(Json.toJson(vms));
+    }
+    
     @Transactional
     public Result getUserPostedFeed(Long id, Long offset) {
-    	final User localUser = Application.getLocalUser(session());
+        final User localUser = Application.getLocalUser(session());
         List<PostVMLite> vms = feedHandler.getFeedPosts(id, offset, localUser, FeedType.USER_POSTED);
-		return ok(Json.toJson(vms));
+        return ok(Json.toJson(vms));
     }
     
     @Transactional
@@ -887,12 +920,12 @@ public class UserController extends Controller {
     
     @Transactional
     public static Result getUserCollections(Long id) {
-    	List<CollectionVM> vms = new ArrayList<>();
-		for(Collection collection : Collection.getUserProductCollections(id)) {
-			CollectionVM vm = new CollectionVM(collection);
-			vms.add(vm);
-		}
-		return ok(Json.toJson(vms));
+        List<CollectionVM> vms = new ArrayList<>();
+        for(Collection collection : Collection.getUserProductCollections(id)) {
+            CollectionVM vm = new CollectionVM(collection);
+            vms.add(vm);
+        }
+        return ok(Json.toJson(vms));
     }
     
     @Transactional
@@ -903,7 +936,7 @@ public class UserController extends Controller {
     
     @Transactional
     public static Result followUser(Long id) {
-    	final User localUser = Application.getLocalUser(session());
+        final User localUser = Application.getLocalUser(session());
         if (!localUser.isLoggedIn()) {
             logger.underlyingLogger().error(String.format("[u=%d] User not logged in", localUser.id));
             return redirect("/login");
@@ -916,12 +949,12 @@ public class UserController extends Controller {
         }
         
         SocialRelationHandler.recordFollowUser(localUser, user);
-		return ok();
+        return ok();
     }
     
     @Transactional
     public static Result unfollowUser(Long id) {
-    	final User localUser = Application.getLocalUser(session());
+        final User localUser = Application.getLocalUser(session());
         if (!localUser.isLoggedIn()) {
             logger.underlyingLogger().error(String.format("[u=%d] User not logged in", localUser.id));
             return redirect("/login");
@@ -934,12 +967,12 @@ public class UserController extends Controller {
         }
         
         SocialRelationHandler.recordUnFollowUser(localUser, user);
-		return ok();
+        return ok();
     }
     
     @Transactional
     public Result viewFollowings(Long id) {
-    	final User localUser = Application.getLocalUser(session());
+        final User localUser = Application.getLocalUser(session());
         User user = User.findById(id);
         if (user == null) {
             logger.underlyingLogger().warn(String.format("[user=%d][u=%d] User not found", id, localUser.id));
@@ -947,40 +980,40 @@ public class UserController extends Controller {
         }
         
         List<UserVMLite> userFollowings = getFollowings(id, 0L, localUser);
-    	return ok(views.html.beautypop.web.followers.render(
-    	        Json.stringify(Json.toJson(userFollowings)), 
-    	        Json.stringify(Json.toJson(new UserVM(user,localUser))),
-    	        Json.stringify(Json.toJson(new UserVM(localUser)))));
+        return ok(views.html.beautypop.web.followers.render(
+                Json.stringify(Json.toJson(userFollowings)), 
+                Json.stringify(Json.toJson(new UserVM(user,localUser))),
+                Json.stringify(Json.toJson(new UserVM(localUser)))));
     }
     
     @Transactional
     public Result viewFollowers(Long id) {
-    	final User localUser = Application.getLocalUser(session());    
-    	User user = User.findById(id);
+        final User localUser = Application.getLocalUser(session());    
+        User user = User.findById(id);
         if (user == null) {
             logger.underlyingLogger().warn(String.format("[user=%d][u=%d] User not found", id, localUser.id));
             return Application.pathNotFound();
         }
         
         List<UserVMLite> userFollowers = getFollowers(id, 0L, localUser);
-    	return ok(views.html.beautypop.web.followers.render(
-    	        Json.stringify(Json.toJson(userFollowers)),
-    	        Json.stringify(Json.toJson(new UserVM(user,localUser))),
-    	        Json.stringify(Json.toJson(new UserVM(localUser)))));
+        return ok(views.html.beautypop.web.followers.render(
+                Json.stringify(Json.toJson(userFollowers)),
+                Json.stringify(Json.toJson(new UserVM(user,localUser))),
+                Json.stringify(Json.toJson(new UserVM(localUser)))));
     }
     
     @Transactional
     public Result getFollowings(Long id, Long offset) {
-    	final User localUser = Application.getLocalUser(session());
-    	List<UserVMLite> userFollowings = getFollowings(id, offset, localUser);
-    	return ok(Json.toJson(userFollowings));
+        final User localUser = Application.getLocalUser(session());
+        List<UserVMLite> userFollowings = getFollowings(id, offset, localUser);
+        return ok(Json.toJson(userFollowings));
     }
     
     @Transactional
     public Result getFollowers(Long id,Long offset) {
-    	final User localUser = Application.getLocalUser(session());   
-    	List<UserVMLite> userFollowers = getFollowers(id, offset, localUser);
-    	return ok(Json.toJson(userFollowers));
+        final User localUser = Application.getLocalUser(session());   
+        List<UserVMLite> userFollowers = getFollowers(id, offset, localUser);
+        return ok(Json.toJson(userFollowers));
     }
     
     public List<UserVMLite> getFollowings(Long id, Long offset, User localUser) {
@@ -1017,7 +1050,7 @@ public class UserController extends Controller {
     
     @Transactional
     public static Result getNotificationCounter() {
-    	final User localUser = Application.getLocalUser(session());
+        final User localUser = Application.getLocalUser(session());
         if (!localUser.isLoggedIn()) {
             logger.underlyingLogger().error(String.format("[u=%d] User not logged in", localUser.id));
             return notFound();
@@ -1025,14 +1058,14 @@ public class UserController extends Controller {
         
         NotificationCounter counter = NotificationCounter.getNotificationCounter(localUser.id);
         if (counter != null) {
-        	return ok(Json.toJson(new NotificationCounterVM(counter)));
+            return ok(Json.toJson(new NotificationCounterVM(counter)));
         }
         return ok();
     }
     
     @Transactional
     public static Result resetActivitiesCount() {
-    	final User localUser = Application.getLocalUser(session());
+        final User localUser = Application.getLocalUser(session());
         if (!localUser.isLoggedIn()) {
             logger.underlyingLogger().error(String.format("[u=%d] User not logged in", localUser.id));
             return notFound();
@@ -1044,7 +1077,7 @@ public class UserController extends Controller {
     
     @Transactional
     public static Result resetConversationsCount() {
-    	final User localUser = Application.getLocalUser(session());
+        final User localUser = Application.getLocalUser(session());
         if (!localUser.isLoggedIn()) {
             logger.underlyingLogger().error(String.format("[u=%d] User not logged in", localUser.id));
             return notFound();
@@ -1056,32 +1089,32 @@ public class UserController extends Controller {
     
     @Transactional
     public static Result getActivities(Long offset){
-    	User localUser = Application.getLocalUser(session());
-    	if (!localUser.isLoggedIn()) {
+        User localUser = Application.getLocalUser(session());
+        if (!localUser.isLoggedIn()) {
             logger.underlyingLogger().error(String.format("[u=%d] User not logged in", localUser.id));
             return notFound();
         }
-    	
-    	List<Activity> activities = Activity.getActivities(localUser.id, offset);
-    	List<ActivityVM> vms = new ArrayList<>();
-		for (Activity activity : activities) {
-			ActivityVM vm = new ActivityVM(activity);
-			vms.add(vm);
-			
-			// mark read
-			if (!activity.viewed) {
-    			activity.viewed = true;
-    			activity.save();
-			}
-		}
-		
-		// reset notification counter for the recipient
+        
+        List<Activity> activities = Activity.getActivities(localUser.id, offset);
+        List<ActivityVM> vms = new ArrayList<>();
+        for (Activity activity : activities) {
+            ActivityVM vm = new ActivityVM(activity);
+            vms.add(vm);
+            
+            // mark read
+            if (!activity.viewed) {
+                activity.viewed = true;
+                activity.save();
+            }
+        }
+        
+        // reset notification counter for the recipient
         if (offset == 0) {
             resetActivitiesCount();
         }
         
-		return ok(Json.toJson(vms));
-	}
+        return ok(Json.toJson(vms));
+    }
     
     @Transactional
     public static Result newConversationOrder() {
@@ -1245,7 +1278,7 @@ public class UserController extends Controller {
         if (logger.underlyingLogger().isDebugEnabled()) {
             logger.underlyingLogger().debug("[u="+localUser.getId()+"][gcmKey="+key+"][versionCode="+versionCode+"] saveGcmKey(). Took "+sw.getElapsedMS()+"ms");
         }
-		return ok();
+        return ok();
     }
     
     @Transactional

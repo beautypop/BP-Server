@@ -34,23 +34,26 @@ import domain.DefaultValues;
 
 @Singleton
 public class CalcServer {
-	private play.api.Logger logger = play.api.Logger.apply(CalcServer.class);
-	
-	@Inject
+    private play.api.Logger logger = play.api.Logger.apply(CalcServer.class);
+    
+    @Inject
     JedisCache jedisCache;
     
-	public static final Boolean FEED_INIT_FLUSH_ALL = Play.application().configuration().getBoolean("feed.init.flush.all", true);
-	public static final Long FEED_SCORE_COMPUTE_SCHEDULE = Play.application().configuration().getLong("feed.score.compute.schedule");
-	public static final Long FEED_SCORE_HIGH_BASE = Play.application().configuration().getLong("feed.score.high.base");
-	public static final Long FEED_HOME_COUNT_MAX = Play.application().configuration().getLong("feed.home.count.max");
-	public static final int FEED_SNAPSHOT_EXPIRY_SECS = Play.application().configuration().getInt("feed.snapshot.expiry.secs");
-	public static final int FEED_SNAPSHOT_LONG_EXPIRY_SECS = Play.application().configuration().getInt("feed.snapshot.long.expiry.secs");
-	public static final int FEED_SOLD_CLEANUP_DAYS = Play.application().configuration().getInt("feed.sold.cleanup.days");
-	public static final int FEED_RETRIEVAL_COUNT = DefaultValues.FEED_INFINITE_SCROLL_COUNT;
-	
-	private CalcFormula formula = new CalcFormula();
-	
-	private static CalcServer instance;
+    public static final Boolean FEED_INIT_FLUSH_ALL = Play.application().configuration().getBoolean("feed.init.flush.all", true);
+    public static final Long FEED_SCORE_COMPUTE_SCHEDULE = Play.application().configuration().getLong("feed.score.compute.schedule");
+    public static final Long FEED_SCORE_HIGH_BASE = Play.application().configuration().getLong("feed.score.high.base");
+    public static final Long FEED_HOME_COUNT_MAX = Play.application().configuration().getLong("feed.home.count.max");
+    public static final int FEED_SNAPSHOT_EXPIRY_SECS = Play.application().configuration().getInt("feed.snapshot.expiry.secs");
+    public static final int FEED_SNAPSHOT_LONG_EXPIRY_SECS = Play.application().configuration().getInt("feed.snapshot.long.expiry.secs");
+    public static final int FEED_SOLD_CLEANUP_DAYS = Play.application().configuration().getInt("feed.sold.cleanup.days");
+    public static final int FEED_RETRIEVAL_COUNT = DefaultValues.FEED_INFINITE_SCROLL_COUNT;
+    
+    public static final String CACHED_USERS = "CACHED_USERS";
+    public static final String CACHED_PRODUCTS = "CACHED_PRODUCTS";
+    
+    private CalcFormula formula = new CalcFormula();
+    
+    private static CalcServer instance;
     
     public static CalcServer instance() {
         if (instance == null) {
@@ -59,51 +62,58 @@ public class CalcServer {
         return instance; 
     }
     
-	public void warmUpActivity() {
-		NanoSecondStopWatch sw = new NanoSecondStopWatch();
-		logger.underlyingLogger().debug("warmUpActivity starts");
-		
-		if (FEED_INIT_FLUSH_ALL) {
-		    jedisCache.flushAll();
-		}
-		
-		buildQueuesFromUsers();
-		buildQueuesFromPosts();
-		JobScheduler.getInstance().schedule(
-		        "buildCategoryPopularQueue", 
-		        FEED_SCORE_COMPUTE_SCHEDULE,  // initial delay 
-		        FEED_SCORE_COMPUTE_SCHEDULE,  // interval
-		        TimeUnit.HOURS,
-				new Runnable() {
-					public void run() {
-					    try {
-    						JPA.withTransaction(new play.libs.F.Callback0() {
-    							@Override
-    							public void invoke() throws Throwable {
-    								buildCategoryPopularQueues();
-    							}
-    						});
-					    } catch (Exception e) {
-	                        logger.underlyingLogger().error("[JobScheduler] buildCategoryPopularQueues failed...", e);
-	                    }
-					}
-				});
+    public void warmUpActivity() {
+        NanoSecondStopWatch sw = new NanoSecondStopWatch();
+        logger.underlyingLogger().debug("warmUpActivity starts");
         
-		sw.stop();
-		logger.underlyingLogger().debug("warmUpActivity completed. Took "+sw.getElapsedSecs()+"s");
-	}
-	
-	public void clearCategoryQueues() {
-		for(Category category : Category.getAllCategories()){
-		    jedisCache.remove(getKey(FeedType.CATEGORY_POPULAR,category.id));
-		    jedisCache.remove(getKey(FeedType.CATEGORY_POPULAR_NEW,category.id));
-		    jedisCache.remove(getKey(FeedType.CATEGORY_POPULAR_USED,category.id));
-		    jedisCache.remove(getKey(FeedType.CATEGORY_NEWEST,category.id));
-		    jedisCache.remove(getKey(FeedType.CATEGORY_PRICE_LOW_HIGH,category.id));
-		}
-	}
-	
-	public void clearHashtagQueues() {
+        if (FEED_INIT_FLUSH_ALL) {
+            jedisCache.flushAll();
+        }
+        
+        clearStaticQueues();
+        buildQueuesFromUsers();
+        buildQueuesFromPosts();
+        
+        JobScheduler.getInstance().schedule(
+                "buildCategoryPopularQueue", 
+                FEED_SCORE_COMPUTE_SCHEDULE,  // initial delay 
+                FEED_SCORE_COMPUTE_SCHEDULE,  // interval
+                TimeUnit.HOURS,
+                new Runnable() {
+                    public void run() {
+                        try {
+                            JPA.withTransaction(new play.libs.F.Callback0() {
+                                @Override
+                                public void invoke() throws Throwable {
+                                    buildCategoryPopularQueues();
+                                }
+                            });
+                        } catch (Exception e) {
+                            logger.underlyingLogger().error("[JobScheduler] buildCategoryPopularQueues failed...", e);
+                        }
+                    }
+                });
+        
+        sw.stop();
+        logger.underlyingLogger().debug("warmUpActivity completed. Took "+sw.getElapsedSecs()+"s");
+    }
+    
+    private void clearStaticQueues() {
+        jedisCache.remove(CACHED_USERS);
+        jedisCache.remove(CACHED_PRODUCTS);
+    }
+    
+    public void clearCategoryQueues() {
+        for(Category category : Category.getAllCategories()){
+            jedisCache.remove(getKey(FeedType.CATEGORY_POPULAR,category.id));
+            jedisCache.remove(getKey(FeedType.CATEGORY_POPULAR_NEW,category.id));
+            jedisCache.remove(getKey(FeedType.CATEGORY_POPULAR_USED,category.id));
+            jedisCache.remove(getKey(FeedType.CATEGORY_NEWEST,category.id));
+            jedisCache.remove(getKey(FeedType.CATEGORY_PRICE_LOW_HIGH,category.id));
+        }
+    }
+    
+    public void clearHashtagQueues() {
         for(Hashtag hashtag : Hashtag.getAllHashtags()){
             jedisCache.remove(getKey(FeedType.HASHTAG_POPULAR,hashtag.id));
             jedisCache.remove(getKey(FeedType.HASHTAG_POPULAR_NEW,hashtag.id));
@@ -111,62 +121,117 @@ public class CalcServer {
             jedisCache.remove(getKey(FeedType.HASHTAG_NEWEST,hashtag.id));
             jedisCache.remove(getKey(FeedType.HASHTAG_PRICE_LOW_HIGH,hashtag.id));
         }
-	}
-	
-	public void clearUserQueues(User user) {
-		jedisCache.remove(getKey(FeedType.USER_POSTED,user.id));
-		jedisCache.remove(getKey(FeedType.USER_LIKED,user.id));
-		jedisCache.remove(getKey(FeedType.USER_FOLLOWINGS,user.id));
-		// dont clear USER_FOLLOWERS queue, it is created by USER_FOLLOWINGS indirectly 
+    }
+    
+    public void clearUserQueues(User user) {
+        jedisCache.remove(getKey(FeedType.USER_POSTED,user.id));
+        jedisCache.remove(getKey(FeedType.USER_LIKED,user.id));
+        jedisCache.remove(getKey(FeedType.USER_FOLLOWINGS,user.id));
+        // dont clear USER_FOLLOWERS queue, it is created by USER_FOLLOWINGS indirectly 
         //jedisCache.remove(getKey(FeedType.USER_FOLLOWERS,user.id));
-	}
-	
-	public void clearPostQueues(Post post) {
-		jedisCache.remove(getKey(FeedType.PRODUCT_LIKES,post.id));
-	}
-	
-	/**
-	 * Main entry for building queues from users.
-	 */
-	private void buildQueuesFromUsers() {
-		for(User user : User.getEligibleUsersForFeed()){
-		    if (!FEED_INIT_FLUSH_ALL) {
-		        clearUserQueues(user);
-		    }
-		    
-			buildUserLikedPostQueue(user);
-			buildUserFollowingsFollowersQueue(user);
-			addToRecommendedSellersQueue(user);
-		}
-	}
+    }
+    
+    public void clearPostQueues(Post post) {
+        jedisCache.remove(getKey(FeedType.PRODUCT_LIKES,post.id));
+    }
+    
+    /**
+     * Static caches 
+     */
+    
+    public boolean isUserCached(User user) {
+        return jedisCache.isMemberOfSortedSet(CACHED_USERS, user.id.toString());
+    }
+   
+    public void addToCachedUsersQueue(User user) {
+        if (!isUserCached(user)) {
+            jedisCache.putToSortedSet(CACHED_USERS, new Date().getTime(), user.id.toString());
+        }
+    }
+    
+    public void removeFromCachedUsersQueue(User user) {
+        jedisCache.removeMemberFromSortedSet(CACHED_USERS, user.id.toString());
+    }
+    
+    public boolean isProductCached(Post post) {
+        return jedisCache.isMemberOfSortedSet(CACHED_PRODUCTS, post.id.toString());
+    }
+   
+    public void addToCachedProductsQueue(Post post) {
+        if (!isProductCached(post)) {
+            jedisCache.putToSortedSet(CACHED_PRODUCTS, new Date().getTime(), post.id.toString());
+        }
+    }
+    
+    public void removeFromCachedProductsQueue(Post post) {
+        jedisCache.removeMemberFromSortedSet(CACHED_PRODUCTS, post.id.toString());
+    }
+    
+    /**
+     * Main entry for building queues from users.
+     */
+    private void buildQueuesFromUsers() {
+        for(User user : User.getEligibleUsersForFeed()){
+            if (!FEED_INIT_FLUSH_ALL) {
+                clearUserQueues(user);
+            }
+            
+            buildQueuesForUser(user);
+        }
+    }
+    
+    private boolean eligibleToBuildQueues(User user) {
+        if (user.newUser || !user.active || user.deleted) {
+            return false;
+        }
+        
+        if (user.numFollowers == 0 && user.numFollowings == 0 && 
+                user.numLikes == 0 && user.numProducts == 0 && user.numStories == 0) {
+            return false;
+        }
+        
+        return true;
+    }
+    
+    public void buildQueuesForUser(User user) {
+        if (!eligibleToBuildQueues(user)) {
+            return;
+        }
+        
+        buildUserLikedPostQueue(user);
+        buildUserFollowingsFollowersQueue(user);
+        addToRecommendedSellersQueue(user);
+        // mark cached
+        addToCachedUsersQueue(user);
+    }
 
-	private void buildUserLikedPostQueue(User user) {
-		NanoSecondStopWatch sw = new NanoSecondStopWatch();
-		logger.underlyingLogger().debug("buildUserLikedPostQueue starts - u="+user.id);
-		
-		for (SocialRelation socialRelation : LikeSocialRelation.getUserLikedPosts(user.id)) {
-			jedisCache.putToSortedSet(getKey(FeedType.USER_LIKED,user.id), socialRelation.getCreatedDate().getTime(), socialRelation.target.toString());
-		}
-		
-		sw.stop();
-		logger.underlyingLogger().debug("buildUserLikedPostQueue completed. Took "+sw.getElapsedSecs()+"s");
-	}
+    private void buildUserLikedPostQueue(User user) {
+        NanoSecondStopWatch sw = new NanoSecondStopWatch();
+        logger.underlyingLogger().debug("buildUserLikedPostQueue starts - u="+user.id);
+        
+        for (SocialRelation socialRelation : LikeSocialRelation.getUserLikedPosts(user.id)) {
+            jedisCache.putToSortedSet(getKey(FeedType.USER_LIKED,user.id), socialRelation.getCreatedDate().getTime(), socialRelation.target.toString());
+        }
+        
+        sw.stop();
+        logger.underlyingLogger().debug("buildUserLikedPostQueue completed. Took "+sw.getElapsedSecs()+"s");
+    }
 
-	private void buildUserFollowingsFollowersQueue(User user) {
-		NanoSecondStopWatch sw = new NanoSecondStopWatch();
-		logger.underlyingLogger().debug("buildUserFollowingsQueue starts - u="+user.id);
-		
-		for (SocialRelation socialRelation : FollowSocialRelation.getUserFollowings(user.id)) {
-		    // USER_FOLLOWINGS:actor adds target
-			jedisCache.putToSortedSet(getKey(FeedType.USER_FOLLOWINGS,socialRelation.actor), socialRelation.getCreatedDate().getTime(), socialRelation.target.toString());
-			// USER_FOLLOWERS:target adds actor  
-			jedisCache.putToSortedSet(getKey(FeedType.USER_FOLLOWERS,socialRelation.target), socialRelation.getCreatedDate().getTime(), socialRelation.actor.toString());
-		}
-		
-		sw.stop();
-		logger.underlyingLogger().debug("buildUserFollowingsQueue completed. Took "+sw.getElapsedSecs()+"s");
-	}
-	
+    private void buildUserFollowingsFollowersQueue(User user) {
+        NanoSecondStopWatch sw = new NanoSecondStopWatch();
+        logger.underlyingLogger().debug("buildUserFollowingsQueue starts - u="+user.id);
+        
+        for (SocialRelation socialRelation : FollowSocialRelation.getUserFollowings(user.id)) {
+            // USER_FOLLOWINGS:actor adds target
+            jedisCache.putToSortedSet(getKey(FeedType.USER_FOLLOWINGS,socialRelation.actor), socialRelation.getCreatedDate().getTime(), socialRelation.target.toString());
+            // USER_FOLLOWERS:target adds actor  
+            jedisCache.putToSortedSet(getKey(FeedType.USER_FOLLOWERS,socialRelation.target), socialRelation.getCreatedDate().getTime(), socialRelation.actor.toString());
+        }
+        
+        sw.stop();
+        logger.underlyingLogger().debug("buildUserFollowingsQueue completed. Took "+sw.getElapsedSecs()+"s");
+    }
+    
     private void addToHashtagPopularQueue(Hashtag hashtag, Post post) {
         if (post.soldMarked) {
             return;
@@ -191,30 +256,30 @@ public class CalcServer {
         }
     }
     
-	private void addToHashtagPriceLowHighQueue(Hashtag hashtag, Post post) {
-	    if (post.soldMarked) {
+    private void addToHashtagPriceLowHighQueue(Hashtag hashtag, Post post) {
+        if (post.soldMarked) {
             return;
-	    }
-	    if(post.hasHashtag(hashtag)) {
-	        jedisCache.putToSortedSet(getKey(FeedType.HASHTAG_PRICE_LOW_HIGH, hashtag.id), post.price * FEED_SCORE_HIGH_BASE + post.id , post.id.toString());
-	    }
-	}
-	
-	public void addToRecommendedSellersQueue(User user) {
+        }
+        if(post.hasHashtag(hashtag)) {
+            jedisCache.putToSortedSet(getKey(FeedType.HASHTAG_PRICE_LOW_HIGH, hashtag.id), post.price * FEED_SCORE_HIGH_BASE + post.id , post.id.toString());
+        }
+    }
+    
+    public void addToRecommendedSellersQueue(User user) {
         if (user.isRecommendedSeller()) {
             jedisCache.putToSortedSet(getKey(FeedType.RECOMMENDED_SELLERS), user.getLastLogin().getTime(), user.id.toString());
         }
     }
-	
-	public void removeFromRecommendedSellersQueue(User user) {
+    
+    public void removeFromRecommendedSellersQueue(User user) {
         jedisCache.removeMemberFromSortedSet(getKey(FeedType.RECOMMENDED_SELLERS), user.id.toString());
     }
-	
-	/**
+    
+    /**
      * Main entry for building queues from posts.
      */
-	private void buildQueuesFromPosts() {
-	    NanoSecondStopWatch sw = new NanoSecondStopWatch();
+    private void buildQueuesFromPosts() {
+        NanoSecondStopWatch sw = new NanoSecondStopWatch();
         logger.underlyingLogger().debug("buildQueuesFromPosts starts");
         
         if (!FEED_INIT_FLUSH_ALL) {
@@ -222,66 +287,74 @@ public class CalcServer {
             clearHashtagQueues();
         }
 
-		for (Post post : Post.getEligiblePostsForFeeds()) {
-		    if (!FEED_INIT_FLUSH_ALL) {
-		        clearPostQueues(post);
-		    }
-		    
-			addToUserPostedQueue(post);
-			
-			// below queues skip sold products
-		    if (post.soldMarked) {
-                continue;
+        for (Post post : Post.getEligiblePostsForFeeds()) {
+            if (!FEED_INIT_FLUSH_ALL) {
+                clearPostQueues(post);
             }
-		    addToCategoryQueues(post);
-		    addToHashtagQueues(post);
-		    buildProductLikesQueue(post);
-		}
-		
-		sw.stop();
+            
+            buildQueuesForPost(post);
+        }
+        
+        sw.stop();
         logger.underlyingLogger().debug("buildQueuesFromPosts completed. Took "+sw.getElapsedSecs()+"s");
-	}
+    }
 
-	private void buildCategoryPopularQueues() {
-	    NanoSecondStopWatch sw = new NanoSecondStopWatch();
+    public void buildQueuesForPost(Post post) {
+        addToUserPostedQueue(post);
+        
+        // below queues skip sold products
+        if (post.soldMarked) {
+            return;
+        }
+        
+        addToCategoryQueues(post);
+        addToHashtagQueues(post);
+        buildProductLikesQueue(post);
+        
+        // mark cached
+        addToCachedProductsQueue(post);
+    }
+    
+    private void buildCategoryPopularQueues() {
+        NanoSecondStopWatch sw = new NanoSecondStopWatch();
         logger.underlyingLogger().debug("buildCategoryPopularQueue starts");
         
-		for (Post post : Post.getEligiblePostsForFeeds()) {
-		    if (post.soldMarked) {
+        for (Post post : Post.getEligiblePostsForFeeds()) {
+            if (post.soldMarked) {
                 continue;
             }
-			addToCategoryPopularQueue(post);
-		}
-		
-		sw.stop();
+            addToCategoryPopularQueue(post);
+        }
+        
+        sw.stop();
         logger.underlyingLogger().debug("buildCategoryPopularQueue completed. Took "+sw.getElapsedSecs()+"s");
-	}
-	
-	private void buildProductLikesQueue(Post post) {
-		NanoSecondStopWatch sw = new NanoSecondStopWatch();
-		logger.underlyingLogger().debug("buildProductLikesQueue starts - p="+post.id);
-		
-		for (SocialRelation socialRelation : LikeSocialRelation.getPostLikedUsers(post.id)) {
-			jedisCache.putToSortedSet(getKey(FeedType.PRODUCT_LIKES,post.id), socialRelation.getCreatedDate().getTime(), socialRelation.actor.toString());
-		}
-		
-		sw.stop();
-		logger.underlyingLogger().debug("buildProductLikesQueue completed. Took "+sw.getElapsedSecs()+"s");
-	}
-	
-	public void addToHashtagQueues(Post post){
-		NanoSecondStopWatch sw = new NanoSecondStopWatch();
-		logger.underlyingLogger().debug("addToHashtagQueues starts - p="+post.id);
-		
-		for (Hashtag hashtag: Hashtag.getAllHashtags()){
-			addToHashtagPriceLowHighQueue(hashtag, post);
-			addToHashtagNewestQueue(hashtag, post);
-			addToHashtagPopularQueue(hashtag, post);
-		}
-		
-		sw.stop();
-		logger.underlyingLogger().debug("addToHashtagQueues completed. Took "+sw.getElapsedSecs()+"s");
-	}
+    }
+    
+    private void buildProductLikesQueue(Post post) {
+        NanoSecondStopWatch sw = new NanoSecondStopWatch();
+        logger.underlyingLogger().debug("buildProductLikesQueue starts - p="+post.id);
+        
+        for (SocialRelation socialRelation : LikeSocialRelation.getPostLikedUsers(post.id)) {
+            jedisCache.putToSortedSet(getKey(FeedType.PRODUCT_LIKES,post.id), socialRelation.getCreatedDate().getTime(), socialRelation.actor.toString());
+        }
+        
+        sw.stop();
+        logger.underlyingLogger().debug("buildProductLikesQueue completed. Took "+sw.getElapsedSecs()+"s");
+    }
+    
+    public void addToHashtagQueues(Post post){
+        NanoSecondStopWatch sw = new NanoSecondStopWatch();
+        logger.underlyingLogger().debug("addToHashtagQueues starts - p="+post.id);
+        
+        for (Hashtag hashtag: Hashtag.getAllHashtags()){
+            addToHashtagPriceLowHighQueue(hashtag, post);
+            addToHashtagNewestQueue(hashtag, post);
+            addToHashtagPopularQueue(hashtag, post);
+        }
+        
+        sw.stop();
+        logger.underlyingLogger().debug("addToHashtagQueues completed. Took "+sw.getElapsedSecs()+"s");
+    }
 
     public void removeFromHashtagQueues(Post post){
         for (Hashtag hashtag: Hashtag.getAllHashtags()){
@@ -299,17 +372,17 @@ public class CalcServer {
         jedisCache.removeMemberFromSortedSet(getKey(FeedType.HASHTAG_POPULAR_USED,hashtag.id), post.id.toString());
     }
     
-	public void recalcScoreAndAddToCategoryPopularQueue(Post post) {
-	    addToCategoryPopularQueue(post);
-	}
-	
-	public void addToCategoryQueues(Post post) {
+    public void recalcScoreAndAddToCategoryPopularQueue(Post post) {
+        addToCategoryPopularQueue(post);
+    }
+    
+    public void addToCategoryQueues(Post post) {
         addToCategoryPopularQueue(post);
         addToCategoryNewestQueue(post);
         addToCategoryPriceLowHighQueue(post);
     }
-	
-	private void addToCategoryPopularQueue(Post post) {
+    
+    private void addToCategoryPopularQueue(Post post) {
         if (post.soldMarked) {
             return;
         }
@@ -326,14 +399,14 @@ public class CalcServer {
         if (post.soldMarked) {
             return;
         }
-    	jedisCache.putToSortedSet(getKey(FeedType.CATEGORY_NEWEST,post.category.id), post.getCreatedDate().getTime(), post.id.toString());
+        jedisCache.putToSortedSet(getKey(FeedType.CATEGORY_NEWEST,post.category.id), post.getCreatedDate().getTime(), post.id.toString());
     }
     
     private void addToCategoryPriceLowHighQueue(Post post) {
         if (post.soldMarked) {
             return;
         }
-    	jedisCache.putToSortedSet(getKey(FeedType.CATEGORY_PRICE_LOW_HIGH,post.category.id), post.price * FEED_SCORE_HIGH_BASE + post.id , post.id.toString());
+        jedisCache.putToSortedSet(getKey(FeedType.CATEGORY_PRICE_LOW_HIGH,post.category.id), post.price * FEED_SCORE_HIGH_BASE + post.id , post.id.toString());
     }
     
     public void removeFromCategoryQueues(Post post){
@@ -350,11 +423,11 @@ public class CalcServer {
         jedisCache.removeMemberFromSortedSet(getKey(FeedType.CATEGORY_POPULAR_USED,category.id), post.id.toString());
     }
     
-    public void addToLikeQueue(Post post, User user){
+    public void addToUserLikedQueue(Post post, User user){
         jedisCache.putToSortedSet(getKey(FeedType.USER_LIKED,user.id), new Date().getTime(), post.id.toString());
     }
     
-    public void removeFromLikeQueue(Post post, User user){
+    public void removeFromUserLikedQueue(Post post, User user){
         jedisCache.removeMemberFromSortedSet(getKey(FeedType.USER_LIKED,user.id), post.id.toString());
     }
     
@@ -389,19 +462,19 @@ public class CalcServer {
         sw.stop();
         logger.underlyingLogger().debug("removeFromAllUsersLikedQueues completed. Took "+sw.getElapsedSecs()+"s");
     }
-	    
-	private void buildUserExploreFeedQueue(Long userId) {
-	    NanoSecondStopWatch sw = new NanoSecondStopWatch();
-		logger.underlyingLogger().debug("buildUserExploreFeedQueue starts - u="+userId);
-		
-		User user = User.findById(userId);
-		Map<Long, Integer> map = new HashMap<>();
-		if (user != null) {
-			map = user.getUserCategoriesRatioForFeed();
-		}
-		
-		for (Category category : Category.getAllCategories()) {
-		    int percentage = category.minPercentFeedExposure;
+        
+    private void buildUserExploreFeedQueue(Long userId) {
+        NanoSecondStopWatch sw = new NanoSecondStopWatch();
+        logger.underlyingLogger().debug("buildUserExploreFeedQueue starts - u="+userId);
+        
+        User user = User.findById(userId);
+        Map<Long, Integer> map = new HashMap<>();
+        if (user != null) {
+            map = user.getUserCategoriesRatioForFeed();
+        }
+        
+        for (Category category : Category.getAllCategories()) {
+            int percentage = category.minPercentFeedExposure;
             Integer catViewPercentage = map.get(category.getId());
             if (catViewPercentage != null && catViewPercentage > percentage) {
                 percentage = catViewPercentage;
@@ -410,60 +483,60 @@ public class CalcServer {
                 percentage = category.maxPercentFeedExposure;
             }
 
-		    Long catPostSize = FEED_HOME_COUNT_MAX * percentage / 100;
-			Set<String> values = jedisCache.getSortedSetDsc(getKey(FeedType.CATEGORY_POPULAR,category.id), 0L, catPostSize - 1);
-			
-			List<Long> catPostIds = new ArrayList<>();
-			for (String value : values) {
-				try {
-				    catPostIds.add(Long.parseLong(value));
-				} catch (Exception e) {
-				}
-			}
-			
-			logger.underlyingLogger().debug(
+            Long catPostSize = FEED_HOME_COUNT_MAX * percentage / 100;
+            Set<String> values = jedisCache.getSortedSetDsc(getKey(FeedType.CATEGORY_POPULAR,category.id), 0L, catPostSize - 1);
+            
+            List<Long> catPostIds = new ArrayList<>();
+            for (String value : values) {
+                try {
+                    catPostIds.add(Long.parseLong(value));
+                } catch (Exception e) {
+                }
+            }
+            
+            logger.underlyingLogger().debug(
                     String.format("[cat=%d name=%s minPercent=%d maxPercent=%d percent=%d catPostSize=%d catPostIds.size=%d]", 
                             category.id, category.name, category.minPercentFeedExposure, category.maxPercentFeedExposure, 
                             percentage, catPostSize, catPostIds.size()));
-			
-			for (Long postId : catPostIds) {
-			    Post post = Post.findById(postId);
-			    if (post != null && post.deleted) {
-			        continue;
-			    }
-			    Double randomizedScore = formula.randomizeScore(post);
-			    if (randomizedScore > 0) {
-			        jedisCache.putToSortedSet(getKey(FeedType.HOME_EXPLORE, userId), randomizedScore * FEED_SCORE_HIGH_BASE, postId.toString());
-			    }
-			}
-		}
-		
-		sw.stop();
-		logger.underlyingLogger().debug("buildUserExploreFeedQueue completed. Took "+sw.getElapsedSecs()+"s");
-	}
-	
-	private void buildHomeFollowingFeedQueue(Long userId) {
-		NanoSecondStopWatch sw = new NanoSecondStopWatch();
-		logger.underlyingLogger().debug("buildHomeFollowingQueue starts - u="+userId);
-		
-		List<Long> followings = getUserFollowingsFeed(userId);
-		for (Long followingUser : followings){
-			Set<String> values = jedisCache.getSortedSetDsc(getKey(FeedType.USER_POSTED,followingUser));
-			for (String value : values) {
-				try {
-					Long postId = Long.parseLong(value);
-					jedisCache.putToSortedSet(getKey(FeedType.HOME_FOLLOWING,userId), getScore(getKey(FeedType.USER_POSTED, followingUser), postId), postId.toString());
-				} catch (Exception e) {
-				}
-			}
-		}
-		jedisCache.expire(getKey(FeedType.HOME_FOLLOWING,userId), FEED_SNAPSHOT_EXPIRY_SECS);
-		
-		sw.stop();
-		logger.underlyingLogger().debug("buildHomeFollowingQueue completed. Took "+sw.getElapsedSecs()+"s");
-	}
-	
-	private void buildUserRecommendedSellersFeedQueue(Long id) {
+            
+            for (Long postId : catPostIds) {
+                Post post = Post.findById(postId);
+                if (post != null && post.deleted) {
+                    continue;
+                }
+                Double randomizedScore = formula.randomizeScore(post);
+                if (randomizedScore > 0) {
+                    jedisCache.putToSortedSet(getKey(FeedType.HOME_EXPLORE, userId), randomizedScore * FEED_SCORE_HIGH_BASE, postId.toString());
+                }
+            }
+        }
+        
+        sw.stop();
+        logger.underlyingLogger().debug("buildUserExploreFeedQueue completed. Took "+sw.getElapsedSecs()+"s");
+    }
+    
+    private void buildHomeFollowingFeedQueue(Long userId) {
+        NanoSecondStopWatch sw = new NanoSecondStopWatch();
+        logger.underlyingLogger().debug("buildHomeFollowingQueue starts - u="+userId);
+        
+        List<Long> followings = getUserFollowingsFeed(userId);
+        for (Long followingUser : followings){
+            Set<String> values = jedisCache.getSortedSetDsc(getKey(FeedType.USER_POSTED,followingUser));
+            for (String value : values) {
+                try {
+                    Long postId = Long.parseLong(value);
+                    jedisCache.putToSortedSet(getKey(FeedType.HOME_FOLLOWING,userId), getScore(getKey(FeedType.USER_POSTED, followingUser), postId), postId.toString());
+                } catch (Exception e) {
+                }
+            }
+        }
+        jedisCache.expire(getKey(FeedType.HOME_FOLLOWING,userId), FEED_SNAPSHOT_EXPIRY_SECS);
+        
+        sw.stop();
+        logger.underlyingLogger().debug("buildHomeFollowingQueue completed. Took "+sw.getElapsedSecs()+"s");
+    }
+    
+    private void buildUserRecommendedSellersFeedQueue(Long id) {
         NanoSecondStopWatch sw = new NanoSecondStopWatch();
         logger.underlyingLogger().debug("buildUserRecommendedSellersFeedQueue starts - u="+id);
         
@@ -480,47 +553,47 @@ public class CalcServer {
         sw.stop();
         logger.underlyingLogger().debug("buildUserRecommendedSellersFeedQueue completed. Took "+sw.getElapsedSecs()+"s");
     }
-	
-	private void buildSuggestedProductQueue(Long postId) {
-		NanoSecondStopWatch sw = new NanoSecondStopWatch();
-		logger.underlyingLogger().debug("buildSuggestedProductQueue starts - p="+postId);
-		
-		List<Long> users = getProductLikesQueue(postId);
-		List<Long> suggestedPostIds = new ArrayList<>();
-		for (Long userId : users){
-			Set<String> values = jedisCache.getSortedSetDsc(getKey(FeedType.USER_LIKED, userId));
-			for (String value : values) {
-				try {
-					Long suggestedPostId = Long.parseLong(value);
-					suggestedPostIds.add(suggestedPostId);
-				} catch (Exception e) {
-				}
-			}
-		}
-		Collections.shuffle(suggestedPostIds);
-		suggestedPostIds = suggestedPostIds.subList(0, suggestedPostIds.size() <= 20 ? suggestedPostIds.size() : 20 );
-		
-		for(Long suggestedPostId : suggestedPostIds){
-			jedisCache.putToSortedSet(getKey(FeedType.PRODUCT_SUGGEST, postId), Math.random() * FEED_SCORE_HIGH_BASE, suggestedPostId.toString());
-		}
-		
-		jedisCache.expire(getKey(FeedType.PRODUCT_SUGGEST, postId), FEED_SNAPSHOT_EXPIRY_SECS);
-		
-		sw.stop();
-		logger.underlyingLogger().debug("buildSuggestedProductQueue completed. Took "+sw.getElapsedSecs()+"s");
-	}
-	
-	// helpers
-	
-	public Long calculateBaseScore(Post post) {
+    
+    private void buildSuggestedProductQueue(Long postId) {
+        NanoSecondStopWatch sw = new NanoSecondStopWatch();
+        logger.underlyingLogger().debug("buildSuggestedProductQueue starts - p="+postId);
+        
+        List<Long> users = getProductLikesQueue(postId);
+        List<Long> suggestedPostIds = new ArrayList<>();
+        for (Long userId : users){
+            Set<String> values = jedisCache.getSortedSetDsc(getKey(FeedType.USER_LIKED, userId));
+            for (String value : values) {
+                try {
+                    Long suggestedPostId = Long.parseLong(value);
+                    suggestedPostIds.add(suggestedPostId);
+                } catch (Exception e) {
+                }
+            }
+        }
+        Collections.shuffle(suggestedPostIds);
+        suggestedPostIds = suggestedPostIds.subList(0, suggestedPostIds.size() <= 20 ? suggestedPostIds.size() : 20 );
+        
+        for(Long suggestedPostId : suggestedPostIds){
+            jedisCache.putToSortedSet(getKey(FeedType.PRODUCT_SUGGEST, postId), Math.random() * FEED_SCORE_HIGH_BASE, suggestedPostId.toString());
+        }
+        
+        jedisCache.expire(getKey(FeedType.PRODUCT_SUGGEST, postId), FEED_SNAPSHOT_EXPIRY_SECS);
+        
+        sw.stop();
+        logger.underlyingLogger().debug("buildSuggestedProductQueue completed. Took "+sw.getElapsedSecs()+"s");
+    }
+    
+    // helpers
+    
+    public Long calculateBaseScore(Post post) {
         // skip already calculated posts during server startup
         if (ThreadLocalOverride.isServerStartingUp() && post.baseScore > 0L) {
             return post.baseScore;
         }
         return formula.computeBaseScore(post);
     }
-	
-	public Double calculateTimeScore(Post post) {
+    
+    public Double calculateTimeScore(Post post) {
         return calculateTimeScore(post, false);
     }
     
@@ -531,32 +604,32 @@ public class CalcServer {
         return formula.computeTimeScore(post);
     }
     
-	public Double getScore(String key, Long postId){
-		return jedisCache.getScore(key, postId.toString());
-	}
-	
-	public String getKey(FeedType feedType) {
-	    return getKey(feedType, null);
-	}
-	
-	public String getKey(FeedType feedType, Long keyId) {
-		// Only 1 queue CATEGORY_PRICE_LOW_HIGH
-		if (FeedType.CATEGORY_PRICE_HIGH_LOW.equals(feedType)) {
-			feedType = FeedType.CATEGORY_PRICE_LOW_HIGH;
-		}
-		// Only 1 queue HASHTAG_PRICE_LOW_HIGH
-		if (FeedType.HASHTAG_PRICE_HIGH_LOW.equals(feedType)) {
-			feedType = FeedType.HASHTAG_PRICE_LOW_HIGH;
-		}
-		
-		if (FeedType.RECOMMENDED_SELLERS.equals(feedType) || keyId == null) {
-		    return feedType.toString();
-		}
-		return feedType+":"+keyId;
-	}
-	
-	public void cleanupSoldPosts() {
-	    DateTime daysBefore = (new DateTime()).minusDays(FEED_SOLD_CLEANUP_DAYS);
+    public Double getScore(String key, Long postId){
+        return jedisCache.getScore(key, postId.toString());
+    }
+    
+    public String getKey(FeedType feedType) {
+        return getKey(feedType, null);
+    }
+    
+    public String getKey(FeedType feedType, Long keyId) {
+        // Only 1 queue CATEGORY_PRICE_LOW_HIGH
+        if (FeedType.CATEGORY_PRICE_HIGH_LOW.equals(feedType)) {
+            feedType = FeedType.CATEGORY_PRICE_LOW_HIGH;
+        }
+        // Only 1 queue HASHTAG_PRICE_LOW_HIGH
+        if (FeedType.HASHTAG_PRICE_HIGH_LOW.equals(feedType)) {
+            feedType = FeedType.HASHTAG_PRICE_LOW_HIGH;
+        }
+        
+        if (FeedType.RECOMMENDED_SELLERS.equals(feedType) || keyId == null) {
+            return feedType.toString();
+        }
+        return feedType+":"+keyId;
+    }
+    
+    public void cleanupSoldPosts() {
+        DateTime daysBefore = (new DateTime()).minusDays(FEED_SOLD_CLEANUP_DAYS);
         List<Post> soldPosts = Post.getUnmarkedSoldPostsAfter(daysBefore.toDate());
         if (soldPosts != null) {
             logger.underlyingLogger().info("cleanupSoldPosts - There are "+soldPosts.size()+" sold posts before "+daysBefore.toString());
@@ -570,10 +643,10 @@ public class CalcServer {
             logger.underlyingLogger().info("cleanupSoldPosts - There is no sold post before "+daysBefore.toString());
         }
     }
-	
-	// feeds
-	
-	public List<Long> getHomeExploreFeed(Long id, Double offset) {
+    
+    // feeds
+    
+    public List<Long> getHomeExploreFeed(Long id, Double offset) {
         if(!jedisCache.exists(getKey(FeedType.HOME_EXPLORE,id))){
             buildUserExploreFeedQueue(id);
         }
