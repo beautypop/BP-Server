@@ -7,6 +7,10 @@ beautypop.controller('HomeController',
 	
 	writeMetaCanonical($location.absUrl());
 	
+	// agent
+	$scope.showAppDownloadTips = showAppDownloadTips();
+	$scope.appDownloadUrl = getAppDownloadUrl();
+
 	usSpinnerService.spin('loading...');
 
 	$scope.featuredItems = featuredItems;
@@ -173,6 +177,10 @@ beautypop.controller('CategoryPageController',
 			formatToExternalUrl(category.icon));
 	*/
 	
+	// agent
+	$scope.showAppDownloadTips = showAppDownloadTips();
+	$scope.appDownloadUrl = getAppDownloadUrl();
+
 	usSpinnerService.spin('loading...');
 	
 	$scope.userInfo = userInfo;

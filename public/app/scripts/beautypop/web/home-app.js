@@ -85,7 +85,6 @@ beautypop.config(['$translateProvider', function ($translateProvider) {
 	    "HOME_EXPLORE":"逛逛",
 	    "HOME_SELLER":"推薦賣家",
 	    "HOME_FOLLOWING":"我的關注",
-	    "HOME_CATEGORY":"商品分類",
 	    // Category page
 	    "POPULAR":"熱門商品",
 	    "NEWEST":"最新上架",
@@ -97,7 +96,7 @@ beautypop.config(['$translateProvider', function ($translateProvider) {
 	    "NEW_WITH_TAG":"全新(未開封/有價錢牌)",
 	    "NEW_WITHOUT_TAG":"全新(已開封/沒有價錢牌)",
 	    "USED":"二手",
-	    "CATEGORIES":"商品分類",
+	    "CATEGORY":"商品分類",
 	    "VIEW_SELLER":"看看商店",
 	    "SELLER_FOLLOWERS":"關注",
 	    "VIEW_ALL":"看所有",
@@ -116,17 +115,17 @@ beautypop.config(['$translateProvider', function ($translateProvider) {
 	    "LIKES":"喜歡",
 	    "LOGOUT":"登出",
 	    // Other
-	    "APP_DOWNLOAD_MESSAGE":"免費下載 BeautyPop 手機 App。 購買商品或刊登你的商品 (30秒完成刊登)。",
+	    "APP_DOWNLOAD_BAR_MESSAGE_1":"立即下載 BeautyPop 手機 App",
+	    "APP_DOWNLOAD_BAR_MESSAGE_2":"Loves beauty",
+	    "APP_DOWNLOAD_MESSAGE":"免費下載 BeautyPop 手機 App。 購買商品或刊登你的商品 (30秒完成刊登)。 Loves beauty.",
 	    "APP_IOS_COMING_SOON":"BeautyPop iPhone 手機 App 快將推出",
-	    "DOWNLOAD_NOW":"立即下載"
+	    "APP_DOWNLOAD_NOW":"下載"
 	});
 	
 	$translateProvider.translations('en', {
 		// Home page
 		"HOME_EXPLORE":"Explore",
-		"HOME_SELLER":"Sellers",
 	    "HOME_FOLLOWING":"Following",
-	    "CATEGORIES":"CATEGORIES",
 	    // Category page
 	    "POPULAR":"Popular",
 	    "NEWEST":"Newest",
@@ -145,9 +144,6 @@ beautypop.config(['$translateProvider', function ($translateProvider) {
 	    "YOU_MAY_ALSO_LIKE":"You may also like",
 	    "CHAT_NOW":"Chat Now",
 	    "BUY_NOW":"Buy Now",
-	    // Story page
-	    "STORY_DETAILS":"Story Details",
-	    "STORY_CATEGORY":"Category",
 	    // Profile page
 	    "FOLLOW":"+ Follow",
 	    "FOLLOWING":"Following",
@@ -157,9 +153,11 @@ beautypop.config(['$translateProvider', function ($translateProvider) {
 	    "LIKES":"Likes",
 	    "LOGOUT":"Logout",
 	    // Other
-	    "APP_DOWNLOAD_MESSAGE":"Download BeautyPop for free now and list your product in 30 seconds. Loves beauty",
+	    "APP_DOWNLOAD_BAR_MESSAGE_1":"Download BeautyPop App now",
+	    "APP_DOWNLOAD_BAR_MESSAGE_2":"Loves beauty",
+	    "APP_DOWNLOAD_MESSAGE":"Download BeautyPop for free now and list your product in 30 seconds. Loves beauty.",
 	    "APP_IOS_COMING_SOON":"BeautyPop iPhone App is coming very soon!",
-	    "DOWNLOAD_NOW":"Download Now"
+	    "APP_DOWNLOAD_NOW":"Download"
 	});
 
 	// http://angular-translate.github.io/docs/#/guide/19_security
