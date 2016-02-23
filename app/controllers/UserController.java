@@ -81,6 +81,9 @@ public class UserController extends Controller {
 
     @Inject
     FeedHandler feedHandler;
+
+    @Inject
+    CalcServer calcServer;
     
     public static String getMobileUserKey(final play.mvc.Http.Request r, final Object key) {
         final String[] m = r.queryString().get(key);
@@ -103,6 +106,9 @@ public class UserController extends Controller {
             return notFound();
         }
         
+        // build queues if not yet built
+        calcServer.buildQueuesForUser(localUser);
+        
         // update last login and user agent
         localUser.updateLastLoginDate();
         Application.setMobileUserAgent(localUser);
@@ -117,7 +123,7 @@ public class UserController extends Controller {
     }
     
     @Transactional
-    public static Result getUserInfoById(Long id) {
+    public Result getUserInfoById(Long id) {
         NanoSecondStopWatch sw = new NanoSecondStopWatch();
         
         final User localUser = Application.getLocalUser(session());
@@ -125,6 +131,9 @@ public class UserController extends Controller {
         if (localUser == null || user == null) {
             return notFound();
         }
+        
+        // build queues if not yet built
+        calcServer.buildQueuesForUser(user);
         
         UserVM userVM = new UserVM(user, localUser);
         
@@ -319,6 +328,8 @@ public class UserController extends Controller {
     
     @Transactional
     public static Result editUserNotificationSettings() {
+        NanoSecondStopWatch sw = new NanoSecondStopWatch();
+        
         final User localUser = Application.getLocalUser(session());
         if (!localUser.isLoggedIn()) {
             logger.underlyingLogger().error(String.format("[u=%d] User not logged in", localUser.id));
@@ -343,6 +354,8 @@ public class UserController extends Controller {
             return badRequest();
         }
         
+        sw.stop();
+        logger.underlyingLogger().info("[u="+localUser.id+"] editUserNotificationSettings. Took "+sw.getElapsedMS()+"ms");
         return ok(Json.toJson(new UserVM(localUser)));
     }
     
@@ -850,7 +863,7 @@ public class UserController extends Controller {
     }
   
     @Transactional
-    public static Result viewProfile(Long id) {
+    public Result viewProfile(Long id) {
         NanoSecondStopWatch sw = new NanoSecondStopWatch();
         
         final User localUser = Application.getLocalUser(session());
@@ -859,6 +872,9 @@ public class UserController extends Controller {
             logger.underlyingLogger().warn(String.format("[user=%d][u=%d] User not found", id, localUser.id));
             return Application.pathNotFound();
         }
+
+        // build queues if not yet built
+        calcServer.buildQueuesForUser(user);
         
         sw.stop();
         if (logger.underlyingLogger().isDebugEnabled()) {

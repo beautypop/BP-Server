@@ -316,35 +316,35 @@ public class DataBootstrap {
         
         String name = "Fashion";
         String desc = "Fashion";
-        createCategory(name, desc, "http://www.beautypop.hk/image/static/category/fashion.jpg", 1);
+        createCategory(name, desc, "http://192.168.1.109:9000/image/static/category/fashion.jpg", 1);
         
         name = "Beauty";
         desc = "Beauty";
-        createCategory(name, desc, "http://www.beautypop.hk/image/static/category/beauty.jpg", 2);
+        createCategory(name, desc, "http://192.168.1.109:9000/image/static/category/beauty.jpg", 2);
                
         name = "Skincare";
         desc = "Skincare";
-        createCategory(name, desc, "http://www.beautypop.hk/image/static/category/skincare.jpg", 3);
+        createCategory(name, desc, "http://192.168.1.109:9000/image/static/category/skincare.jpg", 3);
         
         name = "Bags";
         desc = "Bags";
-        createCategory(name, desc, "http://www.beautypop.hk/image/static/category/bags.jpg", 4);
+        createCategory(name, desc, "http://192.168.1.109:9000/image/static/category/bags.jpg", 4);
         
         name = "Shoes";
         desc = "Shoes";
-        createCategory(name, desc, "http://www.beautypop.hk/image/static/category/shoes.jpg", 5);
+        createCategory(name, desc, "http://192.168.1.109:9000/image/static/category/shoes.jpg", 5);
         
         name = "Accessories";
         desc = "Accessories";
-        createCategory(name, desc, "http://www.beautypop.hk/image/static/category/accessories.jpg", 6);
+        createCategory(name, desc, "http://192.168.1.109:9000/image/static/category/accessories.jpg", 6);
         
         name = "Sportswear";
         desc = "Sportswear";
-        createCategory(name, desc, "http://www.beautypop.hk/image/static/category/sportswear.jpg", 7);
+        createCategory(name, desc, "http://192.168.1.109:9000/image/static/category/sportswear.jpg", 7);
         
         name = "Other";
         desc = "Other";
-        createCategory(name, desc, "http://www.beautypop.hk/image/static/category/other.jpg", 8);
+        createCategory(name, desc, "http://192.168.1.109:9000/image/static/category/other.jpg", 8);
     }
 
     private static Category createCategory(String name, String desc, String icon, int seq) {

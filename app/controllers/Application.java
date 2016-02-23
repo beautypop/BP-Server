@@ -100,76 +100,76 @@ public class Application extends Controller {
     public static final String SIGNUP_EMAIL = "signup_email";
     public static final String SESSION_PROMOCODE = "PROMO_CODE";
     public static final String FLASH_MESSAGE_KEY = "message";
-	public static final String FLASH_ERROR_KEY = "error";
+    public static final String FLASH_ERROR_KEY = "error";
 
-	@Inject
-	CalcServer calcServer;
-	
-	@Inject
+    @Inject
+    CalcServer calcServer;
+    
+    @Inject
     FeedHandler feedHandler;
-	
-	public static enum DeviceType {
-		NA,
-		ANDROID,
-		IOS,
-		WEB,
-		WAP
-	}
-	
-	public static boolean isDev() {
-	    return "dev".equalsIgnoreCase(APPLICATION_ENV);
-	}
-	
-	public static DeviceType parseDeviceType(String deviceType) {
-		try {
-			return Enum.valueOf(DeviceType.class, deviceType);
-		} catch (Exception e) {
-			return DeviceType.NA;
-		}
-	}
-	
-	public static String generateHeaderMeta(String title, String description, String image) {
-	    if (StringUtils.isEmpty(description)) {
-	        description = "Loves beauty";
-	    }
-	    
-	    title = HtmlEscapers.htmlEscaper().escape(title);
-	    description = HtmlEscapers.htmlEscaper().escape(description);
-	    String metaTags =
-	            "<title>"+title+"</title>"+
-	            "<meta name='description' content='"+description+"' />"+
-	            "<meta property='og:title' content='"+title+"' />"+
-	            "<meta property='og:description' content='"+description+"' />"+
-	            "<meta property='og:image' itemprop='image' content='"+HtmlUtil.fullUrl(image)+"' />"+
-	            "<meta property='og:type' content='website' />"+
-	            "<meta property='og:site_name' content='"+APPLICATION_BASE_URL+"' />"+
-	            "<meta property='fb:app_id' content='"+FACEBOOK_APP_ID+"' />";
-		return metaTags;
-	}
-	
-	public static Result getStaticImage(String path) {
-	    response().setHeader("Cache-Control", "max-age=604800");
-	    File file = Resource.getStorageStaticImage(path);
-	    if (file != null) {
-	        return ok(file);
-	    }
+    
+    public static enum DeviceType {
+        NA,
+        ANDROID,
+        IOS,
+        WEB,
+        WAP
+    }
+    
+    public static boolean isDev() {
+        return "dev".equalsIgnoreCase(APPLICATION_ENV);
+    }
+    
+    public static DeviceType parseDeviceType(String deviceType) {
+        try {
+            return Enum.valueOf(DeviceType.class, deviceType);
+        } catch (Exception e) {
+            return DeviceType.NA;
+        }
+    }
+    
+    public static String generateHeaderMeta(String title, String description, String image) {
+        if (StringUtils.isEmpty(description)) {
+            description = "Everymom is a Seller!";
+        }
+        
+        title = HtmlEscapers.htmlEscaper().escape(title);
+        description = HtmlEscapers.htmlEscaper().escape(description);
+        String metaTags =
+                "<title>"+title+"</title>"+
+                "<meta name='description' content='"+description+"' />"+
+                "<meta property='og:title' content='"+title+"' />"+
+                "<meta property='og:description' content='"+description+"' />"+
+                "<meta property='og:image' itemprop='image' content='"+HtmlUtil.fullUrl(image)+"' />"+
+                "<meta property='og:type' content='website' />"+
+                "<meta property='og:site_name' content='"+APPLICATION_BASE_URL+"' />"+
+                "<meta property='fb:app_id' content='"+FACEBOOK_APP_ID+"' />";
+        return metaTags;
+    }
+    
+    public static Result getStaticImage(String path) {
+        response().setHeader("Cache-Control", "max-age=604800");
+        File file = Resource.getStorageStaticImage(path);
+        if (file != null) {
+            return ok(file);
+        }
         return notFound();
-	}
-	
-	@Transactional
+    }
+    
+    @Transactional
     public Result index() {
         return home();
-    }	
-	
-	//
-	// Entry points
-	//
+    }   
+    
+    //
+    // Entry points
+    //
     
     @Transactional
     public Result home() {
         final User user = getLocalUser(session());
         if (user.id == -1) {
-        	return ok(views.html.beautypop.web.home.render(Json.stringify(Json.toJson(new UserVM(user))), Json.stringify(Json.toJson(getFeaturedItemVMs("HOME_SLIDER")))));
+            return ok(views.html.beautypop.web.home.render(Json.stringify(Json.toJson(new UserVM(user))), Json.stringify(Json.toJson(getFeaturedItemVMs("HOME_SLIDER")))));
         }
         
         if (!User.isLoggedIn(user)){
@@ -202,17 +202,17 @@ public class Application extends Controller {
         return ok(views.html.signup.render(MyUsernamePasswordAuthProvider.SIGNUP_FORM));
     }
     
-	@Transactional
+    @Transactional
     public static Result getUserTargetProfile() {
-	    final User localUser = getLocalUser(session());
-	    if (localUser.isLoggedIn() && localUser.userInfo != null) {
-	        //TargetProfile targetProfile = TargetProfile.fromUser(localUser);
-	        return ok();
-	    }
-	    return ok();	    
+        final User localUser = getLocalUser(session());
+        if (localUser.isLoggedIn() && localUser.userInfo != null) {
+            //TargetProfile targetProfile = TargetProfile.fromUser(localUser);
+            return ok();
+        }
+        return ok();        
     }
     
-	public static boolean isOverDailySignupThreshold() {
+    public static boolean isOverDailySignupThreshold() {
         return User.getTodaySignupCount() >= SIGNUP_DAILY_THRESHOLD;
     }
     
@@ -221,36 +221,36 @@ public class Application extends Controller {
     }
 
     @Transactional
-	public static Result signupWithPromoCode(String promoCode) {
-		// put into http session
+    public static Result signupWithPromoCode(String promoCode) {
+        // put into http session
         session().put(SESSION_PROMOCODE, promoCode);
 
-		return signup();
-	}
+        return signup();
+    }
     
     @Transactional
-	public static Result detailsForPromoCode(String promoCode) {
-		// put into http session
+    public static Result detailsForPromoCode(String promoCode) {
+        // put into http session
         session().put(SESSION_PROMOCODE, promoCode);
 
-		return redirect("/home#!/promo-code-page/"+promoCode);
-	}
+        return redirect("/home#!/promo-code-page/"+promoCode);
+    }
 
-	@Transactional
+    @Transactional
     public static Result saveSignupInfoFb() {
-	    return doSaveSignupInfo(true);
-	}
-	
-	@Transactional
-	public static Result saveSignupInfo() {
-	    return doSaveSignupInfo(false);
-	}
-	
-	@Transactional
+        return doSaveSignupInfo(true);
+    }
+    
+    @Transactional
+    public static Result saveSignupInfo() {
+        return doSaveSignupInfo(false);
+    }
+    
+    @Transactional
     public static Result doSaveSignupInfo(boolean fb) {
-		final User localUser = getLocalUser(session());
-		
-		// UserInfo
+        final User localUser = getLocalUser(session());
+        
+        // UserInfo
         DynamicForm form = DynamicForm.form().bindFromRequest();
         String parentDisplayName = form.get("parent_displayname").trim();
         Location parentLocation = Location.getLocationById(Integer.valueOf(form.get("parent_location")));
@@ -275,84 +275,84 @@ public class Application extends Controller {
         
         logger.underlyingLogger().info("[u="+localUser.id+"][name="+localUser.displayName+"] doSaveSignupInfo userInfo="+userInfo.toString());
         return redirect("/home");
-	}
-	
-	private static Result handleSaveSignupInfoError(String error, boolean fb) {
-		final User localUser = getLocalUser(session());
-		flash(FLASH_ERROR_KEY, error);
-		return fb? badRequest(views.html.signup_info_fb.render(localUser)):
-			badRequest(views.html.signup_info.render(localUser));
-	}
+    }
+    
+    private static Result handleSaveSignupInfoError(String error, boolean fb) {
+        final User localUser = getLocalUser(session());
+        flash(FLASH_ERROR_KEY, error);
+        return fb? badRequest(views.html.signup_info_fb.render(localUser)):
+            badRequest(views.html.signup_info.render(localUser));
+    }
 
-	public static User getLocalUser(final Session session) {
-		// request from mobile 
-		String userKey = UserController.getMobileUserKey(request(), APP_USER_KEY);
-		if(userKey != null){
-			User localUser = null;
-			String decryptedValue = null;
-			try {
-				Key dkey = generateKey();
-				Cipher c = Cipher.getInstance("AES");
-				c.init(Cipher.DECRYPT_MODE, dkey);
-				byte[] decodedValue = new BASE64Decoder().decodeBuffer(userKey);
-				byte[] decValue = c.doFinal(decodedValue);
-				decryptedValue = new String(decValue);
-				//logger.underlyingLogger().debug("getLocalUser from mobile - " + userKey + " => " + decryptedValue);
-				localUser = getMobileLocalUser(decryptedValue);
-				return localUser;
-			} catch(Exception e) { 
-				logger.underlyingLogger().error("Failed to getLocalUser from mobile - " + userKey + " => " + decryptedValue, e);
-				return null;
-			}
-		}
+    public static User getLocalUser(final Session session) {
+        // request from mobile 
+        String userKey = UserController.getMobileUserKey(request(), APP_USER_KEY);
+        if(userKey != null){
+            User localUser = null;
+            String decryptedValue = null;
+            try {
+                Key dkey = generateKey();
+                Cipher c = Cipher.getInstance("AES");
+                c.init(Cipher.DECRYPT_MODE, dkey);
+                byte[] decodedValue = new BASE64Decoder().decodeBuffer(userKey);
+                byte[] decValue = c.doFinal(decodedValue);
+                decryptedValue = new String(decValue);
+                //logger.underlyingLogger().debug("getLocalUser from mobile - " + userKey + " => " + decryptedValue);
+                localUser = getMobileLocalUser(decryptedValue);
+                return localUser;
+            } catch(Exception e) { 
+                logger.underlyingLogger().error("Failed to getLocalUser from mobile - " + userKey + " => " + decryptedValue, e);
+                return null;
+            }
+        }
 
-		//if request from web
-		final AuthUser currentAuthUser = PlayAuthenticate.getUser(session);
-		if (currentAuthUser == null) {
-		    return User.noLoginUser();
-		}
-		final User localUser = User.findByAuthUserIdentity(currentAuthUser);
-		if (localUser == null) {
+        // request from web
+        final AuthUser currentAuthUser = PlayAuthenticate.getUser(session);
+        if (currentAuthUser == null) {
             return User.noLoginUser();
         }
-		
-		//DateTime exp = new DateTime(currentAuthUser.expires());
-		//logger.underlyingLogger().debug("User ["+localUser.getId()+"|"+localUser.getDisplayName()+"] will expire in "+exp.toString());
-		
-		return localUser;
-	}
-	
-	public static User getLocalUser(final String session) {
-		final AuthUser currentAuthUser = PlayAuthenticate.getUser(session);
-		if (currentAuthUser == null) {
-		    return User.noLoginUser();
-		}
-		final User localUser = User.findByAuthUserIdentity(currentAuthUser);
-		if (localUser == null) {
+        final User localUser = User.findByAuthUserIdentity(currentAuthUser);
+        if (localUser == null) {
             return User.noLoginUser();
         }
-		return localUser;
-	}
-	
-	public static User getMobileLocalUser(final String decryptedValue) {
-		final AuthUser currentAuthUser = PlayAuthenticate.getUser(decryptedValue);
-		
-		if (currentAuthUser == null) {
-		    return User.noLoginUser();
-		}
-		final User localUser = User.findByAuthUserIdentity(currentAuthUser);
-		if (localUser == null) {
+        
+        //DateTime exp = new DateTime(currentAuthUser.expires());
+        //logger.underlyingLogger().debug("User ["+localUser.getId()+"|"+localUser.getDisplayName()+"] will expire in "+exp.toString());
+        
+        return localUser;
+    }
+    
+    public static User getLocalUser(final String session) {
+        final AuthUser currentAuthUser = PlayAuthenticate.getUser(session);
+        if (currentAuthUser == null) {
             return User.noLoginUser();
         }
-		return localUser;
-	}
-	
-	public static Key generateKey() throws Exception {
-		Key key = new SecretKeySpec("TheBestSecretkey".getBytes(), "AES");
-		return key;
-	}
-	
-	public static Long getLocalUserId() {
+        final User localUser = User.findByAuthUserIdentity(currentAuthUser);
+        if (localUser == null) {
+            return User.noLoginUser();
+        }
+        return localUser;
+    }
+    
+    public static User getMobileLocalUser(final String decryptedValue) {
+        final AuthUser currentAuthUser = PlayAuthenticate.getUser(decryptedValue);
+        
+        if (currentAuthUser == null) {
+            return User.noLoginUser();
+        }
+        final User localUser = User.findByAuthUserIdentity(currentAuthUser);
+        if (localUser == null) {
+            return User.noLoginUser();
+        }
+        return localUser;
+    }
+    
+    public static Key generateKey() throws Exception {
+        Key key = new SecretKeySpec("TheBestSecretkey".getBytes(), "AES");
+        return key;
+    }
+    
+    public static Long getLocalUserId() {
         User user = null;
         try {
             user = getLocalUser(session());
@@ -379,8 +379,8 @@ public class Application extends Controller {
         }
         return "";
     }
-	        
-	@Restrict(@Group(SecurityRole.USER))
+            
+    @Restrict(@Group(SecurityRole.USER))
     public static Result restricted() {
         final User localUser = getLocalUser(session());
         return ok(views.html.restricted.render(localUser));
@@ -389,92 +389,92 @@ public class Application extends Controller {
     @Restrict(@Group(SecurityRole.USER))
     public static Result profile() {
         final User localUser = getLocalUser(session());
- 		String metaTags = generateHeaderMeta(localUser.getDisplayName(), "", "/image/get-profile-image-by-id/"+localUser.getId());
- 		return ok(views.html.beautypop.web.profile.render(
- 		        Json.stringify(Json.toJson(new UserVM(localUser))), 
- 		        Json.stringify(Json.toJson(new UserVM(localUser))), 
- 		        metaTags));
+        String metaTags = generateHeaderMeta(localUser.getDisplayName(), "", "/image/get-profile-image-by-id/"+localUser.getId());
+        return ok(views.html.beautypop.web.profile.render(
+                Json.stringify(Json.toJson(new UserVM(localUser))), 
+                Json.stringify(Json.toJson(new UserVM(localUser))), 
+                metaTags));
     }
     
-	@Transactional
-	public static Result login() {
-		return ok(views.html.login.render(MyUsernamePasswordAuthProvider.LOGIN_FORM, isOverDailySignupThreshold()));
-	}
-	
-	@Transactional
-	public static Result doLogin() {
-		com.feth.play.module.pa.controllers.Authenticate.noCache(response());
-		final Form<MyLogin> filledForm = MyUsernamePasswordAuthProvider.LOGIN_FORM.bindFromRequest();
-		if (filledForm.hasErrors()) {
-			// User did not fill everything properly
-			flash(FLASH_ERROR_KEY, "登入電郵或密碼錯誤");
-			return badRequest(views.html.login.render(filledForm, isOverDailySignupThreshold()));
-		} else {
-			// Everything was filled
-			Result r = UsernamePasswordAuthProvider.handleLogin(ctx());
-			final User localUser = getLocalUser(session());
-			if(User.isLoggedIn(localUser)) {
-				logger.underlyingLogger().info("[u="+localUser.id+"] [name="+localUser.displayName+"] Native login");
-			}
-			return r;
-		}
-	}
-	
     @Transactional
-	public static Result doLoginMobile() throws AuthException {
-		com.feth.play.module.pa.controllers.Authenticate.noCache(response());
-		final Form<MyLogin> filledForm = MyUsernamePasswordAuthProvider.LOGIN_FORM.bindFromRequest();
-		if (filledForm.hasErrors()) {
-			// User did not fill everything properly
-			return badRequest();
-		} else {
-			// Everything was filled
-			Result r = PlayAuthenticate.handleAuthenticationByProvider(ctx(),
-					 com.feth.play.module.pa.providers.password.UsernamePasswordAuthProvider.Case.LOGIN,
-					 new MyUsernamePasswordAuthProvider(Play.application()));
-			
-			// check redirect result and flash for errors
-			String error = ctx().flash().get(controllers.Application.FLASH_ERROR_KEY);
-			if (!StringUtils.isEmpty(error)) {
-				return badRequest(error);
-			}
-			
-			// case where user not verify email yet
-			// for all cases, see MyUsernamePasswordAuthProvider.loginUser() and UsernamePasswordAuthProvider.authenticate()
-			MyLogin login = filledForm.get();
-			UsernamePasswordAuthUser authUser = new MyLoginUsernamePasswordAuthUser(login.getPassword(), login.getEmail());
-			final User user = User.findByUsernamePasswordIdentity(authUser);
-			if (user != null && !user.emailValidated) {
-				return badRequest("電郵尚未認證，請登入電郵並按認證連結 - "+user.email);
-			}
-			
-			// null:null
-			String providerKey = session().get(PlayAuthenticate.PROVIDER_KEY);
-			String userKey = session().get(PlayAuthenticate.USER_KEY);
-			if (StringUtils.isEmpty(providerKey) || "null".equals(providerKey.trim()) || 
-					StringUtils.isEmpty(userKey) || "null".equals(userKey.trim())) {
-				return badRequest("沒有此用戶，請確認電郵或密碼無誤");
-			}
-			
-			String encryptedValue = null;
-			String plainData = session().get(PlayAuthenticate.PROVIDER_KEY) +
-			        PlayAuthenticate.USER_ENCRYPTED_KEY_SEPARATOR +
-			        session().get(PlayAuthenticate.USER_KEY);
-			try { 
-	    		Key key = generateKey();
-	            Cipher c = Cipher.getInstance("AES");
-	            c.init(Cipher.ENCRYPT_MODE, key);
-	            byte[] encVal = c.doFinal(plainData.getBytes());
-	            encryptedValue = new BASE64Encoder().encode(encVal);
-	    	} catch(Exception e) { 
-	    		return badRequest();
-	    	}
+    public static Result login() {
+        return ok(views.html.login.render(MyUsernamePasswordAuthProvider.LOGIN_FORM, isOverDailySignupThreshold()));
+    }
+    
+    @Transactional
+    public static Result doLogin() {
+        com.feth.play.module.pa.controllers.Authenticate.noCache(response());
+        final Form<MyLogin> filledForm = MyUsernamePasswordAuthProvider.LOGIN_FORM.bindFromRequest();
+        if (filledForm.hasErrors()) {
+            // User did not fill everything properly
+            flash(FLASH_ERROR_KEY, "登入電郵或密碼錯誤");
+            return badRequest(views.html.login.render(filledForm, isOverDailySignupThreshold()));
+        } else {
+            // Everything was filled
+            Result r = UsernamePasswordAuthProvider.handleLogin(ctx());
+            final User localUser = getLocalUser(session());
+            if(User.isLoggedIn(localUser)) {
+                logger.underlyingLogger().info("[u="+localUser.id+"] [name="+localUser.displayName+"] Native login");
+            }
+            return r;
+        }
+    }
+    
+    @Transactional
+    public static Result doLoginMobile() throws AuthException {
+        com.feth.play.module.pa.controllers.Authenticate.noCache(response());
+        final Form<MyLogin> filledForm = MyUsernamePasswordAuthProvider.LOGIN_FORM.bindFromRequest();
+        if (filledForm.hasErrors()) {
+            // User did not fill everything properly
+            return badRequest();
+        } else {
+            // Everything was filled
+            Result r = PlayAuthenticate.handleAuthenticationByProvider(ctx(),
+                     com.feth.play.module.pa.providers.password.UsernamePasswordAuthProvider.Case.LOGIN,
+                     new MyUsernamePasswordAuthProvider(Play.application()));
+            
+            // check redirect result and flash for errors
+            String error = ctx().flash().get(controllers.Application.FLASH_ERROR_KEY);
+            if (!StringUtils.isEmpty(error)) {
+                return badRequest(error);
+            }
+            
+            // case where user not verify email yet
+            // for all cases, see MyUsernamePasswordAuthProvider.loginUser() and UsernamePasswordAuthProvider.authenticate()
+            MyLogin login = filledForm.get();
+            UsernamePasswordAuthUser authUser = new MyLoginUsernamePasswordAuthUser(login.getPassword(), login.getEmail());
+            final User user = User.findByUsernamePasswordIdentity(authUser);
+            if (user != null && !user.emailValidated) {
+                return badRequest("電郵尚未認證，請登入電郵並按認證連結 - "+user.email);
+            }
+            
+            // null:null
+            String providerKey = session().get(PlayAuthenticate.PROVIDER_KEY);
+            String userKey = session().get(PlayAuthenticate.USER_KEY);
+            if (StringUtils.isEmpty(providerKey) || "null".equals(providerKey.trim()) || 
+                    StringUtils.isEmpty(userKey) || "null".equals(userKey.trim())) {
+                return badRequest("沒有此用戶，請確認電郵或密碼無誤");
+            }
+            
+            String encryptedValue = null;
+            String plainData = session().get(PlayAuthenticate.PROVIDER_KEY) +
+                    PlayAuthenticate.USER_ENCRYPTED_KEY_SEPARATOR +
+                    session().get(PlayAuthenticate.USER_KEY);
+            try { 
+                Key key = generateKey();
+                Cipher c = Cipher.getInstance("AES");
+                c.init(Cipher.ENCRYPT_MODE, key);
+                byte[] encVal = c.doFinal(plainData.getBytes());
+                encryptedValue = new BASE64Encoder().encode(encVal);
+            } catch(Exception e) { 
+                return badRequest();
+            }
 
-			encryptedValue = encryptedValue.replace("+", "%2b");
-			logger.underlyingLogger().info("[u="+user.id+"] [name="+user.displayName+"] Native mobile login - encryptedValue="+encryptedValue);
-			return ok(encryptedValue);
-		}
-	}
+            encryptedValue = encryptedValue.replace("+", "%2b");
+            logger.underlyingLogger().info("[u="+user.id+"] [name="+user.displayName+"] Native mobile login - encryptedValue="+encryptedValue);
+            return ok(encryptedValue);
+        }
+    }
 
     @Transactional
     public static Result doLoginPopup() {
@@ -495,23 +495,23 @@ public class Application extends Controller {
     
     @Transactional
     public Result initNewUser() {
-    	final User user = getLocalUser(session());
-    	if (!User.isLoggedIn(user)) {
-    	    logger.underlyingLogger().error(String.format("[u=%d] User not logged in", user.id));
+        final User user = getLocalUser(session());
+        if (!User.isLoggedIn(user)) {
+            logger.underlyingLogger().error(String.format("[u=%d] User not logged in", user.id));
             return notFound();
         }
-    	
-    	//String promoCode = session().get(SESSION_PROMOCODE);
-    	//GameAccountReferral.processAnyReferral(promoCode, user);
+        
+        //String promoCode = session().get(SESSION_PROMOCODE);
+        //GameAccountReferral.processAnyReferral(promoCode, user);
 
         //GameAccount.setPointsForSignUp(user);
 
-    	if (user.hasCompleteInfo()) {
-    	    GameBadgeAwarded.recordGameBadge(user, BadgeType.PROFILE_INFO);
-    	}
-    	
-    	calcServer.clearUserQueues(user);
-    	
+        if (user.hasCompleteInfo()) {
+            GameBadgeAwarded.recordGameBadge(user, BadgeType.PROFILE_INFO);
+        }
+        
+        calcServer.clearUserQueues(user);
+        
         user.setNewUser(false);
         
         return ok();
@@ -519,39 +519,39 @@ public class Application extends Controller {
     
     public static Result jsRoutes() {
         return ok(Routes.javascriptRouter("jsRoutes", 
-    	        controllers.routes.javascript.Signup.forgotPassword())).as("text/javascript");
+                controllers.routes.javascript.Signup.forgotPassword())).as("text/javascript");
     }
 
-	@Transactional
-	public static Result doSignup() {
-		com.feth.play.module.pa.controllers.Authenticate.noCache(response());
-		Form<MySignup> filledForm = MyUsernamePasswordAuthProvider.SIGNUP_FORM.bindFromRequest();
-		
-		if (!filledForm.hasErrors() && filledForm.get() != null) {
-    		String email = filledForm.get().email;
-    		if (email != null) {
-    		    final User existingUser = User.findByEmail(email);
+    @Transactional
+    public static Result doSignup() {
+        com.feth.play.module.pa.controllers.Authenticate.noCache(response());
+        Form<MySignup> filledForm = MyUsernamePasswordAuthProvider.SIGNUP_FORM.bindFromRequest();
+        
+        if (!filledForm.hasErrors() && filledForm.get() != null) {
+            String email = filledForm.get().email;
+            if (email != null) {
+                final User existingUser = User.findByEmail(email);
                 if (existingUser != null && existingUser.emailValidated) {
-        		    List<ValidationError> errors = new ArrayList<>();
-        	        errors.add(new ValidationError(Signup.EMAIL_EXISTS_ERROR_KEY, Signup.EMAIL_EXISTS_ERROR_MESSAGE));
-        	        filledForm.errors().put(Signup.EMAIL_EXISTS_ERROR_KEY, errors);
-        	        logger.underlyingLogger().info("[email="+email+"] already registered");
+                    List<ValidationError> errors = new ArrayList<>();
+                    errors.add(new ValidationError(Signup.EMAIL_EXISTS_ERROR_KEY, Signup.EMAIL_EXISTS_ERROR_MESSAGE));
+                    filledForm.errors().put(Signup.EMAIL_EXISTS_ERROR_KEY, errors);
+                    logger.underlyingLogger().info("[email="+email+"] already registered");
                 }
-    		}
-		}
-		
-		if (filledForm.hasErrors()) {
-		    String errorRequired = Messages.get("error.required") + " - ";
-		    String errorRequiredFields = "";
-		    String errorOther = "";
-		    for (Entry<String, List<ValidationError>> errorEntry : filledForm.errors().entrySet()) {
-		        List<ValidationError> errors = errorEntry.getValue();
-		        for (ValidationError error : errors) {
-		            if ("error.required".equalsIgnoreCase(error.message())) {
-		                if ("lname".equalsIgnoreCase(error.key())) {
-		                    errorRequiredFields += "'姓' ";
-		                } else if ("fname".equalsIgnoreCase(error.key())) {
-		                    errorRequiredFields += "'名' ";
+            }
+        }
+        
+        if (filledForm.hasErrors()) {
+            String errorRequired = Messages.get("error.required") + " - ";
+            String errorRequiredFields = "";
+            String errorOther = "";
+            for (Entry<String, List<ValidationError>> errorEntry : filledForm.errors().entrySet()) {
+                List<ValidationError> errors = errorEntry.getValue();
+                for (ValidationError error : errors) {
+                    if ("error.required".equalsIgnoreCase(error.message())) {
+                        if ("lname".equalsIgnoreCase(error.key())) {
+                            errorRequiredFields += "'姓' ";
+                        } else if ("fname".equalsIgnoreCase(error.key())) {
+                            errorRequiredFields += "'名' ";
                         } else if ("email".equalsIgnoreCase(error.key())) {
                             errorRequiredFields += "'電郵' ";
                         } else if ("password".equalsIgnoreCase(error.key())) {
@@ -561,38 +561,38 @@ public class Application extends Controller {
                         } else {
                             errorRequiredFields += error.key() + " ";
                         }
-		            } if ("error.minLength".equalsIgnoreCase(error.message()) ||
-		                    "error.maxLength".equalsIgnoreCase(error.message())) {
-		                if (!errorOther.isEmpty()) {
+                    } if ("error.minLength".equalsIgnoreCase(error.message()) ||
+                            "error.maxLength".equalsIgnoreCase(error.message())) {
+                        if (!errorOther.isEmpty()) {
                             break;
                         }
-		                if ("password".equalsIgnoreCase(error.key()) ||
-		                        "repeatPassword".equalsIgnoreCase(error.key())) {
-		                    errorOther += "密碼" + String.format(Messages.get(error.message()), error.arguments().get(0));
+                        if ("password".equalsIgnoreCase(error.key()) ||
+                                "repeatPassword".equalsIgnoreCase(error.key())) {
+                            errorOther += "密碼" + String.format(Messages.get(error.message()), error.arguments().get(0));
                         } else {
                             errorOther += error.key() + String.format(Messages.get(error.message()), error.arguments().get(0));
                         }
-		            } else {
-		                if (!errorOther.isEmpty()) {
-		                    break;
-		                }
-		                errorOther += Messages.get(error.message());      // + " - " + error.key();
-		            }
-		        }
-		    }
-		    
-		    if (!errorRequiredFields.isEmpty()) {
-		        flash().put(controllers.Application.FLASH_ERROR_KEY, errorRequired + errorRequiredFields);
-		    } else if (!errorOther.isEmpty()) {
-		        flash().put(controllers.Application.FLASH_ERROR_KEY, errorOther);
-		    } else {
+                    } else {
+                        if (!errorOther.isEmpty()) {
+                            break;
+                        }
+                        errorOther += Messages.get(error.message());      // + " - " + error.key();
+                    }
+                }
+            }
+            
+            if (!errorRequiredFields.isEmpty()) {
+                flash().put(controllers.Application.FLASH_ERROR_KEY, errorRequired + errorRequiredFields);
+            } else if (!errorOther.isEmpty()) {
+                flash().put(controllers.Application.FLASH_ERROR_KEY, errorOther);
+            } else {
                 flash().put(controllers.Application.FLASH_ERROR_KEY, Messages.get("error.invalid"));
-		    }
-			return badRequest(views.html.signup.render(filledForm));
-		} else {
-			// Everything was filled
-		    String email = filledForm.get().email;
-		    session().put(SIGNUP_EMAIL, email);
+            }
+            return badRequest(views.html.signup.render(filledForm));
+        } else {
+            // Everything was filled
+            String email = filledForm.get().email;
+            session().put(SIGNUP_EMAIL, email);
 
             // native signup with promoCode
             String promoCode = session().get(SESSION_PROMOCODE);
@@ -601,63 +601,63 @@ public class Application extends Controller {
             }
 
             logger.underlyingLogger().info("STS [email="+email+"] Native signup submitted");
-			return UsernamePasswordAuthProvider.handleSignup(ctx());
-		}
-	}
-	
-	//
-	// Mobile
-	//
+            return UsernamePasswordAuthProvider.handleSignup(ctx());
+        }
+    }
+    
+    //
+    // Mobile
+    //
 
-	public static void setMobileUserAgent(User user) {
-		if (user.isLoggedIn()) {
-			UserAgentUtil userAgentUtil = new UserAgentUtil(request());
+    public static void setMobileUserAgent(User user) {
+        if (user.isLoggedIn()) {
+            UserAgentUtil userAgentUtil = new UserAgentUtil(request());
             String agentStr = userAgentUtil.getUserAgent();
-			if (!StringUtils.isEmpty(agentStr)) {
-				user.lastLoginUserAgent = userAgentUtil.getUserAgent().substring(0, Math.min(100, agentStr.length()));
-			}
-		}
-	}
-	
-	@Transactional
+            if (!StringUtils.isEmpty(agentStr)) {
+                user.lastLoginUserAgent = userAgentUtil.getUserAgent().substring(0, Math.min(100, agentStr.length()));
+            }
+        }
+    }
+    
+    @Transactional
     public static Result apps() {
         return ok(views.html.beautypop.web.apps.render(
                 "https://itunes.apple.com/app/idxxx",
                 "https://play.google.com/store/apps/details?id=com.beautypop.app",
-                "http://www.beautypop.hk"));
+                "http://www.baby-box.hk"));
     }
-	
-	@Transactional
+    
+    @Transactional
     public static Result getStarted() {
         return ok(views.html.beautypop.web.getstarted.render(
                 "https://itunes.apple.com/app/idxxx",
                 "https://play.google.com/store/apps/details?id=com.beautypop.app",
-                "http://www.beautypop.hk"));
+                "http://www.baby-box.hk"));
     }
     
-	@Transactional
-	public static Result privacy() {
-		TermsAndConditions terms = TermsAndConditions.getTermsAndConditions();
+    @Transactional
+    public static Result privacy() {
+        TermsAndConditions terms = TermsAndConditions.getTermsAndConditions();
         return ok(views.html.privacy.render(terms.privacy));
     }
-	
-	@Transactional
-	public static Result terms() {
-		TermsAndConditions terms = TermsAndConditions.getTermsAndConditions();
+    
+    @Transactional
+    public static Result terms() {
+        TermsAndConditions terms = TermsAndConditions.getTermsAndConditions();
         return ok(views.html.terms_and_conditions.render(terms.terms));
     }
-	
-	public static String formatTimestamp(final long t) {
-		return new SimpleDateFormat("yyyy-dd-MM HH:mm:ss").format(new Date(t));
-	}
     
-	//
-	// Other APIs
-	//
-	
-	@Transactional
+    public static String formatTimestamp(final long t) {
+        return new SimpleDateFormat("yyyy-dd-MM HH:mm:ss").format(new Date(t));
+    }
+    
+    //
+    // Other APIs
+    //
+    
+    @Transactional
     public static Result getDistricts() {
-	    List<LocationVM> vms = new ArrayList<>();
+        List<LocationVM> vms = new ArrayList<>();
         try {
             List<Location> districts = LocationCache.getHongKongDistricts();
             for (Location district : districts) {
@@ -667,16 +667,16 @@ public class Application extends Controller {
         }
         return ok(Json.toJson(vms));
     }
-	
-	@Transactional
+    
+    @Transactional
     public static Result getCountries() {
-	    List<CountryVM> vms = new ArrayList<>();
-	    try {
-	        List<Country> countries = CountryCache.getCountries();
-	        for (Country country : countries) {
-	            vms.add(new CountryVM(country));
-	        }
-	    } catch (Exception e) {
+        List<CountryVM> vms = new ArrayList<>();
+        try {
+            List<Country> countries = CountryCache.getCountries();
+            for (Country country : countries) {
+                vms.add(new CountryVM(country));
+            }
+        } catch (Exception e) {
         }
         return ok(Json.toJson(vms));
     }
@@ -699,32 +699,32 @@ public class Application extends Controller {
         return vms;
     }
 
-	//
-	// Webmaster
-	//
-	
-	@Transactional
-	public static Result googleWebmaster() {
-	    return ok(views.html.google_webmaster.render());
-	}
-	
-	@Transactional
+    //
+    // Webmaster
+    //
+    
+    @Transactional
+    public static Result googleWebmaster() {
+        return ok(views.html.google_webmaster.render());
+    }
+    
+    @Transactional
     public static Result pathNotFound() {
         return redirect("/home");
     }
-	
-	@Transactional
-	public static Result pathNotFound(String path) {
-	    if (path.contains("/")) {
-	        return pathNotFound();
-	    }
-	    
-	    logger.underlyingLogger().warn("Path not found - "+path);
-	    User user = User.findByDisplayName(path);
-	    if (user != null) {
-	        logger.underlyingLogger().info(String.format("[u=%d][displayName=%s] Found user to redirect to profile ", user.id, user.displayName));
-	        return redirect("/profile/"+user.id);
-	    }
-	    return pathNotFound();
-	}
+    
+    @Transactional
+    public static Result pathNotFound(String path) {
+        if (path.contains("/")) {
+            return pathNotFound();
+        }
+        
+        logger.underlyingLogger().warn("Path not found - "+path);
+        User user = User.findByDisplayName(path);
+        if (user != null) {
+            logger.underlyingLogger().info(String.format("[u=%d][displayName=%s] Found user to redirect to profile ", user.id, user.displayName));
+            return redirect("/profile/"+user.id);
+        }
+        return pathNotFound();
+    }
 }
