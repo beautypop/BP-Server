@@ -3,7 +3,7 @@ package domain;
 public class DefaultValues {
     public static final String DELIMITER_COMMA = ",";
     
-	public static final int DEFAULT_INFINITE_SCROLL_COUNT = 40;
+	public static final int DEFAULT_INFINITE_SCROLL_COUNT = 20;
 	public static final int FEED_INFINITE_SCROLL_COUNT = 40;
 	
 	public static final int MAX_POST_IMAGES = 4;
@@ -19,7 +19,6 @@ public class DefaultValues {
     
     public static final int SHORT_MESSAGE_COUNT = 50;
     
-    public static final int CONVERSATION_MESSAGES_COUNT = 20;
     public static final int MAX_CONVERSATIONS_COUNT = 1000;
     
     public static final int ACTIVITY_NEW_COMMENT_MAX_FAN_OUT = 100;
