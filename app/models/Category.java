@@ -17,7 +17,6 @@ import org.apache.commons.lang3.builder.EqualsBuilder;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import common.cache.CategoryCache;
-
 import domain.Likeable;
 import domain.Postable;
 import domain.SocialObjectType;
@@ -29,62 +28,79 @@ import play.db.jpa.JPA;
 @Entity
 public class Category extends SocialObject implements Likeable, Postable, Comparable<Category> {
 
-	public String icon;
+    public String icon;
 
-	@Column(length=2000)
-	public String description;
+    @Column(length=2000)
+    public String description;
     
-	@Enumerated(EnumType.STRING)
-	public CategoryType categoryType;
+    @Enumerated(EnumType.STRING)
+    public CategoryType categoryType;
     
-	public int seq;
+    @ManyToOne
+    public Category parent;
+    
+    public int seq;
 
-	public int minPercentFeedExposure = 0;
-	
-	public int maxPercentFeedExposure = 100;
-	
-	@ManyToOne(cascade = CascadeType.REMOVE)
-	@JsonIgnore
-	public Folder albumPhotoProfile;
-	
-	@OneToMany(cascade = CascadeType.REMOVE)
-	public List<Folder> folders;
-	
-	public static enum CategoryType {
-		PUBLIC
-	}
-	
-	public Category() {
-		this.objectType = SocialObjectType.CATEGORY;
-	}
-	
-	public Category(String name, String description, User owner, String icon, int seq) {
-		this();
-		this.name = name;
-		this.description = description;
-		this.categoryType = CategoryType.PUBLIC;
-		this.owner = owner;
-		this.icon = icon;
-		this.seq = seq;
-		this.system = true;
-	}
-	
-	public static List<Category> loadCategories() {
-		try {
-            Query q = JPA.em().createQuery("SELECT c FROM Category c where deleted = 0 order by seq");
+    public int minPercentFeedExposure = 0;
+    
+    public int maxPercentFeedExposure = 100;
+    
+    @ManyToOne(cascade = CascadeType.REMOVE)
+    @JsonIgnore
+    public Folder albumPhotoProfile;
+    
+    @OneToMany(cascade = CascadeType.REMOVE)
+    public List<Folder> folders;
+    
+    public static enum CategoryType {
+        PUBLIC
+    }
+    
+    public Category() {
+        this.objectType = SocialObjectType.CATEGORY;
+    }
+    
+    public Category(String name, String description, User owner, String icon, int seq) {
+        this(name, description, owner, icon, seq, null);
+    }
+    
+    public Category(String name, String description, User owner, String icon, int seq, Category parent) {
+        this();
+        this.name = name;
+        this.description = description;
+        this.categoryType = CategoryType.PUBLIC;
+        this.owner = owner;
+        this.icon = icon;
+        this.seq = seq;
+        this.parent = parent;
+        this.system = true;
+    }
+    
+    public static List<Category> loadCategories() {
+        try {
+            Query q = JPA.em().createQuery("SELECT c FROM Category c where parent is null and deleted = 0 order by seq");
+            return (List<Category>) q.getResultList();
+        } catch (NoResultException nre) {
+            return null;
+        }
+    }
+    
+    public static List<Category> loadSubCategories() {
+        try {
+            Query q = JPA.em().createQuery("SELECT c FROM Category c where parent is not null and deleted = 0 order by seq");
             return (List<Category>) q.getResultList();
         } catch (NoResultException nre) {
             return null;
         }
     }
 
-	public static Category findById(Long id) {
-		Category category = CategoryCache.getCategory(id);
-		if (category != null) {
-			return category;
-		}
+    public static Category findById(Long id) {
+        Category category = CategoryCache.getCategory(id);
+        if (category != null) {
+            return category;
+        }
 
-		try {
+        try {
             Query q = JPA.em().createQuery("SELECT c FROM Category c where id = ?1 and deleted = 0");
             q.setParameter(1, id);
             return (Category) q.getSingleResult();
@@ -93,11 +109,11 @@ public class Category extends SocialObject implements Likeable, Postable, Compar
         }
     }
 
-	public static List<Category> getAllCategories() {
-		return CategoryCache.getAllCategories();
-	}
-	
-	@Override
+    public static List<Category> getCategories() {
+        return CategoryCache.getCategories();
+    }
+    
+    @Override
     public boolean equals(Object o) {
         if (o != null && o instanceof Category) {
             final Category other = (Category) o;
@@ -111,8 +127,11 @@ public class Category extends SocialObject implements Likeable, Postable, Compar
         if (this.system != o.system) {
             return Boolean.compare(this.system, o.system);
         }
+        if (this.parent != null && this.parent != o.parent) {
+            return this.parent.compareTo(o.parent);
+        }
         if (this.categoryType != null && o.categoryType != null && 
-        		this.categoryType != o.categoryType) {
+                this.categoryType != o.categoryType) {
             return this.categoryType.compareTo(o.categoryType);
         }
         return this.name.compareTo(o.name);
