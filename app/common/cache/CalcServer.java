@@ -434,12 +434,12 @@ public class CalcServer {
         } else {
             jedisCache.putToSortedSet(getKey(FeedType.CATEGORY_POPULAR_USED,post.category.id),  timeScore.doubleValue() * FEED_SCORE_HIGH_BASE, post.id.toString());
         }
-        if (post.subCategory != null) {
-            jedisCache.putToSortedSet(getKey(FeedType.CATEGORY_POPULAR,post.subCategory.id),  timeScore.doubleValue() * FEED_SCORE_HIGH_BASE, post.id.toString());
+        if (post.category.parent != null) {
+            jedisCache.putToSortedSet(getKey(FeedType.CATEGORY_POPULAR,post.category.parent.id),  timeScore.doubleValue() * FEED_SCORE_HIGH_BASE, post.id.toString());
             if (post.isNewCondition()) {
-                jedisCache.putToSortedSet(getKey(FeedType.CATEGORY_POPULAR_NEW,post.subCategory.id),  timeScore.doubleValue() * FEED_SCORE_HIGH_BASE, post.id.toString());    
+                jedisCache.putToSortedSet(getKey(FeedType.CATEGORY_POPULAR_NEW,post.category.parent.id),  timeScore.doubleValue() * FEED_SCORE_HIGH_BASE, post.id.toString());    
             } else {
-                jedisCache.putToSortedSet(getKey(FeedType.CATEGORY_POPULAR_USED,post.subCategory.id),  timeScore.doubleValue() * FEED_SCORE_HIGH_BASE, post.id.toString());
+                jedisCache.putToSortedSet(getKey(FeedType.CATEGORY_POPULAR_USED,post.category.parent.id),  timeScore.doubleValue() * FEED_SCORE_HIGH_BASE, post.id.toString());
             }
         }
     }
@@ -449,8 +449,8 @@ public class CalcServer {
             return;
         }
         jedisCache.putToSortedSet(getKey(FeedType.CATEGORY_NEWEST,post.category.id), post.getCreatedDate().getTime(), post.id.toString());
-        if (post.subCategory != null) {
-            jedisCache.putToSortedSet(getKey(FeedType.CATEGORY_NEWEST,post.subCategory.id), post.getCreatedDate().getTime(), post.id.toString());    
+        if (post.category.parent != null) {
+            jedisCache.putToSortedSet(getKey(FeedType.CATEGORY_NEWEST,post.category.parent.id), post.getCreatedDate().getTime(), post.id.toString());    
         }
     }
     
@@ -459,16 +459,13 @@ public class CalcServer {
             return;
         }
         jedisCache.putToSortedSet(getKey(FeedType.CATEGORY_PRICE_LOW_HIGH,post.category.id), post.price * FEED_SCORE_HIGH_BASE + post.id , post.id.toString());
-        if (post.subCategory != null) {
-            jedisCache.putToSortedSet(getKey(FeedType.CATEGORY_PRICE_LOW_HIGH,post.subCategory.id), post.getCreatedDate().getTime(), post.id.toString());    
+        if (post.category.parent != null) {
+            jedisCache.putToSortedSet(getKey(FeedType.CATEGORY_PRICE_LOW_HIGH,post.category.parent.id), post.getCreatedDate().getTime(), post.id.toString());    
         }
     }
     
     public void removeFromCategoryQueues(Post post){
         removeFromCategoryQueues(post, post.category);
-        if (post.subCategory != null) {
-            removeFromCategoryQueues(post, post.subCategory);
-        }
     }
         
     public void removeFromCategoryQueues(Post post, Category category){

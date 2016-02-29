@@ -20,7 +20,11 @@ public class PostVM extends PostVMLite {
 	@JsonProperty("categoryId") public Long categoryId;
 	@JsonProperty("categoryName") public String categoryName;
 	@JsonProperty("categoryIcon") public String categoryIcon;
-	@JsonProperty("categoryType") public String categoryType;	
+	@JsonProperty("categoryType") public String categoryType;
+	@JsonProperty("subCategoryId") public Long subCategoryId;
+    @JsonProperty("subCategoryName") public String subCategoryName;
+    @JsonProperty("subCategoryIcon") public String subCategoryIcon;
+    @JsonProperty("subCategoryType") public String subCategoryType;
     @JsonProperty("latestComments") public List<CommentVM> latestComments;
     
 	@JsonProperty("isOwner") public boolean isOwner = false;
@@ -39,10 +43,25 @@ public class PostVM extends PostVMLite {
         this.createdDate = post.getCreatedDate().getTime();
         this.updatedDate = post.getUpdatedDate().getTime();
         this.body = post.body;
-        this.categoryType = post.category.categoryType.toString();
-        this.categoryName = post.category.name;
-        this.categoryIcon = post.category.icon;
-        this.categoryId = post.category.id;
+        if (post.category.parent == null) {
+            this.categoryId = post.category.id;
+            this.categoryName = post.category.name;
+            this.categoryIcon = post.category.icon;
+            this.categoryType = post.category.categoryType.toString();
+            this.subCategoryId = -1L;
+            this.subCategoryName = "";
+            this.subCategoryIcon = "";
+            this.subCategoryType = "";
+        } else {
+            this.categoryId = post.category.parent.id;
+            this.categoryName = post.category.parent.name;
+            this.categoryIcon = post.category.parent.icon;
+            this.categoryType = post.category.parent.categoryType.toString();
+            this.subCategoryId = post.category.id;
+            this.subCategoryName = post.category.name;
+            this.subCategoryIcon = post.category.icon;
+            this.subCategoryType = post.category.categoryType.toString();
+        }
         
         this.latestComments = new ArrayList<>();
         for (Comment comment : post.getLatestComments(DefaultValues.LATEST_COMMENTS_COUNT)) {

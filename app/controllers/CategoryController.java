@@ -103,6 +103,23 @@ public class CategoryController extends Controller{
         }
         return ok(Json.toJson(categoryList));
     }
+	
+	@Transactional
+    public static Result getSubCategories(Long categoryId){
+        return ok(Json.toJson(getSubCategoryVMs(categoryId)));
+    }
+	
+	public static List<CategoryVM> getSubCategoryVMs(Long categoryId) {
+	    List<CategoryVM> vms = new ArrayList<CategoryVM>();
+	    List<Category> subCategories = Category.getSubCategories(categoryId);
+	    if (subCategories != null) {
+            for(Category category : subCategories){
+                CategoryVM vm = new CategoryVM(category);
+                vms.add(vm);
+            }
+	    }
+        return vms;
+	}
     
     @Transactional
     public static Result getCategory(Long id){
@@ -125,6 +142,8 @@ public class CategoryController extends Controller{
             return Application.pathNotFound();
         }
         
+        List<CategoryVM> subCategoryVMs = getSubCategoryVMs(id);
+        
         CategoryVM categoryVM = new CategoryVM(category);
         List<PostVMLite> postVMs = new ArrayList<>();
         
@@ -145,7 +164,8 @@ public class CategoryController extends Controller{
         
         String metaTags = Application.generateHeaderMeta(category.name, category.description, category.icon);
         return ok(views.html.beautypop.web.category.render(
-                Json.stringify(Json.toJson(categoryVM)), 
+                Json.stringify(Json.toJson(subCategoryVMs)),
+                Json.stringify(Json.toJson(categoryVM)),
                 Json.stringify(Json.toJson(postVMs)), 
                 Json.stringify(Json.toJson(new UserVM(localUser))),
                 metaTags));
