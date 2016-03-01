@@ -626,7 +626,7 @@ public class Application extends Controller {
         return ok(views.html.beautypop.web.apps.render(
                 "https://itunes.apple.com/app/idxxx",
                 "https://play.google.com/store/apps/details?id=com.beautypop.app",
-                "http://www.baby-box.hk"));
+                "http://www.beautypop.hk"));
     }
     
     @Transactional
@@ -634,7 +634,7 @@ public class Application extends Controller {
         return ok(views.html.beautypop.web.getstarted.render(
                 "https://itunes.apple.com/app/idxxx",
                 "https://play.google.com/store/apps/details?id=com.beautypop.app",
-                "http://www.baby-box.hk"));
+                "http://www.beautypop.hk"));
     }
     
     @Transactional

@@ -21,7 +21,7 @@ var showAppDownloadTips = function() {
 
 var getAppDownloadUrl = function() {
 	if (isAndroid()) {
-		return "https://play.google.com/store/apps/details?id=com.babybox.app";
+		return "https://play.google.com/store/apps/details?id=com.beautypop.app";
 	} else if (isIOS()) {
 		return ""
 	}

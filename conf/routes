@@ -15,7 +15,7 @@ GET     /robots.txt                 controllers.Assets.at(path="/public",file="a
 # Google Webmaster
 GET     /googlee42c6d2bf91e90b7.html    controllers.Application.googleWebmaster
 
-GET     /favicon.ico                controllers.Assets.at(path="/public", file="app/images/favicon-1.ico")
+GET     /favicon.ico                controllers.Assets.at(path="/public", file="app/images/favicon.ico")
 GET     /assets/javascript/routes.js    controllers.Application.jsRoutes
 GET     /privacy                    controllers.Application.privacy
 GET     /terms                      controllers.Application.terms

@@ -18,6 +18,8 @@
         <link rel="stylesheet" href="../assets/app/custom-css/textfield.css">
         <link rel="stylesheet" href="../assets/app/custom-css/login.css">
         <link rel="stylesheet" href="../assets/app/custom-css/responsive.css">
+        <link rel="icon" type="image/png" href="@routes.Assets.versioned("app/images/favicon.ico")">
+        <link rel="shortcut icon" type="image/png" href="@routes.Assets.versioned("app/images/favicon.ico")">
         <script src="@routes.Assets.versioned("components/library/jquery/jquery.min.js")"></script>
         <script src="@routes.Application.jsRoutes" defer="defer"></script>
         <style>
@@ -34,7 +36,7 @@
     <body>
         <div id=login-header>
             <a class="login-logo pull-left" href="/">
-                <img src="../assets/app/images/logo-2.png" />
+                <img src="../assets/app/custom-css/images/logo%403x.png" />
             </a>
         </div>
         <div class="login-container w3-row-padding">
@@ -45,7 +47,7 @@
             </div>
             <div class="login-box w3-third" id="login-section" >
                 <ul>
-                    <li><img src="../assets/app/images/login/login_flag.png" /><h4>會員登入</h4></li>
+                    <li style="height:25px"><!--img src="../assets/app/images/login/login_flag.png" /><h4>會員登入</h4--></li>
                     <li style="padding:10px 10px;text-align:center;"><a href="/authenticate/facebook"><img class="login-btn-img" alt="Login via Faceebook" src="../assets/app/images/login/facebook_acc.jpg" /></a></li>
                     <li style="padding:10px 10px;text-align:center;"><span style="color:gray;font-size:12px;">註: BeautyPop 不會發佈或留言到您的 facebook 帳戶中</span></li>
                     <hr style="margin-top:15px;"/>

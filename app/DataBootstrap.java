@@ -233,7 +233,7 @@ public class DataBootstrap {
         
         /*
         try {
-            superAdmin.setPhotoProfile(new File(Resource.STORAGE_PATH + "/default/logo/logo-mB-1.png"));
+            superAdmin.setPhotoProfile(new File(Resource.STORAGE_PATH + "/default/logo/logo.png"));
         } catch (IOException e) {
             logger.underlyingLogger().error(ExceptionUtils.getStackTrace(e));
         }
@@ -317,210 +317,210 @@ public class DataBootstrap {
         // fashion
         String name = "Fashion";
         String desc = "Fashion";
-        Category category = createCategory(name, desc, "http://192.168.1.108:9000/image/static/category/fashion.jpg", 1);
+        Category category = createCategory(name, desc, "http://www.beautypop.hk/image/static/category/fashion.jpg", 1);
         
         name = "Dresses & Skirts";
         desc = "Dresses & Skirts";
-        createCategory(name, desc, "http://192.168.1.108:9000/image/static/category/fashion.jpg", 1, category);
+        createCategory(name, desc, "http://www.beautypop.hk/image/static/category/fashion.jpg", 1, category);
         
         name = "Shirts & Tops";
         desc = "Shirts & Tops";
-        createCategory(name, desc, "http://192.168.1.108:9000/image/static/category/beauty.jpg", 2, category);
+        createCategory(name, desc, "http://www.beautypop.hk/image/static/category/beauty.jpg", 2, category);
 
         name = "Pants & Leggings";
         desc = "Pants & Leggings";
-        createCategory(name, desc, "http://192.168.1.108:9000/image/static/category/skincare.jpg", 3, category);
+        createCategory(name, desc, "http://www.beautypop.hk/image/static/category/skincare.jpg", 3, category);
         
         name = "Jackets & Coats";
         desc = "Jackets & Coats";
-        createCategory(name, desc, "http://192.168.1.108:9000/image/static/category/bags.jpg", 4, category);
+        createCategory(name, desc, "http://www.beautypop.hk/image/static/category/bags.jpg", 4, category);
         
         name = "Lingerie & Sleepwear";
         desc = "Lingerie & Sleepwear";
-        createCategory(name, desc, "http://192.168.1.108:9000/image/static/category/shoes.jpg", 5, category);
+        createCategory(name, desc, "http://www.beautypop.hk/image/static/category/shoes.jpg", 5, category);
         
         name = "Other";
         desc = "Other";
-        createCategory(name, desc, "http://192.168.1.108:9000/image/static/category/other.jpg", 6, category);
+        createCategory(name, desc, "http://www.beautypop.hk/image/static/category/other.jpg", 6, category);
         
         // beauty
         name = "Beauty";
         desc = "Beauty";
-        category = createCategory(name, desc, "http://192.168.1.108:9000/image/static/category/beauty.jpg", 2);
+        category = createCategory(name, desc, "http://www.beautypop.hk/image/static/category/beauty.jpg", 2);
 
         name = "Makeup";
         desc = "Makeup";
-        createCategory(name, desc, "http://192.168.1.108:9000/image/static/category/beauty.jpg", 1, category);
+        createCategory(name, desc, "http://www.beautypop.hk/image/static/category/beauty.jpg", 1, category);
 
         name = "Fragrance";
         desc = "Fragrance";
-        createCategory(name, desc, "http://192.168.1.108:9000/image/static/category/skincare.jpg", 2, category);
+        createCategory(name, desc, "http://www.beautypop.hk/image/static/category/skincare.jpg", 2, category);
 
         name = "Bath & Body";
         desc = "Bath & Body";
-        createCategory(name, desc, "http://192.168.1.108:9000/image/static/category/shoes.jpg", 3, category);
+        createCategory(name, desc, "http://www.beautypop.hk/image/static/category/shoes.jpg", 3, category);
 
         name = "Nails";
         desc = "Nails";
-        createCategory(name, desc, "http://192.168.1.108:9000/image/static/category/accessories.jpg", 4, category);
+        createCategory(name, desc, "http://www.beautypop.hk/image/static/category/accessories.jpg", 4, category);
 
         name = "Haircare";
         desc = "Haircare";
-        createCategory(name, desc, "http://192.168.1.108:9000/image/static/category/sportswear.jpg", 5, category);
+        createCategory(name, desc, "http://www.beautypop.hk/image/static/category/sportswear.jpg", 5, category);
 
         name = "Other";
         desc = "Other";
-        createCategory(name, desc, "http://192.168.1.108:9000/image/static/category/other.jpg", 6, category);
+        createCategory(name, desc, "http://www.beautypop.hk/image/static/category/other.jpg", 6, category);
         
         // skincare
         name = "Skincare";
         desc = "Skincare";
-        category = createCategory(name, desc, "http://192.168.1.108:9000/image/static/category/skincare.jpg", 3);
+        category = createCategory(name, desc, "http://www.beautypop.hk/image/static/category/skincare.jpg", 3);
 
         name = "Face";
         desc = "Face";
-        createCategory(name, desc, "http://192.168.1.108:9000/image/static/category/skincare.jpg", 1, category);
+        createCategory(name, desc, "http://www.beautypop.hk/image/static/category/skincare.jpg", 1, category);
 
         name = "Eyecare";
         desc = "Eyecare";
-        createCategory(name, desc, "http://192.168.1.108:9000/image/static/category/shoes.jpg", 2, category);
+        createCategory(name, desc, "http://www.beautypop.hk/image/static/category/shoes.jpg", 2, category);
 
         name = "Bath & Body";
         desc = "Bath & Body";
-        createCategory(name, desc, "http://192.168.1.108:9000/image/static/category/fashion.jpg", 3, category);
+        createCategory(name, desc, "http://www.beautypop.hk/image/static/category/fashion.jpg", 3, category);
 
         name = "Other";
         desc = "Other";
-        createCategory(name, desc, "http://192.168.1.108:9000/image/static/category/other.jpg", 4, category);
+        createCategory(name, desc, "http://www.beautypop.hk/image/static/category/other.jpg", 4, category);
         
         // bags
         name = "Bags";
         desc = "Bags";
-        category = createCategory(name, desc, "http://192.168.1.108:9000/image/static/category/bags.jpg", 4);
+        category = createCategory(name, desc, "http://www.beautypop.hk/image/static/category/bags.jpg", 4);
         
         name = "Clutches";
         desc = "Clutches";
-        createCategory(name, desc, "http://192.168.1.108:9000/image/static/category/bags.jpg", 1, category);
+        createCategory(name, desc, "http://www.beautypop.hk/image/static/category/bags.jpg", 1, category);
 
         name = "Wallets";
         desc = "Wallets";
-        createCategory(name, desc, "http://192.168.1.108:9000/image/static/category/accessories.jpg", 2, category);
+        createCategory(name, desc, "http://www.beautypop.hk/image/static/category/accessories.jpg", 2, category);
 
         name = "Sling Bags";
         desc = "Sling Bags";
-        createCategory(name, desc, "http://192.168.1.108:9000/image/static/category/shoes.jpg", 3, category);
+        createCategory(name, desc, "http://www.beautypop.hk/image/static/category/shoes.jpg", 3, category);
 
         name = "Handbags";
         desc = "Handbags";
-        createCategory(name, desc, "http://192.168.1.108:9000/image/static/category/skincare.jpg", 4, category);
+        createCategory(name, desc, "http://www.beautypop.hk/image/static/category/skincare.jpg", 4, category);
 
         name = "Backpacks";
         desc = "Backpacks";
-        createCategory(name, desc, "http://192.168.1.108:9000/image/static/category/fashion.jpg", 5, category);
+        createCategory(name, desc, "http://www.beautypop.hk/image/static/category/fashion.jpg", 5, category);
         
         name = "Other";
         desc = "Other";
-        createCategory(name, desc, "http://192.168.1.108:9000/image/static/category/other.jpg", 6, category);
+        createCategory(name, desc, "http://www.beautypop.hk/image/static/category/other.jpg", 6, category);
         
         // shoes
         name = "Shoes";
         desc = "Shoes";
-        category = createCategory(name, desc, "http://192.168.1.108:9000/image/static/category/shoes.jpg", 5);
+        category = createCategory(name, desc, "http://www.beautypop.hk/image/static/category/shoes.jpg", 5);
         
         name = "Flats";
         desc = "Flats";
-        createCategory(name, desc, "http://192.168.1.108:9000/image/static/category/accessories.jpg", 1, category);
+        createCategory(name, desc, "http://www.beautypop.hk/image/static/category/accessories.jpg", 1, category);
 
         name = "Boots";
         desc = "Boots";
-        createCategory(name, desc, "http://192.168.1.108:9000/image/static/category/bags.jpg", 2, category);
+        createCategory(name, desc, "http://www.beautypop.hk/image/static/category/bags.jpg", 2, category);
 
         name = "Heels";
         desc = "Heels";
-        createCategory(name, desc, "http://192.168.1.108:9000/image/static/category/fashion.jpg", 3, category);
+        createCategory(name, desc, "http://www.beautypop.hk/image/static/category/fashion.jpg", 3, category);
 
         name = "Casual";
         desc = "Casual";
-        createCategory(name, desc, "http://192.168.1.108:9000/image/static/category/beauty.jpg", 4, category);
+        createCategory(name, desc, "http://www.beautypop.hk/image/static/category/beauty.jpg", 4, category);
 
         name = "Wedges & Platforms";
         desc = "Wedges & Platforms";
-        createCategory(name, desc, "http://192.168.1.108:9000/image/static/category/shoes.jpg", 5, category);
+        createCategory(name, desc, "http://www.beautypop.hk/image/static/category/shoes.jpg", 5, category);
         
         name = "Sandals";
         desc = "Sandals";
-        createCategory(name, desc, "http://192.168.1.108:9000/image/static/category/sportswear.jpg", 6, category);
+        createCategory(name, desc, "http://www.beautypop.hk/image/static/category/sportswear.jpg", 6, category);
         
         name = "Other";
         desc = "Other";
-        createCategory(name, desc, "http://192.168.1.108:9000/image/static/category/other.jpg", 7, category);
+        createCategory(name, desc, "http://www.beautypop.hk/image/static/category/other.jpg", 7, category);
         
         // accessories
         name = "Accessories";
         desc = "Accessories";
-        category = createCategory(name, desc, "http://192.168.1.108:9000/image/static/category/accessories.jpg", 6);
+        category = createCategory(name, desc, "http://www.beautypop.hk/image/static/category/accessories.jpg", 6);
         
         name = "Belts";
         desc = "Belts";
-        createCategory(name, desc, "http://192.168.1.108:9000/image/static/category/sportswear.jpg", 1, category);
+        createCategory(name, desc, "http://www.beautypop.hk/image/static/category/sportswear.jpg", 1, category);
 
         name = "Eyewear";
         desc = "Eyewear";
-        createCategory(name, desc, "http://192.168.1.108:9000/image/static/category/bags.jpg", 2, category);
+        createCategory(name, desc, "http://www.beautypop.hk/image/static/category/bags.jpg", 2, category);
 
         name = "Watches";
         desc = "Watches";
-        createCategory(name, desc, "http://192.168.1.108:9000/image/static/category/beauty.jpg", 3, category);
+        createCategory(name, desc, "http://www.beautypop.hk/image/static/category/beauty.jpg", 3, category);
         
         name = "Jewelery";
         desc = "Jewelery";
-        createCategory(name, desc, "http://192.168.1.108:9000/image/static/category/fashion.jpg", 4, category);
+        createCategory(name, desc, "http://www.beautypop.hk/image/static/category/fashion.jpg", 4, category);
         
         name = "Hats";
         desc = "Hats";
-        createCategory(name, desc, "http://192.168.1.108:9000/image/static/category/skincare.jpg", 5, category);
+        createCategory(name, desc, "http://www.beautypop.hk/image/static/category/skincare.jpg", 5, category);
         
         name = "Hair Accessories";
         desc = "Hair Accessories";
-        createCategory(name, desc, "http://192.168.1.108:9000/image/static/category/shoes.jpg", 6, category);
+        createCategory(name, desc, "http://www.beautypop.hk/image/static/category/shoes.jpg", 6, category);
 
         name = "Lifestyle Gadgets";
         desc = "Lifestyle Gadgets";
-        createCategory(name, desc, "http://192.168.1.108:9000/image/static/category/accessories.jpg", 7, category);
+        createCategory(name, desc, "http://www.beautypop.hk/image/static/category/accessories.jpg", 7, category);
         
         name = "Other";
         desc = "Other";
-        createCategory(name, desc, "http://192.168.1.108:9000/image/static/category/other.jpg", 8, category);
+        createCategory(name, desc, "http://www.beautypop.hk/image/static/category/other.jpg", 8, category);
         
         // sportswear
         name = "Sports";
         desc = "Sports";
-        category = createCategory(name, desc, "http://192.168.1.108:9000/image/static/category/sportswear.jpg", 7);
+        category = createCategory(name, desc, "http://www.beautypop.hk/image/static/category/sportswear.jpg", 7);
         
         name = "Sportswear";
         desc = "Sportswear";
-        createCategory(name, desc, "http://192.168.1.108:9000/image/static/category/fashion.jpg", 1, category);
+        createCategory(name, desc, "http://www.beautypop.hk/image/static/category/fashion.jpg", 1, category);
 
         name = "Swimwear";
         desc = "Swimwear";
-        createCategory(name, desc, "http://192.168.1.108:9000/image/static/category/beauty.jpg", 2, category);
+        createCategory(name, desc, "http://www.beautypop.hk/image/static/category/beauty.jpg", 2, category);
 
         name = "Sports Shoes";
         desc = "Sports Shoes";
-        createCategory(name, desc, "http://192.168.1.108:9000/image/static/category/sportswear.jpg", 3, category);
+        createCategory(name, desc, "http://www.beautypop.hk/image/static/category/sportswear.jpg", 3, category);
         
         name = "Sports Equipments";
         desc = "Sports Equipments";
-        createCategory(name, desc, "http://192.168.1.108:9000/image/static/category/bags.jpg", 4, category);
+        createCategory(name, desc, "http://www.beautypop.hk/image/static/category/bags.jpg", 4, category);
         
         name = "Other";
         desc = "Other";
-        createCategory(name, desc, "http://192.168.1.108:9000/image/static/category/other.jpg", 5, category);
+        createCategory(name, desc, "http://www.beautypop.hk/image/static/category/other.jpg", 5, category);
         
         // other
         name = "Other";
         desc = "Other";
-        category = createCategory(name, desc, "http://192.168.1.108:9000/image/static/category/other.jpg", 8);
+        category = createCategory(name, desc, "http://www.beautypop.hk/image/static/category/other.jpg", 8);
         
     }
     

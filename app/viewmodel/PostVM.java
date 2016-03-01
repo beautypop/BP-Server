@@ -146,6 +146,38 @@ public class PostVM extends PostVMLite {
         this.categoryId = categoryId;
     }
     
+    public Long getSubCategoryId() {
+        return subCategoryId;
+    }
+
+    public void setSubCategoryId(Long subCategoryId) {
+        this.subCategoryId = subCategoryId;
+    }
+
+    public String getSubCategoryName() {
+        return subCategoryName;
+    }
+
+    public void setSubCategoryName(String subCategoryName) {
+        this.subCategoryName = subCategoryName;
+    }
+
+    public String getSubCategoryIcon() {
+        return subCategoryIcon;
+    }
+
+    public void setSubCategoryIcon(String subCategoryIcon) {
+        this.subCategoryIcon = subCategoryIcon;
+    }
+
+    public String getSubCategoryType() {
+        return subCategoryType;
+    }
+
+    public void setSubCategoryType(String subCategoryType) {
+        this.subCategoryType = subCategoryType;
+    }
+    
     public List<CommentVM> getLatestComments() {
 		return latestComments;
 	}

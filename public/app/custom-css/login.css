@@ -18,12 +18,12 @@ ul, li {
     margin-left: 4%;
     margin-bottom: 0%;
     float: left;
-    top: -10px;
+    top: -5px;
     position: relative;
 }
 .login-logo img {
     width: auto !important;
-    height: 65px !important;
+    height: 48px !important;
 }
 #login-header {
     width: 100%;
@@ -179,12 +179,12 @@ ul, li {
     border-radius: 4px;
     cursor: pointer;
     display: inline-block;
-    background-color: #ffac33;
-    background-image: linear-gradient(#ffcc4d,#ffac33);
+    background-color: #ff7089;
+    background-image: linear-gradient(#ff7089,#ff5271);
     -ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorstr=#ffcc4d, endColorstr=#ffac33, GradientType=0)";
-    border-color: #f1a02a;
-    color: #292f33;
-    text-shadow: 0 1px 0 rgba(255,255,255,0.5);
+    border-color: #ff2742;
+    color: #fff;
+    /*text-shadow: 0 1px 0 rgba(255,255,255,0.5);*/
 }
 #login-newacc {
     margin-top: 25px;
