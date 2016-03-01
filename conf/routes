@@ -253,6 +253,8 @@ GET     /comments/:postId/:offset                   controllers.ProductControlle
 GET     /api/get-conversations                      controllers.UserController.getConversations()
 GET     /get-all-conversations                      controllers.UserController.getConversations()
 
+GET     /api/get-user-conversations/:offset         controllers.UserController.getUserConversations(offset:Long)
+
 GET     /api/get-post-conversations/:id             controllers.ProductController.getConversations(id:Long)
 GET     /get-post-conversations/:id                 controllers.ProductController.getConversations(id:Long)
 
