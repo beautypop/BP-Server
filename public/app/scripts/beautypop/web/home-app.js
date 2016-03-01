@@ -116,8 +116,8 @@ beautypop.config(['$translateProvider', function ($translateProvider) {
 	    "LOGOUT":"登出",
 	    // Other
 	    "APP_DOWNLOAD_BAR_MESSAGE_1":"立即下載 BeautyPop 手機 App",
-	    "APP_DOWNLOAD_BAR_MESSAGE_2":"Loves beauty",
-	    "APP_DOWNLOAD_MESSAGE":"免費下載 BeautyPop 手機 App。 購買商品或刊登你的商品 (30秒完成刊登)。 Loves beauty.",
+	    "APP_DOWNLOAD_BAR_MESSAGE_2":"Sell your style",
+	    "APP_DOWNLOAD_MESSAGE":"免費下載 BeautyPop 手機 App。 購買商品或刊登你的商品 (30秒完成刊登)。 Sell your style.",
 	    "APP_IOS_COMING_SOON":"BeautyPop iPhone 手機 App 快將推出",
 	    "APP_DOWNLOAD_NOW":"下載"
 	});
@@ -154,9 +154,9 @@ beautypop.config(['$translateProvider', function ($translateProvider) {
 	    "LIKES":"Likes",
 	    "LOGOUT":"Logout",
 	    // Other
-	    "APP_DOWNLOAD_BAR_MESSAGE_1":"Download BeautyPop App now",
-	    "APP_DOWNLOAD_BAR_MESSAGE_2":"Loves beauty",
-	    "APP_DOWNLOAD_MESSAGE":"Download BeautyPop for free now and list your product in 30 seconds. Loves beauty.",
+	    "APP_DOWNLOAD_BAR_MESSAGE_1":"Download BeautyPop now",
+	    "APP_DOWNLOAD_BAR_MESSAGE_2":"Sell your style",
+	    "APP_DOWNLOAD_MESSAGE":"Download BeautyPop for free now and list your product in 30 seconds. Sell your style.",
 	    "APP_IOS_COMING_SOON":"BeautyPop iPhone App is coming very soon!",
 	    "APP_DOWNLOAD_NOW":"Download"
 	});
