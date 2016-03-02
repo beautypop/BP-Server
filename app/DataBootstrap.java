@@ -235,7 +235,7 @@ public class DataBootstrap {
         superAdmin.save();
         
         UserInfo userInfo = new UserInfo();
-        userInfo.location = LocationCache.getDistrict(1L);
+        userInfo.location = LocationCache.getDistrict(7L);
         superAdmin.userInfo = userInfo;
         superAdmin.userInfo.save();
         superAdmin.save();
@@ -521,19 +521,19 @@ public class DataBootstrap {
         // lingerie
         name = "Bras";
         desc = "Bras";
-        createCategory(name, desc, "http://www.beautypop.com.hk/image/static/category/fashion.jpg", 1, accessoriesCategory);
+        createCategory(name, desc, "http://www.beautypop.com.hk/image/static/category/fashion.jpg", 1, lingerieCategory);
 
         name = "Underwear";
         desc = "Underwear";
-        createCategory(name, desc, "http://www.beautypop.com.hk/image/static/category/sports.jpg", 2, accessoriesCategory);
+        createCategory(name, desc, "http://www.beautypop.com.hk/image/static/category/sportswear.jpg", 2, lingerieCategory);
 
         name = "Sleepwear";
         desc = "Sleepwear";
-        createCategory(name, desc, "http://www.beautypop.com.hk/image/static/category/beauty.jpg", 3, accessoriesCategory);
+        createCategory(name, desc, "http://www.beautypop.com.hk/image/static/category/beauty.jpg", 3, lingerieCategory);
 
         name = "Other";
         desc = "Other";
-        createCategory(name, desc, "http://www.beautypop.com.hk/image/static/category/other.jpg", 4, accessoriesCategory);
+        createCategory(name, desc, "http://www.beautypop.com.hk/image/static/category/other.jpg", 4, lingerieCategory);
         
         // sports
         name = "Sportswear";
