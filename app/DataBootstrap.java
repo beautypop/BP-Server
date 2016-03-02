@@ -4,6 +4,8 @@ import javax.persistence.Query;
 
 import org.apache.commons.lang.exception.ExceptionUtils;
 
+import common.cache.LocationCache;
+
 import models.Category;
 import models.Country;
 import models.Country.CountryCode;
@@ -16,6 +18,7 @@ import models.Location.LocationCode;
 import models.SecurityRole;
 import models.TermsAndConditions;
 import models.User;
+import models.UserInfo;
 import play.db.jpa.JPA;
 import providers.MyUsernamePasswordAuthUser;
 import providers.MyUsernamePasswordAuthProvider.MySignup;
@@ -229,6 +232,8 @@ public class DataBootstrap {
         superAdmin.emailValidated = true;
         superAdmin.newUser = false;
         superAdmin.system = true;
+        superAdmin.userInfo = new UserInfo();
+        superAdmin.userInfo.location = LocationCache.getDistrict(1L);
         superAdmin.save();
         
         /*

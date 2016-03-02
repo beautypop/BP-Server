@@ -82,7 +82,7 @@ public class User extends SocialObject implements Subject, Followable {
     
 	public static final Long NO_LOGIN_ID = -1L;
 	
-	public static final String BP_ADMIN_NAME = "BeautyPop 管理員";
+	public static final String BP_ADMIN_NAME = "BeautyPop";
 
 	public String firstName;
 	public String lastName;
