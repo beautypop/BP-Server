@@ -1,7 +1,10 @@
 package viewmodel;
 
+import java.util.List;
+
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import controllers.CategoryController;
 import models.Category;
 
 public class CategoryVM {
@@ -11,6 +14,7 @@ public class CategoryVM {
 	@JsonProperty("description") public String description;
 	@JsonProperty("categoryType") public String categoryType;
 	@JsonProperty("seq") public int seq;
+	@JsonProperty("subCategories") public List<CategoryVM> subCategories;
 
     public CategoryVM(Category category) {
     	this.id = category.id;
@@ -19,5 +23,6 @@ public class CategoryVM {
     	this.description = category.description;
     	this.categoryType = category.categoryType.name();
     	this.seq = category.seq;
+    	subCategories = CategoryController.getSubCategoryVMs(id);
     }
 }
