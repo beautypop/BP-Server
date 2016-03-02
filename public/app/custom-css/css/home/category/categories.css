@@ -566,12 +566,14 @@ label {
     margin-right: 0px
 }
 
+.categories-wrapper .col-xs-3,
 .categories-wrapper .col-xs-4 {
     padding-right: 4px;
     padding-left: 0;
     padding-bottom: 4px
 }
 
+.categories-wrapper .col-xs-3 .category-wrapper,
 .categories-wrapper .col-xs-4 .category-wrapper {
     background-position: center center;
     background-size: cover;
@@ -579,16 +581,19 @@ label {
     background-color: #e8e8e8
 }
 
+.categories-wrapper .col-xs-3 .subcat-title,
 .categories-wrapper .col-xs-4 .subcat-title {
     background-color: #e8e8e8 !important
 }
 
+.categories-wrapper .col-xs-3 .middle-centered-div,
 .categories-wrapper .col-xs-4 .middle-centered-div {
     height: 24px;
     padding: 0 12px;
     background-color: white
 }
 
+.categories-wrapper .col-xs-3 .middle-centered-div .title,
 .categories-wrapper .col-xs-4 .middle-centered-div .title {
     padding-top: 7px;
     width: 100%;

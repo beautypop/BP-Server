@@ -597,6 +597,7 @@ label {
     margin-right: 0px
 }
 
+.categories-wrapper .col-xs-3, 
 .categories-wrapper .col-xs-4 {
     padding-right: 6px;
     padding-left: 0;

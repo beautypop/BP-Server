@@ -33,8 +33,8 @@ public class DataBootstrap {
         bootstrapTermsAndConditions();
         bootstrapCountry();
         bootstrapSystemInfo();
-        bootstrapUser();
         bootstrapLocation();
+        bootstrapUser();
         bootstrapCategory();
         bootstrapGameBadge();
 	}
@@ -232,8 +232,12 @@ public class DataBootstrap {
         superAdmin.emailValidated = true;
         superAdmin.newUser = false;
         superAdmin.system = true;
-        superAdmin.userInfo = new UserInfo();
-        superAdmin.userInfo.location = LocationCache.getDistrict(1L);
+        superAdmin.save();
+        
+        UserInfo userInfo = new UserInfo();
+        userInfo.location = LocationCache.getDistrict(1L);
+        superAdmin.userInfo = userInfo;
+        superAdmin.userInfo.save();
         superAdmin.save();
         
         /*
@@ -635,6 +639,10 @@ public class DataBootstrap {
         gameBadge.save();
         
         for (User user : User.getEligibleUsersForFeed()) {
+            if (user.system) {
+                continue;
+            }
+            
             if (user.albumPhotoProfile != null) {
                 GameBadgeAwarded.recordGameBadge(user, BadgeType.PROFILE_PHOTO);
             }
