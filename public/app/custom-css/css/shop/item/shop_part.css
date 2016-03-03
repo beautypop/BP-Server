@@ -316,7 +316,7 @@ label {
 }
 
 .shop-part-container .shop-part .top-holder .view-box.isPC {
-    background: #FF2742;
+    background: #fd4e64;
     color: white;
     font-size: 14px;
     border: none;
@@ -387,7 +387,7 @@ label {
 }
 
 .shop-part-container .shop-part .bottom-holder li .box-above .text {
-    color: #FF2742;
+    color: #fd4e64;
     margin-left: 4px
 }
 
@@ -438,7 +438,7 @@ label {
 }
 
 .shop-part-container .shop-part .bottom-holder.isPC li .box-right .number {
-    color: #FF2742
+    color: #fd4e64
 }
 
 .shop-part-container .shop-part .bottom-holder.isPC li .box-right .text {
@@ -563,14 +563,14 @@ label {
     -webkit-transition: all 0.2s ease-in;
     -moz-transition: all 0.2s ease-in;
     transition: all 0.2s ease-in;
-    border: 1px solid #FF2742;
-    background-color: #FF2742;
+    border: 1px solid #fd4e64;
+    background-color: #fd4e64;
     color: white;
     min-width: 50px;
     height: 24px;
     line-height: 24px;
-    background: #FF2742;
-    border: 1px solid #FF2742;
+    background: #fd4e64;
+    border: 1px solid #fd4e64;
     text-align: center;
     width: 70px;
     color: white;

@@ -1847,7 +1847,7 @@ label {
 }
 
 #item-page .info-part .table .td .text-link {
-    color: #FF2742;
+    color: #fd4e64;
     line-height: 36px
 }
 
@@ -2299,12 +2299,12 @@ label {
     -webkit-transition: all 0.2s ease-in;
     -moz-transition: all 0.2s ease-in;
     transition: all 0.2s ease-in;
-    border: 1px solid #FF2742;
-    background-color: #FF2742;
+    border: 1px solid #fd4e64;
+    background-color: #fd4e64;
     color: white;
     min-width: 60px;
     color: white;
-    background: #FF2742;
+    background: #fd4e64;
     height: 40px;
     line-height: 38px;
     box-shadow: 0px 2px 4px 0px rgba(0, 0, 0, 0.08)
