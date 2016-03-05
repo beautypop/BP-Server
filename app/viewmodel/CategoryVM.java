@@ -14,6 +14,7 @@ public class CategoryVM {
 	@JsonProperty("description") public String description;
 	@JsonProperty("categoryType") public String categoryType;
 	@JsonProperty("seq") public int seq;
+	@JsonProperty("parentId") public Long parentId;
 	@JsonProperty("subCategories") public List<CategoryVM> subCategories;
 
     public CategoryVM(Category category) {
@@ -23,6 +24,7 @@ public class CategoryVM {
     	this.description = category.description;
     	this.categoryType = category.categoryType.name();
     	this.seq = category.seq;
-    	subCategories = CategoryController.getSubCategoryVMs(id);
+    	this.parentId = category.parent == null? -1L : category.parent.id;
+    	this.subCategories = CategoryController.getSubCategoryVMs(id);
     }
 }

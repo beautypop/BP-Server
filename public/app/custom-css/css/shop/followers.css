@@ -80,14 +80,14 @@ label {
     -webkit-transition: all 0.2s ease-in;
     -moz-transition: all 0.2s ease-in;
     transition: all 0.2s ease-in;
-    border: 1px solid #FF2742;
-    background-color: #FF2742;
+    border: 1px solid #fd4e64;
+    background-color: #fd4e64;
     color: white;
     min-width: 60px;
     height: 30px;
     line-height: 28px;
-    background: #FF2742;
-    border: 1px solid #FF2742;
+    background: #fd4e64;
+    border: 1px solid #fd4e64;
     text-align: center;
     width: 85px;
     color: white;
@@ -116,11 +116,11 @@ label {
     padding: 20px 0 40px 0;
     text-align: center;
     font-weight: 500;
-    color: #FF2742
+    color: #fd4e64
 }
 
 .label-banned {
-    color: #FF2742
+    color: #fd4e64
 }
 
 .deleted {
