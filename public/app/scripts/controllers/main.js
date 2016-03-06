@@ -32,7 +32,7 @@ beautypop.controller('HomeController',
 			url = "product/"+featuredItem.destinationObjId;
 		}
 		if(angular.equals(featuredItem.destinationType,"USER")){
-			url = "profile/"+featuredItem.destinationObjId;
+			url = "seller/"+featuredItem.destinationObjId;
 		}
 		window.location.href=url;
 	}

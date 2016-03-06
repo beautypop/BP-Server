@@ -725,7 +725,7 @@ public class Application extends Controller {
         User user = User.findByDisplayName(path);
         if (user != null) {
             logger.underlyingLogger().info(String.format("[u=%d][displayName=%s] Found user to redirect to profile ", user.id, user.displayName));
-            return redirect("/profile/"+user.id);
+            return redirect("/seller/"+user.id);
         }
         return pathNotFound();
     }
