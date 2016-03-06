@@ -510,8 +510,8 @@ public class DataBootstrap {
         desc = "Hair Accessories";
         createCategory(name, desc, "http://www.beautypop.com.hk/image/static/category/shoes.jpg", 6, accessoriesCategory);
 
-        name = "Lifestyle Gadgets";
-        desc = "Lifestyle Gadgets";
+        name = "Lifestyle";
+        desc = "Lifestyle";
         createCategory(name, desc, "http://www.beautypop.com.hk/image/static/category/accessories.jpg", 7, accessoriesCategory);
         
         name = "Other";
@@ -555,6 +555,19 @@ public class DataBootstrap {
         name = "Other";
         desc = "Other";
         createCategory(name, desc, "http://www.beautypop.com.hk/image/static/category/other.jpg", 5, sportsCategory);
+        
+        // sports
+        name = "Maternity";
+        desc = "Maternity";
+        createCategory(name, desc, "http://www.beautypop.com.hk/image/static/category/fashion.jpg", 1, otherCategory);
+        
+        name = "Wedding";
+        desc = "Wedding";
+        createCategory(name, desc, "http://www.beautypop.com.hk/image/static/category/bags.jpg", 2, otherCategory);
+        
+        name = "Other";
+        desc = "Other";
+        createCategory(name, desc, "http://www.beautypop.com.hk/image/static/category/other.jpg", 3, otherCategory);
     }
     
     private static Category createCategory(String name, String desc, String icon, int seq) {
