@@ -96,12 +96,16 @@ public class CategoryController extends Controller{
 	
 	@Transactional
     public static Result getCategories(){
-        List<CategoryVM> categoryList = new ArrayList<CategoryVM>();
-        for(Category category : Category.getCategories()){
-            CategoryVM cvm = new CategoryVM(category);
-            categoryList.add(cvm);
+        List<CategoryVM> categories = new ArrayList<CategoryVM>();
+        for (Category category : Category.getCategories()) {
+            CategoryVM vm = new CategoryVM(category);
+            categories.add(vm);
         }
-        return ok(Json.toJson(categoryList));
+        for (Category category : Category.getCustomCategories()) {
+            CategoryVM vm = new CategoryVM(category);
+            categories.add(vm);
+        }
+        return ok(Json.toJson(categories));
     }
 	
 	@Transactional

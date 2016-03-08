@@ -52,8 +52,11 @@ public class Category extends SocialObject implements Likeable, Postable, Compar
     @OneToMany(cascade = CascadeType.REMOVE)
     public List<Folder> folders;
     
+    public String customJob;
+    
     public static enum CategoryType {
-        PUBLIC
+        PUBLIC,
+        CUSTOM
     }
     
     public Category() {
@@ -65,10 +68,14 @@ public class Category extends SocialObject implements Likeable, Postable, Compar
     }
     
     public Category(String name, String description, User owner, String icon, int seq, Category parent) {
+        this(CategoryType.PUBLIC, name, description, owner, icon, seq, parent);
+    }
+
+    public Category(CategoryType categoryType, String name, String description, User owner, String icon, int seq, Category parent) {
         this();
         this.name = name;
         this.description = description;
-        this.categoryType = CategoryType.PUBLIC;
+        this.categoryType = categoryType;
         this.owner = owner;
         this.icon = icon;
         this.seq = seq;
@@ -78,7 +85,8 @@ public class Category extends SocialObject implements Likeable, Postable, Compar
     
     public static List<Category> loadCategories() {
         try {
-            Query q = JPA.em().createQuery("SELECT c FROM Category c where parent is null and deleted = 0 order by seq");
+            Query q = JPA.em().createQuery("SELECT c FROM Category c where categoryType = ?1 and parent is null and deleted = 0 order by seq");
+            q.setParameter(1, CategoryType.PUBLIC);
             return (List<Category>) q.getResultList();
         } catch (NoResultException nre) {
             return null;
@@ -87,7 +95,18 @@ public class Category extends SocialObject implements Likeable, Postable, Compar
     
     public static List<Category> loadSubCategories() {
         try {
-            Query q = JPA.em().createQuery("SELECT c FROM Category c where parent is not null and deleted = 0 order by seq");
+            Query q = JPA.em().createQuery("SELECT c FROM Category c where categoryType = ?1 and parent is not null and deleted = 0 order by seq");
+            q.setParameter(1, CategoryType.PUBLIC);
+            return (List<Category>) q.getResultList();
+        } catch (NoResultException nre) {
+            return null;
+        }
+    }
+    
+    public static List<Category> loadCustomCategories() {
+        try {
+            Query q = JPA.em().createQuery("SELECT c FROM Category c where categoryType = ?1 and deleted = 0 order by seq");
+            q.setParameter(1, CategoryType.CUSTOM);
             return (List<Category>) q.getResultList();
         } catch (NoResultException nre) {
             return null;
@@ -115,6 +134,10 @@ public class Category extends SocialObject implements Likeable, Postable, Compar
     
     public static List<Category> getSubCategories(Long categoryId) {
         return CategoryCache.getSubCategories(categoryId);
+    }
+    
+    public static List<Category> getCustomCategories() {
+        return CategoryCache.getCustomCategories();
     }
     
     @Override

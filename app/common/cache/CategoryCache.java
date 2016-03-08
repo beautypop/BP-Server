@@ -15,6 +15,7 @@ public class CategoryCache {
 
     private static List<Category> categories;
     private static final Map<Long, List<Category>> categoryToSubCategoryiesMap = new HashMap<>();
+    private static List<Category> customCategories;
     private static final Map<Long, Category> allCategoriesMap = new HashMap<>();
 
     static {
@@ -33,6 +34,11 @@ public class CategoryCache {
                 categoryToSubCategoryiesMap.get(subCategory.parent.id).add(subCategory);
             }
         }
+        
+        customCategories = Category.loadCustomCategories();
+        for (Category customCategory : customCategories) {
+            allCategoriesMap.put(customCategory.id, customCategory);
+        }
     }
 
     public static List<Category> getCategories() {
@@ -41,6 +47,10 @@ public class CategoryCache {
     
     public static List<Category> getSubCategories(Long categoryId) {
         return categoryToSubCategoryiesMap.get(categoryId);
+    }
+    
+    public static List<Category> getCustomCategories() {
+        return customCategories;
     }
     
     public static Category getCategory(Long id) {

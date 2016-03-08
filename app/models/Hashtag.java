@@ -24,8 +24,6 @@ public class Hashtag extends SocialObject implements Likeable, Postable {
 	@Column(length=2000)
 	public String description;
     
-	public String jobClass;
-
 	@Column(nullable = false, columnDefinition = "TINYINT(1)")
 	public boolean rerun = false;
 	
@@ -42,7 +40,6 @@ public class Hashtag extends SocialObject implements Likeable, Postable {
 		this.owner = owner;
 		this.icon = icon;
 		this.seq = seq;
-		this.system = true;
 	}
 	
 	public static List<Hashtag> loadHashtags() {
@@ -87,16 +84,6 @@ public class Hashtag extends SocialObject implements Likeable, Postable {
 	public static List<Hashtag> getRerunHashtags() {
 		try {
             Query q = JPA.em().createQuery("SELECT t FROM Hashtag t where rerun = true and deleted = 0");
-            List<Hashtag> list = (List<Hashtag>)q.getResultList();
-            return list;
-        } catch (NoResultException nre) {
-            return null;
-        }
-    }
-	
-	public static List<Hashtag> getSystemHashtags() {
-		try {
-            Query q = JPA.em().createQuery("SELECT t FROM Hashtag t where system = true and jobClass is not null and deleted = 0");
             List<Hashtag> list = (List<Hashtag>)q.getResultList();
             return list;
         } catch (NoResultException nre) {

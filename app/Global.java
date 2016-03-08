@@ -21,7 +21,7 @@ import com.feth.play.module.pa.exceptions.AuthException;
 
 import common.cache.CalcServer;
 import common.cache.FeaturedItemCache;
-import common.hashtag.PostMarker;
+import common.category.custom.PostMarker;
 import common.schedule.CommandChecker;
 import common.schedule.JobScheduler;
 import common.thread.ThreadLocalOverride;

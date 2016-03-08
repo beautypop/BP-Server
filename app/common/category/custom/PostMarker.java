@@ -1,7 +1,7 @@
-package common.hashtag;
+package common.category.custom;
 
+import models.Category;
 import models.PostToMark;
-
 import models.Hashtag;
 import models.Post;
 
@@ -21,21 +21,21 @@ public class PostMarker {
 
 			for(PostToMark postToMark : PostToMark.getAllPostsToMark()){
 			    Post post = Post.findById(postToMark.postId);
-				for(Hashtag hash : Hashtag.getSystemHashtags()){
+				for(Category customCategory : Category.getCustomCategories()){
 					try {
-						//jobClass name must be qualified name in DB, for eg: common.hashtag.NewThisWeekHashtagMarkingJob
-						Class cls = classLoader.loadClass(hash.jobClass);
+						//customJob name must be qualified name in DB, for eg: common.Category.NewThisWeekHashtagMarkingJob
+						Class cls = classLoader.loadClass(customCategory.customJob);
 						Object job = cls.newInstance();
 						Method method = cls.getDeclaredMethod("execute", paramString);
-						method.invoke(job, new Object[] { post,hash });
+						method.invoke(job, new Object[] { post, customCategory });
 					} catch (InvocationTargetException e) {
-					    logger.underlyingLogger().error(hash.jobClass+" failed to execute... \n"+e.getMessage(), e.getTargetException());
+					    logger.underlyingLogger().error(customCategory.customJob+" failed to execute... \n"+e.getMessage(), e.getTargetException());
 					}
 				}
 				postToMark.delete();
 			}
 		} catch (Exception e) {
-			System.out.println(e);
+			logger.underlyingLogger().error("Error in markPosts()", e);
 		}
 	}				
 }
