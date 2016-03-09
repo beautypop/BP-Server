@@ -240,19 +240,16 @@ public class UserController extends Controller {
         String firstName = form.get("firstName");
         String lastName = form.get("lastName");
         String aboutMe = form.get("aboutMe");
-        if (StringUtils.isEmpty(displayName) || StringUtils.isEmpty(firstName) || StringUtils.isEmpty(lastName)) {
-            logger.underlyingLogger().error(String.format(
-                    "[u=%d][displayName=%s][firstName=%s][lastName=%s] displayName, firstName or lastName missing", 
-                    localUser.id, displayName, firstName, lastName));
+        if (StringUtils.isEmpty(displayName)) {
+            logger.underlyingLogger().error(
+                    String.format("[u=%d][displayName=%s] displayName is missing", localUser.id, displayName));
             return badRequest("請填寫您的顯示名稱與姓名");
         }
         
         displayName = displayName.trim();
-        firstName = firstName.trim();
-        lastName = lastName.trim();
-        if (aboutMe != null) {
-            aboutMe = aboutMe.trim();
-        }
+        firstName = StringUtils.isEmpty(firstName)? "" : firstName.trim();
+        lastName = StringUtils.isEmpty(lastName)? "" : lastName.trim();
+        aboutMe = StringUtils.isEmpty(aboutMe)? "" : aboutMe.trim();
         
         if (!localUser.displayName.equals(displayName)) {
             if (StringUtil.hasWhitespace(displayName)) {
