@@ -1,4 +1,11 @@
 
+var HTTP_PREFIXES = 
+	[ "http://www.",
+	  "https://www.",
+	  "http://",
+	  "https://",
+	  "www." ];
+
 var dismissAppDownloadTips = function() {
 	$('#appDownloadTips').hide();
 	sessionStorage.setItem('dismissAppDownloadTips','true');
@@ -45,37 +52,6 @@ var writeMetaTitleDescription = function(title, description, image) {
 	$('meta[name=keywords]').attr('content', title + ', ' + $('meta[name=keywords]').attr('content'));
 	if (image && image != undefined) {
 		$('meta[property="og:image"]').attr('content', image);
-	}
-}
-
-var getMetaForSchool = function(obj) {
-	var title, description;
-	
-	var name = obj.n;
-	if (obj.ne && obj.ne != undefined) {
-		name += ' ' + obj.ne;
-	}
-	title = name + ' 收生與收費資料';
-	
-	var schoolType = '';
-	var hasPN = '';
-	if (obj.hasPN == undefined) {
-		schoolType = '幼兒班';
-	} else {
-		schoolType = '幼稚園';
-		hasPN = (obj.hasPN? '有' : '沒有') + '提供幼兒班，';
-	}
-	
-	description = name + ' 是一所' + 	//schoolType + '概覽：' + 
-		obj.orgt + '學校，' +
-		(obj.cp? '可' : '不可') + '兌現學券，' +
-		hasPN + 
-		'位於' + obj.dis + '。' +
-		'立即查看更多收生與收費資料。';
-	
-	return {
-		title: title,
-		description: description
 	}
 }
 
@@ -151,6 +127,16 @@ var formatToExternalUrl = function(url) {
     	url = DefaultValues.BASE_URL + url;
     }
     return url;
+}
+
+var stripHttpPrefix = function(url) {
+	for (i = 0; i < HTTP_PREFIXES.length; i++) { 
+		var prefix = HTTP_PREFIXES[i];
+		if (startsWith(url,prefix)) {
+			return url.replace(prefix, "");
+		}
+	}
+	return url;
 }
 
 //

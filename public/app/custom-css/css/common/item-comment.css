@@ -342,7 +342,7 @@ label {
 }
 
 .at-user {
-    color: #ff5722
+    color: #fd4e64
 }
 
 .item-comments-index-container {
@@ -375,7 +375,7 @@ label {
 }
 
 .item-comments-index-container .load-previous-button {
-    color: #ff5722;
+    color: #fd4e64;
     text-decoration: underline;
     height: 30px;
     line-height: 30px;

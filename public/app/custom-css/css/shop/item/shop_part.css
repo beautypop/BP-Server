@@ -664,6 +664,7 @@ label {
     text-align: left;
     white-space: pre-wrap;
     word-wrap: break-word;
+    margin-top: 4px;
 }
 
 .shop-detailed-info .shop-description-wrapper, .shop-detailed-info .shop-status {
@@ -673,10 +674,11 @@ label {
 }
 
 .shop-detailed-info .shop-link {
-    color: #ff5722;
+    color: #fd4e64;
     text-align: left;
     overflow: hidden;
     text-overflow: ellipsis;
+    margin-top: 4px;
 }
 
 .shop-detailed-info .shop-verified-status {

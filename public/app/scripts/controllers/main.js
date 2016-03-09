@@ -403,7 +403,7 @@ beautypop.controller('CommentOnProductController',
 });
 
 
-beautypop.controller('ProfileController', 
+beautypop.controller('ProfilePageController', 
 		function($scope, $location, $translate, $route, $rootScope, $filter, $window, $anchorScroll, profileUser, userService, userInfo, followService, ngDialog, profilePhotoModal) {
 
 	writeMetaCanonical($location.absUrl());
@@ -417,6 +417,7 @@ beautypop.controller('ProfileController',
 	$scope.active = true;
 	$scope.userInfo = userInfo;
 	$scope.user = profileUser;
+	$scope.sellerUrl = stripHttpPrefix(formatToExternalUrl(profileUser.displayName));
 
 	$scope.products = userService.getUserPostedFeed.get({id:profileUser.id, offset:0});
 	

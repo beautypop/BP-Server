@@ -68,7 +68,7 @@
    </div>
    <div class="flex1 middle-centered-div shopname-wrapper">
     <div class="shopname truncate m18 flex1">
-     {{user.displayName}}<span style="font-weight:300;font-size:14px;color:white;margin-left:10px">{{user.name}}</span>
+     {{user.displayName}}
      <div ng-click="openUploadPhotoModal('profile')" style="display:inline-block">
       <div ng-class="user.id==userInfo.id ? 'upload-profile-image' : 'hide' " class="shopname truncate m16 " style="cursor:pointer"></div>
      </div>
@@ -103,8 +103,10 @@
 
  <div class='shop-detailed-info'>
 
-  <div class="shop-description-wrapper padding15" ng-if="user.aboutMe">
-    <div class="shop-description r14">{{user.aboutMe}}</div>
+  <div class="shop-description-wrapper padding15" >
+    <div class="shop-description r14" style="font-weight:bold;color:#555;" ng-if="user.name">{{user.name}}</div>
+    <div class="shop-description r14" ng-if="user.name">{{user.name}}</div>
+    <div class="shop-link r14">{{sellerUrl}}</div>
   </div>
   
   <div class='shop-part-container inShop'>
