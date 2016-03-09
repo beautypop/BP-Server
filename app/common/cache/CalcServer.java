@@ -364,7 +364,7 @@ public class CalcServer {
             if (post.soldMarked) {
                 continue;
             }
-            addToCategoryPopularQueue(post);
+            addToCategoryPopularQueue(post, post.category);
         }
         
         sw.stop();
@@ -414,53 +414,57 @@ public class CalcServer {
     }
     
     public void recalcScoreAndAddToCategoryPopularQueue(Post post) {
-        addToCategoryPopularQueue(post);
+        addToCategoryPopularQueue(post, post.category);
     }
     
     public void addToCategoryQueues(Post post) {
-        addToCategoryPopularQueue(post);
-        addToCategoryNewestQueue(post);
-        addToCategoryPriceLowHighQueue(post);
+        addToCategoryQueues(post, post.category);
     }
     
-    private void addToCategoryPopularQueue(Post post) {
+    public void addToCategoryQueues(Post post, Category category) {
+        addToCategoryPopularQueue(post, category);
+        addToCategoryNewestQueue(post, category);
+        addToCategoryPriceLowHighQueue(post, category);
+    }
+    
+    private void addToCategoryPopularQueue(Post post, Category category) {
         if (post.soldMarked) {
             return;
         }
         Double timeScore = calculateTimeScore(post, true);
-        jedisCache.putToSortedSet(getKey(FeedType.CATEGORY_POPULAR,post.category.id),  timeScore.doubleValue() * FEED_SCORE_HIGH_BASE, post.id.toString());
+        jedisCache.putToSortedSet(getKey(FeedType.CATEGORY_POPULAR,category.id),  timeScore.doubleValue() * FEED_SCORE_HIGH_BASE, post.id.toString());
         if (post.isNewCondition()) {
-            jedisCache.putToSortedSet(getKey(FeedType.CATEGORY_POPULAR_NEW,post.category.id),  timeScore.doubleValue() * FEED_SCORE_HIGH_BASE, post.id.toString());    
+            jedisCache.putToSortedSet(getKey(FeedType.CATEGORY_POPULAR_NEW,category.id),  timeScore.doubleValue() * FEED_SCORE_HIGH_BASE, post.id.toString());    
         } else {
-            jedisCache.putToSortedSet(getKey(FeedType.CATEGORY_POPULAR_USED,post.category.id),  timeScore.doubleValue() * FEED_SCORE_HIGH_BASE, post.id.toString());
+            jedisCache.putToSortedSet(getKey(FeedType.CATEGORY_POPULAR_USED,category.id),  timeScore.doubleValue() * FEED_SCORE_HIGH_BASE, post.id.toString());
         }
-        if (post.category.parent != null) {
-            jedisCache.putToSortedSet(getKey(FeedType.CATEGORY_POPULAR,post.category.parent.id),  timeScore.doubleValue() * FEED_SCORE_HIGH_BASE, post.id.toString());
+        if (category.parent != null) {
+            jedisCache.putToSortedSet(getKey(FeedType.CATEGORY_POPULAR,category.parent.id),  timeScore.doubleValue() * FEED_SCORE_HIGH_BASE, post.id.toString());
             if (post.isNewCondition()) {
-                jedisCache.putToSortedSet(getKey(FeedType.CATEGORY_POPULAR_NEW,post.category.parent.id),  timeScore.doubleValue() * FEED_SCORE_HIGH_BASE, post.id.toString());    
+                jedisCache.putToSortedSet(getKey(FeedType.CATEGORY_POPULAR_NEW,category.parent.id),  timeScore.doubleValue() * FEED_SCORE_HIGH_BASE, post.id.toString());    
             } else {
-                jedisCache.putToSortedSet(getKey(FeedType.CATEGORY_POPULAR_USED,post.category.parent.id),  timeScore.doubleValue() * FEED_SCORE_HIGH_BASE, post.id.toString());
+                jedisCache.putToSortedSet(getKey(FeedType.CATEGORY_POPULAR_USED,category.parent.id),  timeScore.doubleValue() * FEED_SCORE_HIGH_BASE, post.id.toString());
             }
         }
     }
     
-    private void addToCategoryNewestQueue(Post post) {
+    private void addToCategoryNewestQueue(Post post, Category category) {
         if (post.soldMarked) {
             return;
         }
-        jedisCache.putToSortedSet(getKey(FeedType.CATEGORY_NEWEST,post.category.id), post.getCreatedDate().getTime(), post.id.toString());
-        if (post.category.parent != null) {
-            jedisCache.putToSortedSet(getKey(FeedType.CATEGORY_NEWEST,post.category.parent.id), post.getCreatedDate().getTime(), post.id.toString());    
+        jedisCache.putToSortedSet(getKey(FeedType.CATEGORY_NEWEST,category.id), post.getCreatedDate().getTime(), post.id.toString());
+        if (category.parent != null) {
+            jedisCache.putToSortedSet(getKey(FeedType.CATEGORY_NEWEST,category.parent.id), post.getCreatedDate().getTime(), post.id.toString());    
         }
     }
     
-    private void addToCategoryPriceLowHighQueue(Post post) {
+    private void addToCategoryPriceLowHighQueue(Post post, Category category) {
         if (post.soldMarked) {
             return;
         }
-        jedisCache.putToSortedSet(getKey(FeedType.CATEGORY_PRICE_LOW_HIGH,post.category.id), post.price * FEED_SCORE_HIGH_BASE + post.id , post.id.toString());
-        if (post.category.parent != null) {
-            jedisCache.putToSortedSet(getKey(FeedType.CATEGORY_PRICE_LOW_HIGH,post.category.parent.id), post.getCreatedDate().getTime(), post.id.toString());    
+        jedisCache.putToSortedSet(getKey(FeedType.CATEGORY_PRICE_LOW_HIGH,category.id), post.price * FEED_SCORE_HIGH_BASE + post.id , post.id.toString());
+        if (category.parent != null) {
+            jedisCache.putToSortedSet(getKey(FeedType.CATEGORY_PRICE_LOW_HIGH,category.parent.id), post.getCreatedDate().getTime(), post.id.toString());    
         }
     }
     

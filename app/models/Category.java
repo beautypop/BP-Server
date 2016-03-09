@@ -54,6 +54,11 @@ public class Category extends SocialObject implements Likeable, Postable, Compar
     
     public String customJob;
     
+    public String customJobData;
+    
+    @Column(nullable = false, columnDefinition = "TINYINT(1)")
+    public boolean run = false;
+    
     public static enum CategoryType {
         PUBLIC,
         CUSTOM

@@ -146,12 +146,26 @@ public class StringUtil {
     }
     
     public static List<String> parseValues(String values) {
-        return Arrays.asList(values.split(DefaultValues.DELIMITER_COMMA));
+        return parseValues(DefaultValues.DELIMITER_COMMA);
+    }
+    
+    public static List<String> parseValues(String values, String delimiter) {
+        if (values == null) {
+            return new ArrayList<>();
+        }
+        return Arrays.asList(values.split(delimiter));
     }
     
     public static List<Long> parseIds(String ids) {
+        return parseIds(ids, DefaultValues.DELIMITER_COMMA);
+    }
+    
+    public static List<Long> parseIds(String ids, String delimiter) {
+        if (ids == null) {
+            return new ArrayList<>();
+        }
         List<Long> list = new ArrayList<>();
-        List<String> tokens = Arrays.asList(ids.split(DefaultValues.DELIMITER_COMMA));
+        List<String> tokens = Arrays.asList(ids.split(delimiter));
         for (String token : tokens) {
             try {
                 long id = Long.parseLong(token);
@@ -163,6 +177,13 @@ public class StringUtil {
     }
     
     public static String idsToString(List<Long> ids) {
-        return StringUtils.join(ids, DefaultValues.DELIMITER_COMMA);
+        return idsToString(ids, DefaultValues.DELIMITER_COMMA);
+    }
+    
+    public static String idsToString(List<Long> ids, String delimiter) {
+        if (ids == null) {
+            return "";
+        }
+        return StringUtils.join(ids, delimiter);
     }
 }

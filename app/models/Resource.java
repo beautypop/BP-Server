@@ -1,6 +1,7 @@
 package models;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -11,6 +12,7 @@ import javax.persistence.NoResultException;
 import javax.persistence.Query;
 
 import common.utils.FileUtil;
+import common.utils.StringUtil;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
@@ -141,6 +143,7 @@ public class Resource extends SocialObject {
             return;
         }
         
+        /*
         String authorizedUserIds = "";
         for (User user : users) {
             authorizedUserIds += user.id + DefaultValues.DELIMITER_COMMA;
@@ -148,8 +151,14 @@ public class Resource extends SocialObject {
         if (authorizedUserIds.endsWith(DefaultValues.DELIMITER_COMMA)) {
             authorizedUserIds = authorizedUserIds.substring(0, authorizedUserIds.length() - 1);
         }
+        */
         
-        this.authorizedUserIds = authorizedUserIds;
+        List<Long> ids = new ArrayList<Long>();
+        for (User user : users) {
+            ids.add(user.id);
+        }
+        
+        this.authorizedUserIds = StringUtil.idsToString(ids);
         this.save();
     }
     
@@ -162,8 +171,8 @@ public class Resource extends SocialObject {
             return false;
         }
         
-        List<String> ids = Arrays.asList(authorizedUserIds.split(DefaultValues.DELIMITER_COMMA));
-        if (ids.contains(String.valueOf(user.id))) {
+        List<Long> ids = StringUtil.parseIds(authorizedUserIds);
+        if (ids.contains(user.id)) {
             return true;
         }
         return false;

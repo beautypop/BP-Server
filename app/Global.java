@@ -2,6 +2,7 @@ import java.util.Arrays;
 import java.util.concurrent.TimeUnit;
 
 import models.Activity;
+import models.Category;
 import models.Hashtag;
 import models.Post;
 import models.SecurityRole;
@@ -122,6 +123,42 @@ public class Global extends GlobalSettings {
     private void scheduleJobs() {
         
         //
+        // Startup delayed jobs
+        //
+        
+        // schedule for Hash Marking daily at 5am HKT
+        JobScheduler.getInstance().run(
+                new Runnable() {
+                    public void run() {
+                        try {
+                           JPA.withTransaction(new play.libs.F.Callback0() {
+                                public void invoke() {
+                                    logger.underlyingLogger().info("[JobScheduler] customCategoryMarking starts...");
+    
+                                    try {
+                                        for (Category customCategory: Category.getCustomCategories()){
+                                            for (Post post : Post.getEligiblePostsForFeeds()) {
+                                                if (post.soldMarked) {
+                                                    continue;
+                                                }
+                                                PostMarker.markPost(post);
+                                             }
+                                        }   
+                                    } catch (Exception e2) {
+                                        // TODO: handle exception
+                                    }
+                                    logger.underlyingLogger().info("[JobScheduler] customCategoryMarking completed !");
+                                }
+                            });
+                        } catch (Exception e) {
+                            logger.underlyingLogger().error("[JobScheduler] customCategoryMarking failed...");
+                        }
+                    }
+                }, DateTimeUtil.MINUTE_MILLIS);
+        
+        
+        
+        //
         // Daily scheduled jobs
         //
         
@@ -161,38 +198,6 @@ public class Global extends GlobalSettings {
                     }
                 });
 
-        // schedule for Hash Marking daily at 5am HKT
-        /*
-        JobScheduler.getInstance().schedule("hashtagMarking", "0 0 5 ? * *",
-                new Runnable() {
-                    public void run() {
-                        try {
-                           JPA.withTransaction(new play.libs.F.Callback0() {
-                                public void invoke() {
-                                    logger.underlyingLogger().info("[JobScheduler] hashtagMarking starts...");
-    
-                                    try {
-                                    	for (Hashtag hashtag: Hashtag.getRerunHashtags()){
-    	                                	for (Post post : Post.getEligiblePostsForFeeds()) {
-    	                        				if (post.soldMarked) {
-    	                        					continue;
-    	                        				}
-    	                        				post.addHashtag(hashtag);
-    	                        			 }
-                                    	}	
-    								} catch (Exception e2) {
-    									// TODO: handle exception
-    								}
-                                	logger.underlyingLogger().info("[JobScheduler] hashtagMarking completed !");
-                                }
-                            });
-                        } catch (Exception e) {
-                            logger.underlyingLogger().error("[JobScheduler] hashtagMarking failed...");
-                        }
-                    }
-                });
-        */
-        
         //
         // Interval scheduled jobs
         //
