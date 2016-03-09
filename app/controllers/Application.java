@@ -257,8 +257,8 @@ public class Application extends Controller {
         String parentDisplayName = form.get("parent_displayname").trim();
         Location parentLocation = Location.getLocationById(Integer.valueOf(form.get("parent_location")));
 
-        if (!ValidationUtil.isDisplayNameValid(parentDisplayName)) {
-            return handleSaveSignupInfoError("\""+parentDisplayName+"\" 不可有空格", fb);
+        if (!ValidationUtil.isValidDisplayName(parentDisplayName)) {
+            return handleSaveSignupInfoError("顯示名稱只可輸入 英文字母(a-z) 數字(0-9) 和 符號(_)(.) , 不可以 (.) 結尾, 不可有空格, 不可有2個或以上相連符號(.)", fb);
         }
         if (User.isDisplayNameExists(parentDisplayName)) {
             return handleSaveSignupInfoError("\""+parentDisplayName+"\" 已被選用。請選擇另一個顯示名稱重試", fb);
@@ -267,8 +267,8 @@ public class Application extends Controller {
             return handleSaveSignupInfoError("請填寫您的地區", fb);
         }
         
-        localUser.displayName = parentDisplayName;
-        localUser.name = parentDisplayName;
+        localUser.displayName = parentDisplayName.toLowerCase();
+        localUser.name = new String(localUser.firstName+" "+localUser.lastName).trim();
         
         UserInfo userInfo = new UserInfo();
         userInfo.location = parentLocation;

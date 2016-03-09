@@ -7,6 +7,7 @@ import models.User;
 public class UserVMLite {
 	@JsonProperty("id") public Long id;
     @JsonProperty("displayName") public String displayName;
+    @JsonProperty("name") public String name;
     @JsonProperty("firstName") public String firstName;
     @JsonProperty("lastName") public String lastName;
     @JsonProperty("email") public String email;
@@ -49,6 +50,7 @@ public class UserVMLite {
         }
         
         this.displayName = user.displayName;
+        this.name = user.name;
         this.email = user.email;
         this.firstName = user.firstName;
         this.lastName = user.lastName;
@@ -94,6 +96,14 @@ public class UserVMLite {
 
     public void setDisplayName(String displayName) {
         this.displayName = displayName;
+    }
+    
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
     public String getFirstName() {

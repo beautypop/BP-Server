@@ -205,14 +205,6 @@ public class User extends SocialObject implements Subject, Followable {
 		this.objectType = SocialObjectType.USER;
 	}
 
-	public User(String firstName, String lastName, String displayName) {
-		this();
-		this.firstName = firstName;
-		this.lastName = lastName;
-		this.displayName = displayName;
-		this.name = firstName;
-	}
-	
 	public void likesOn(SocialObject target)
 			throws SocialObjectNotLikableException {
 		target.onLikedBy(this);

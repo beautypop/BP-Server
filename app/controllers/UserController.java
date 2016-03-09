@@ -260,7 +260,7 @@ public class UserController extends Controller {
                         "[u=%d][displayName=%s] displayName contains whitespace", localUser.id, displayName));
                 return badRequest("\""+displayName+"\" 不可有空格");
             }
-            if (!ValidationUtil.isDisplayNameValid(displayName)) {
+            if (!ValidationUtil.isValidDisplayName(displayName)) {
                 logger.underlyingLogger().error(String.format(
                         "[u=%d][displayName=%s] displayName incorrect format", localUser.id, displayName));
                 return badRequest("\""+displayName+"\" 格式不正確");
@@ -310,10 +310,10 @@ public class UserController extends Controller {
             return badRequest("請填寫地區");
         }
         
-        localUser.displayName = displayName;
-        localUser.name = displayName;
+        localUser.displayName = displayName.toLowerCase();
         localUser.firstName = firstName;
         localUser.lastName = lastName;
+        localUser.name = new String(firstName+" "+lastName).trim();
         
         localUser.userInfo.location = location;
         localUser.userInfo.aboutMe = aboutMe;

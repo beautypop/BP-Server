@@ -134,7 +134,6 @@ public class Global extends GlobalSettings {
                            JPA.withTransaction(new play.libs.F.Callback0() {
                                 public void invoke() {
                                     logger.underlyingLogger().info("[JobScheduler] customCategoryMarking starts...");
-    
                                     try {
                                         for (Category customCategory: Category.getCustomCategories()){
                                             for (Post post : Post.getEligiblePostsForFeeds()) {
