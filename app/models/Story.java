@@ -16,7 +16,7 @@ import javax.persistence.OrderBy;
 import javax.persistence.Query;
 
 import play.db.jpa.JPA;
-import beautypop.shopping.social.exception.SocialObjectNotCommentableException;
+import common.social.exception.SocialObjectNotCommentableException;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 

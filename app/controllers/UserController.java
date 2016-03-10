@@ -40,7 +40,7 @@ import models.GameBadge.BadgeType;
 import org.apache.commons.lang.exception.ExceptionUtils;
 import org.apache.commons.lang3.StringUtils;
 
-import beautypop.shopping.social.exception.SocialObjectNotCommentableException;
+import common.social.exception.SocialObjectNotCommentableException;
 import play.data.DynamicForm;
 import play.db.jpa.Transactional;
 import play.libs.Json;

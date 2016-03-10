@@ -12,7 +12,7 @@ import java.util.Map;
 
 import com.google.inject.Inject;
 
-import beautypop.shopping.social.exception.SocialObjectNotCommentableException;
+import common.social.exception.SocialObjectNotCommentableException;
 import models.Category;
 import models.Collection;
 import models.Comment;

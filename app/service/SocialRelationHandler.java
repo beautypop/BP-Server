@@ -7,22 +7,22 @@ import models.Message;
 import models.Post;
 import models.Story;
 import models.User;
-import beautypop.events.handler.EventHandler;
-import beautypop.events.map.CommentEvent;
-import beautypop.events.map.ConversationEvent;
-import beautypop.events.map.DeleteCommentEvent;
-import beautypop.events.map.DeletePostEvent;
-import beautypop.events.map.EditPostEvent;
-import beautypop.events.map.FollowEvent;
-import beautypop.events.map.LikeEvent;
-import beautypop.events.map.MessageEvent;
-import beautypop.events.map.PostEvent;
-import beautypop.events.map.SoldEvent;
-import beautypop.events.map.StoryEvent;
-import beautypop.events.map.TouchEvent;
-import beautypop.events.map.UnFollowEvent;
-import beautypop.events.map.UnlikeEvent;
-import beautypop.events.map.ViewEvent;
+import events.handler.EventHandler;
+import events.map.CommentEvent;
+import events.map.ConversationEvent;
+import events.map.DeleteCommentEvent;
+import events.map.DeletePostEvent;
+import events.map.EditPostEvent;
+import events.map.FollowEvent;
+import events.map.LikeEvent;
+import events.map.MessageEvent;
+import events.map.PostEvent;
+import events.map.SoldEvent;
+import events.map.StoryEvent;
+import events.map.TouchEvent;
+import events.map.UnFollowEvent;
+import events.map.UnlikeEvent;
+import events.map.ViewEvent;
 
 public class SocialRelationHandler {
 	

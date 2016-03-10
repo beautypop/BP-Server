@@ -1,6 +1,6 @@
 package domain;
 
-import beautypop.shopping.social.exception.SocialObjectNotCommentableException;
+import common.social.exception.SocialObjectNotCommentableException;
 import models.Comment;
 import models.SocialObject;
 import models.User;

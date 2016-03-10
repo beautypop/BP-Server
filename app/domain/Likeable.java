@@ -1,6 +1,6 @@
 package domain;
 
-import beautypop.shopping.social.exception.SocialObjectNotLikableException;
+import common.social.exception.SocialObjectNotLikableException;
 import models.User;
 
 public interface Likeable {

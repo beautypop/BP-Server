@@ -1,6 +1,6 @@
 package domain;
 
-import beautypop.shopping.social.exception.SocialObjectNotFollowableException;
+import common.social.exception.SocialObjectNotFollowableException;
 import models.User;
 
 public interface Followable {

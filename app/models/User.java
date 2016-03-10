@@ -41,7 +41,7 @@ import play.Play;
 import play.data.format.Formats;
 import play.db.jpa.JPA;
 import play.db.jpa.Transactional;
-import beautypop.shopping.social.exception.SocialObjectNotLikableException;
+import common.social.exception.SocialObjectNotLikableException;
 import be.objectify.deadbolt.core.models.Permission;
 import be.objectify.deadbolt.core.models.Role;
 import be.objectify.deadbolt.core.models.Subject;

@@ -22,7 +22,7 @@ import javax.persistence.TemporalType;
 
 import models.Country.CountryCode;
 import play.db.jpa.JPA;
-import beautypop.shopping.social.exception.SocialObjectNotCommentableException;
+import common.social.exception.SocialObjectNotCommentableException;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 

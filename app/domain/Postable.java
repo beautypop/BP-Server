@@ -1,6 +1,6 @@
 package domain;
 
-import beautypop.shopping.social.exception.SocialObjectNotPostableException;
+import common.social.exception.SocialObjectNotPostableException;
 import models.SocialObject;
 import models.User;
 

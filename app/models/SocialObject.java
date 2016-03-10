@@ -12,10 +12,10 @@ import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.MappedSuperclass;
 
-import beautypop.shopping.social.exception.SocialObjectNotCommentableException;
-import beautypop.shopping.social.exception.SocialObjectNotFollowableException;
-import beautypop.shopping.social.exception.SocialObjectNotLikableException;
-import beautypop.shopping.social.exception.SocialObjectNotPostableException;
+import common.social.exception.SocialObjectNotCommentableException;
+import common.social.exception.SocialObjectNotFollowableException;
+import common.social.exception.SocialObjectNotLikableException;
+import common.social.exception.SocialObjectNotPostableException;
 
 import org.apache.commons.lang3.builder.EqualsBuilder;
 

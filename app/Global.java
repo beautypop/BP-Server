@@ -13,7 +13,7 @@ import play.GlobalSettings;
 import play.Play;
 import play.db.jpa.JPA;
 import play.mvc.Call;
-import beautypop.events.handler.EventHandler;
+import events.handler.EventHandler;
 
 import com.feth.play.module.pa.PlayAuthenticate;
 import com.feth.play.module.pa.PlayAuthenticate.Resolver;
