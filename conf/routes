@@ -36,7 +36,7 @@ GET     /login                                      controllers.Application.logi
 GET     /signup                                     controllers.Application.signup
 
 # Login
-POST    /login                                      controllers.Application.doLogin
+POST    /login                                      @controllers.Application.doLogin
 POST    /login/popup                                controllers.Application.doLoginPopup
 POST    /signup                                     controllers.Application.doSignup
 POST    /saveSignupInfo                             controllers.Application.saveSignupInfo

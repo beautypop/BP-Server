@@ -68,7 +68,7 @@ public class CalcServer {
         logger.underlyingLogger().debug("warmUpActivity starts");
         
         if (FEED_INIT_FLUSH_ALL) {
-            jedisCache.flushAll();
+            jedisCache.flushDB();
         }
         
         clearStaticQueues();

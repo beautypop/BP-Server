@@ -268,6 +268,16 @@ public class JedisCache {
         }
     }
     
+    public void flushDB() {
+        Jedis j = null;
+        try {
+            j = getResource();
+            j.flushDB();
+        } finally {
+            returnResource(j);
+        }
+    }
+    
     public void flushAll() {
         Jedis j = null;
         try {

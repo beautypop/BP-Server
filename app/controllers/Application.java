@@ -404,7 +404,7 @@ public class Application extends Controller {
     }
     
     @Transactional
-    public static Result doLogin() {
+    public Result doLogin() {
         com.feth.play.module.pa.controllers.Authenticate.noCache(response());
         final Form<MyLogin> filledForm = MyUsernamePasswordAuthProvider.LOGIN_FORM.bindFromRequest();
         if (filledForm.hasErrors()) {
@@ -415,7 +415,8 @@ public class Application extends Controller {
             // Everything was filled
             Result r = UsernamePasswordAuthProvider.handleLogin(ctx());
             final User localUser = getLocalUser(session());
-            if(User.isLoggedIn(localUser)) {
+            if (User.isLoggedIn(localUser)) {
+                calcServer.buildQueuesForUser(localUser);
                 logger.underlyingLogger().info("[u="+localUser.id+"] [name="+localUser.displayName+"] Native login");
             }
             return r;

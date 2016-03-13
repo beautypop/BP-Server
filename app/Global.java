@@ -126,7 +126,7 @@ public class Global extends GlobalSettings {
         // Startup delayed jobs
         //
         
-        // schedule for Hash Marking daily at 5am HKT
+        // schedule CustomCategoryMarking 1 min after server started
         JobScheduler.getInstance().run(
                 new Runnable() {
                     public void run() {
