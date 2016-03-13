@@ -85,6 +85,8 @@ beautypop.config(['$translateProvider', function ($translateProvider) {
 	    "HOME_EXPLORE":"逛逛",
 	    "HOME_SELLER":"推薦賣家",
 	    "HOME_FOLLOWING":"我的關注",
+	    "CATEGORIES":"商品分類",
+	    "SUGGEST_FOR_YOU":"推介給你",
 	    // Category page
 	    "POPULAR":"熱門商品",
 	    "NEWEST":"最新上架",
@@ -128,6 +130,8 @@ beautypop.config(['$translateProvider', function ($translateProvider) {
 		"HOME_EXPLORE":"Explore",
 		"HOME_SELLER":"Shop",
 	    "HOME_FOLLOWING":"Following",
+	    "CATEGORIES":"CATEGORIES",
+	    "SUGGEST_FOR_YOU":"SUGGEST FOR YOU",
 	    // Category page
 	    "POPULAR":"Popular",
 	    "NEWEST":"Newest",

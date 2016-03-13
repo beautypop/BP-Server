@@ -41,9 +41,10 @@
  </div>
  <div class="location-bar"></div>
  <div class="location-bar_fixed "></div>
-      
+
  <div ng-show="homeExplore || homeFollowing">
-	 <div class="popular_products_wrapper center-container">
+     <div class="L12" style="margin:7px 0 0 10px ;color:rgba(0, 0, 0, 0.54)">{{'SUGGEST_FOR_YOU'|translate}}</div>
+     <div class="popular_products_wrapper center-container">
 	   <div infinite-scroll='loadMoreProducts()' infinite-scroll-distance='2' style="width: 100%">
 	    <ul class="item-list-pop" style="min-height: 600px; text-align: left; width: 102%;">
 	     <li class="item-card simple" ng-repeat="product in products track by $index">
