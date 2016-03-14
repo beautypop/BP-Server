@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>BeautyPop App</title>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+        
+        <!-- seo -->
+        <meta name="robots" content="index, follow" />
+        <meta name="description" content="Sell your style">
+        
+        <link rel="stylesheet" href="@routes.Assets.versioned("components/library/bootstrap/css/bootstrap.min.css")" />
+        <link rel="stylesheet" href="../../assets/app/custom-css/beautypop-override.css">
+        <link rel="stylesheet" href="../../assets/app/custom-css/login.css">
+        <link rel="stylesheet" href="../../assets/app/custom-css/guide.css">
+        <link rel="icon" type="image/png" href="@routes.Assets.versioned("app/images/favicon.ico")">
+        <link rel="shortcut icon" type="image/png" href="@routes.Assets.versioned("app/images/favicon.ico")">
+        <script src="@routes.Assets.versioned("components/library/jquery/jquery.min.js")"></script>
+        <script src="@routes.Application.jsRoutes" defer="defer"></script>
+        <style>
+            body {
+                background-image: url(../../assets/app/images/login/login-bg.jpg);
+                background-size: cover;
+                background-position: center center;
+                margin: 0;
+                padding: 0;
+            }
+        </style>
+    </head>
+
+    <body>
+        <div id=login-header style="margin-bottom:20px;">
+            <a class="login-logo pull-left" href="/">
+                <img src="../../assets/app/custom-css/images/logo%403x.png" />
+            </a>
+        </div>
+        <div class="guide-info-container">
+            <div class="guide-info-box" id="guide-info-section">
+                <h3>How can I stay safe on BeautyPop?</h3>
+                <p>BeautyPop is an open community where members have the freedom to conduct transactions in ways which they feel most comfortable. The BeautyPop team takes the safety of our community very seriously and does its best to keep the marketplace a pleasant place for all. However, as with any online marketplace or trading site, there are always unforeseen circumstances that every user has to look out for.</p> 
+                <p>Here are some tips for buying and selling safely on BeautyPop:</p><br>
+                <p><b><u>BUYERS</u></b></p>
+                <p>
+                    <ul>
+                        <li><b>Read listing descriptions</b> - Sellers often provide detailed descriptions of items within the listing. Read, read, read before completing a deal to avoid nasty surprises.</li><br>
+                        <li><b>Ask questions</b> - Don't make offers blindly. Ask the seller questions, request for more item pictures or proof of authenticity and clear your doubts before confirming a deal. </li><br>
+                        <li><b>Do your research</b> - If you are unsure about the authenticity of an item or feel that a listing looks suspicious, don't make an offer until you are assured that the listing is genuine. Listings which are suspicious should be reported to the BeautyPop team so that it can be removed from the marketplace.</li><br>
+                        <li><b>Use the offer system</b> - Buyers are able to leave feedback for sellers only after an offer has been made and accepted. To ensure that you can leave feedback for a seller should the deal not be to your satisfaction, always make an offer and ensure that the seller accepts your offer before proceeding to make payment for an item.</li><br>
+                        <li><b>Read the seller's profile</b> - Sellers often state their shop policies clearly in their BeautyPop bio, eg. whether they accept negotiations on price, whether they are agreeable to meet-ups, etc. Be sure to clue yourself in on these individual policies before completing a deal so as to ensure a smooth transaction.</li><br>
+                        <li><b>Be extra careful when purchasing event tickets and vouchers</b> - When purchasing resale tickets or vouchers, always ask to be shown a picture of the terms and conditions of the item. These are usually printed overleaf on the ticket or voucher. Some tickets and vouchers are not allowed to be resold and may be rejected by the ticket vendor upon resale. Certain tickets are also be tied to the original purchaser and cannot thus be rightfully be used by another person. You could be barred from entering the event or from using the voucher if you obtained it through a resale.</li><br>
+                        <li><b>Ask for registered / tracked mail or a certificate of posting</b> - This is especially essential if you are dealing with expensive items. Don't take chances!</li><br>
+                        <li><b>Read user feedback</b> - You can assess the credibility of a seller by reading user feedback on his or her BeautyPop profile (just tap the "+", "-", "o" bar). If you're not convinced by the feedback, don't proceed with the deal.</li><br>
+                        <li><b>Check your item</b> - If you are dealing via meet-up, check your item before making payment to ensure that you're getting exactly what you paid for.</li><br>
+                    </ul>
+                </p>
+                <p><b><u>SELLERS</u></b></p>
+                <p>
+                    <ul>
+                        <li><b>Remind your buyers to 'Make an Offer' before confirming a deal</b> - You can only leave feedback for another user if an offer has been made by a buyer, and accepted by the seller. Always use the offer system to deal so that you can leave feedback for a buyer should the deal go awry.</li><br>
+                        <li><b>Wait to receive payment before mailing out items</b> - If your buyer has opted for postage, always make sure that payment has actually been made before you mail the item out.</li><br>
+                        <li><b>Suggest tracked / registered mail where possible</b> - Having tracked mail gives both you and your buyer peace of mind that an item has been delivered. This can also help you, as a seller, to avoid buyer scams.</li><br>
+                        <li><b>Ask for a deposit for high-value items</b> - If you are dealing with an expensive item and the buyer has requested for a meet-up to complete the deal, ask for a deposit from the buyer prior to the meet-up to ascertain  his or her sincerity.</li><br>
+                        <li><b>State your policies clearly</b> - If you have any return, refund or exchange policy, make sure to communicate this to your buyer prior to completing a deal.</li><br>
+                    </ul>
+                </p>
+                <p><b><u>EVERYONE</u></b></p>
+                <p>
+                    <ul>
+                        <li><b>Only use trusted payment methods which are familiar to you</b> - Avoid money transfer services such as MoneyGram or Western Union. These are commonly used by fraudsters to conduct scams.</li><br>
+                        <li><b>Check and double-check</b> - When receiving payments from third-party payment sites (e.g. Paypal), do make an effort to also double check the sender’s e-mail address to ensure it is from a legitimate source</li><br>
+                        <li><b>Only deal locally</b> - As the marketplace is currently not optimised for buying & selling overseas, we do not advise for users to engage in such transactions</li><br>
+                        <li><b>Always deal within BeautyPop</b> - Try to avoid dealing via SMS or WhatsApp. This way, we are able to look back on our records and assist with investigations should the need arise.</li><br>
+                        <li><b>Common sense is king</b> - Use your instincts and logical reasoning to assess the safety of each individual deal. Things that are too good to be true often aren't.</li><br>
+                        <li><b>Don't bring large sums of money with you</b> - If you are meeting up with a user from BeautyPop, avoid carrying large sums of cash on your person.</li><br>
+                        <li><b>Always meet in well-lit, public places</b> - Self-explanatory. BeautyPop may be a community, but always remember that meeting up with an unfamiliar user is the same as meeting a stranger, so be safe and bring a friend with you if possible.</li><br>
+                        <li><b>Be prompt</b> - If you suspect that you have been scammed or are a victim of a scam, report the scam promptly to the BeautyPop team so that we are able to assist you. All incident reports must be made within 60 days of your knowledge of the scam or fraud.</li><br>
+                    </ul>
+                </p>
+            </div>
+        </div>
+        <div id="login-footer">
+            <p>BeautyPop &#169; 2016 - <a href="../guide" target="_blank">關於</a><a href="../terms" target="_blank">使用條款</a><a href="../privacy" target="_blank">私隱政策</a><a href="../apps" target="_blank">下載手機 Apps</a></p>
+        </div>
+    </body>
+</html>
+
+<script type="text/javascript" src="@routes.Assets.versioned("app/scripts/tracking.js")"></script>
+<script>
+    ga_send_pv();
+</script>

@@ -624,7 +624,7 @@ public class Application extends Controller {
     
     @Transactional
     public static Result apps() {
-        return ok(views.html.beautypop.web.apps.render(
+        return ok(views.html.apps.render(
                 "https://itunes.apple.com/app/idxxx",
                 "https://play.google.com/store/apps/details?id=com.beautypop.app",
                 "http://www.beautypop.hk"));
@@ -632,7 +632,7 @@ public class Application extends Controller {
     
     @Transactional
     public static Result getStarted() {
-        return ok(views.html.beautypop.web.getstarted.render(
+        return ok(views.html.getstarted.render(
                 "https://itunes.apple.com/app/idxxx",
                 "https://play.google.com/store/apps/details?id=com.beautypop.app",
                 "http://www.beautypop.hk"));
@@ -648,6 +648,11 @@ public class Application extends Controller {
     public static Result terms() {
         TermsAndConditions terms = TermsAndConditions.getTermsAndConditions();
         return ok(views.html.terms_and_conditions.render(terms.terms));
+    }
+    
+    @Transactional
+    public static Result guide() {
+        return ok(views.html.guide.render());
     }
     
     public static String formatTimestamp(final long t) {

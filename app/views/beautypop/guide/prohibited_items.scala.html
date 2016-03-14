@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>BeautyPop App</title>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+        
+        <!-- seo -->
+        <meta name="robots" content="index, follow" />
+        <meta name="description" content="Sell your style">
+        
+        <link rel="stylesheet" href="@routes.Assets.versioned("components/library/bootstrap/css/bootstrap.min.css")" />
+        <link rel="stylesheet" href="../../assets/app/custom-css/beautypop-override.css">
+        <link rel="stylesheet" href="../../assets/app/custom-css/login.css">
+        <link rel="stylesheet" href="../../assets/app/custom-css/guide.css">
+        <link rel="icon" type="image/png" href="@routes.Assets.versioned("app/images/favicon.ico")">
+        <link rel="shortcut icon" type="image/png" href="@routes.Assets.versioned("app/images/favicon.ico")">
+        <script src="@routes.Assets.versioned("components/library/jquery/jquery.min.js")"></script>
+        <script src="@routes.Application.jsRoutes" defer="defer"></script>
+        <style>
+            body {
+                background-image: url(../../assets/app/images/login/login-bg.jpg);
+                background-size: cover;
+                background-position: center center;
+                margin: 0;
+                padding: 0;
+            }
+        </style>
+    </head>
+
+    <body>
+        <div id=login-header style="margin-bottom:20px;">
+            <a class="login-logo pull-left" href="/">
+                <img src="../../assets/app/custom-css/images/logo%403x.png" />
+            </a>
+        </div>
+        <div class="guide-info-container">
+            <div class="guide-info-box" id="guide-info-section">
+                <h3>What items are prohibited on BeautyPop?</h3>
+                <p>There are certain items that are not allowed on BeautyPop at all. They may not necessarily be illegal, and they may even fit our selling criteria. However, they aren’t in the spirit of BeautyPop. As such, if the items listed below are found on the BeautyPop marketplace, they will be promptly deleted.</p>
+                <p>
+                    <ol> 
+						<li>Food</li> 
+						<li>Alcohol</li> 
+						<li>Health supplements </li> 
+						<li>Contact Lenses and other optometry products</li> 
+						<li>Medicine,&nbsp;medicinal instruments and items with objectionable medical claims</li> 
+						<li>E-cigarettes and related products</li> 
+						<li>Hazardous materials which are flammable, explosive, corrosive, poisonous or otherwise dangerous</li> 
+						<li>Recalled items</li> 
+						<li>Weapons, including firearms -&nbsp;imitation firearms</li> 
+						<li>Tobacco products&nbsp;and other smokeable products</li> 
+						<li>Drugs and drug paraphenalia&nbsp;</li> 
+						<li>Live animals and insects</li> 
+						<li>Items made from animals, including, but not limited to, endangered species and exotic animals</li> 
+						<li>Counterfeit items</li> 
+						<li>High powered laser pointers (Class 3b and Class 4)</li> 
+						<li>Items for rent and listings advertising rental services</li> 
+						<li>Items or listings that promote, support or glorify hatred and seek to discriminate and/or demean on the basis of race, religion, gender, gender identity, disability or sexual orientation</li> 
+						<li>Items or listings that promote, support or seek to engage users in illegal activity</li> 
+						<li>Items or listings that promote, support or glorify acts of violence</li> 
+						<li>Items or listings that seek to shame fellow BeautyPop members and/or reveal personal information of fellow BeautyPop members</li> 
+						<li>Items that infringe copyright laws including, but not limited to, unauthorized sales of eBooks</li> 
+						<li>Virtual items including, but not limited to,&nbsp;game currency, game items and game accounts/characters</li> 
+						<li>Unauthorised resale of tickets</li> 
+						<li>Used undergarments and intimate items</li> 
+						<li>Stolen or Illegal goods</li> 
+						<li>Pornography and adult material including, but not limited to, pornographic books, magazines, videos and pictures</li> 
+						<li>Human beings, human remains and body parts</li> 
+						<li>Services</li> 
+						<li>Re-sale of mobile numbers</li> 
+						<li>Multi-Level-Marketing and related products</li>
+                    </ol>
+                </p>
+            </div>
+        </div>
+        <div id="login-footer">
+            <p>BeautyPop &#169; 2016 - <a href="../guide" target="_blank">關於</a><a href="../terms" target="_blank">使用條款</a><a href="../privacy" target="_blank">私隱政策</a><a href="../apps" target="_blank">下載手機 Apps</a></p>
+        </div>
+    </body>
+</html>
+
+<script type="text/javascript" src="@routes.Assets.versioned("app/scripts/tracking.js")"></script>
+<script>
+    ga_send_pv();
+</script>

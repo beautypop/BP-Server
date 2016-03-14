@@ -1,0 +1,311 @@
+ul, li {
+    list-style: none;
+    padding: 0;
+}
+ol li {
+	list-style: inherit;
+	padding: 0;
+}
+a, a:hover {
+    color: #fd4e64;
+    text-decoration: none;
+}
+.guide-info-table label.error {
+    background-image: url(../images/error.png);
+    background-repeat: no-repeat;
+    background-position: center left;
+    color: #c33;
+    font-size: 13px;
+    line-height: 16px;
+    margin: 0 0 0 15px;
+    padding: 0 0 0 18px;
+    vertical-align: middle; 
+}
+.guide-info-sub-table {
+}
+.note {
+    font-size: 12px;
+    margin-top: 10px;
+    max-width: 280px;
+}
+.guide-info-sub-table tr td {
+    font-size: 14px;
+    font-weight: normal;
+    padding: 5px;
+    vertical-align: top;
+    color: #0A0A0A;
+}
+.guide-info-sub-table tr td label {
+    font-size: 14px;
+    font-weight: normal;
+    padding-right: 15px;
+    vertical-align: top;
+}
+.guide-info-sub-table tr td:first-child {
+    text-align: right;
+    width: 100px;
+}
+.guide-info-table {
+}
+.guide-info-table tr td {
+    font-size: 14px;
+    font-weight: normal;
+    padding: 5px;
+    vertical-align: top;
+    color: #0A0A0A;
+}
+.guide-info-table tr td label {
+    font-size: 14px;
+    font-weight: normal;
+    padding-right: 15px;
+    vertical-align: top;
+}
+.guide-info-table tr td .title {
+    margin-bottom: 5px;
+    padding-bottom: 10px;
+    border-bottom: 1px dashed #2EAB66;
+    font-weight: bold;
+}
+.guide-info-table tr td input[type='radio'],
+.guide-info-table tr td input[type='checkbox'] {
+    margin: 0 10px;
+}
+.guide-info-header {
+    margin: 3px 0;
+    font-size: 14px;
+    font-weight: bold;
+    color: #44318B;
+    line-height: 1.6;
+}
+.guide-info-header-tips {
+    margin: 3px 20px;
+    font-size: 12px;
+    color: #44318B;
+    line-height: 1.5;
+}
+.guide-info-box {
+    background-color: white;
+    border-radius: 5px;
+    padding: 15px;
+    height:100%
+}
+.guide-info-box h1,
+.guide-info-box h2,
+.guide-info-box h3 {
+    color: #ff7089;
+    border-bottom: 1px solid #ff2742;
+    margin-bottom: 5px;
+    padding-bottom: 10px;
+}
+.guide-info-container {
+    margin: 0 auto;
+    padding: 0;
+    position: relative;
+    max-width: 650px;
+    width: 90%;
+    height: auto;
+}
+.guide-info-container .guide-main li {
+    margin-top: 10px;
+}
+.guide-info-container a.guide-link {
+	color: gray;
+}
+.guide-info-container a.guide-link:hover {
+    color: #333;
+}
+.guide-info-container div.guide-info-box {
+    float: left;
+    width: 100%;
+    margin-right: 2%;
+    height: 100%;
+    padding: 2% 7%;
+}
+.guide-info-container div.guide-info-box div {
+    float: left;
+    width: 100%;
+}
+.guide-info-container div.guide-info-box h1 {
+    position: absolute;
+    bottom: 45%;
+    left: 10%;
+}
+.guide-info-container div.guide-info-box h5 {
+    line-height: 1.3;
+}
+.guide-info-container div.guide-info-box p {
+    color: #333;
+}
+.guide-info-container div {
+    float: right;
+    width: 28%;
+}
+.guide-info-box img[alt=title-image] {
+    width: 250px;
+    height: auto;
+    float: right;
+    margin-top: -25%;
+}
+
+#guide-info-section ul {
+    position: relative;
+}
+#guide-info-section li img {
+    width: 40%;
+    position: absolute;
+    left: -23px;
+}
+#guide-info-section li h4 {
+    color: white;
+    font-weight: bold;
+    font-size: normal;
+    position: relative;
+    left: -15px;
+    top: 5px;
+    margin-bottom: 25px;
+}
+/*.guide-info-container div.guide-info-box ul h4{
+    background-color: #f13b18;
+    float: left;
+    color: white;
+    font-weight: bold;
+    padding: 10px 30px 10px 10px;
+    position: relative;
+    left: -25px;
+    box-shadow: 2px 2px 3px gray;
+}
+.guide-info-container div.guide-info-box ul h4:before {
+    content: "";
+    width: 0;
+    height: 0;
+    border-style: solid;
+    border-width: 0 10px 10px 0;
+    border-color: transparent #802412 transparent transparent;
+    position: relative;
+    left: -10px;
+    top: 10px;
+}
+.guide-info-container div.guide-info-box ul h4:after {
+    content: "";
+    width: 0;
+    height: 0;
+    border-style: solid;
+    border-width: 0 10px 10px 0;
+    border-color: #f13b18;
+    position: relative;
+    left: -96px;
+    top: -1px;
+}
+.guide-info-container div.guide-info-box ul h4+p {
+    width: 10px;
+    height: 39px; 
+    float: left;
+    position: relative;
+    left: -30px;
+    top: 10px;
+    text-indent: -9999px;
+    background-image: url(../images/login/sawtooth.jpg);
+    background-repeat: repeat-y;
+    background-position: top right;
+}*/
+.guide-info-container div.guide-info-box ul li img[alt=guide-info-via-facebook] {
+    display: block;
+    position: relative;
+    left: 45%;
+    margin-left: -108px;
+    padding: 10px; 
+}
+.guide-info-container div.guide-info-box ul li img[alt=fb-icon] {
+    margin-right: 10px;
+    width: 15px;
+}
+.guide-info-container div.guide-info-box ul li a[title=user-name]:after {
+    content: ",";
+    font-weight: bolder;
+    font-size: larger;
+    color: black;
+}
+.guide-info-container div.guide-info-box ul li span[title=fd-num]:before {
+    content: " 和 ";
+}
+.guide-info-container div.guide-info-box ul li span[title=fd-num]+p {
+    display: inline-block;
+}
+.guide-info-fd-list img{
+    width: 35px;
+    display: inline-block;
+    margin-right: 3px;
+}
+.guide-info-container div.guide-info-box ul hr {
+    border: #c1c1c1 thin dashed;
+}
+#guide-info-info-wrapper {
+    text-align: left;
+}
+#guide-info-info-wrapper .general-textfield {
+    border-radius: 20px;
+    width: 95%;
+    border: thin solid #bcbcbc;
+    padding: 7px 15px 7px 7px;
+    margin-bottom: 15px;
+}
+#guide-info-info-wrapper .general-textfield:focus {
+    border: thin solid #FF99B8;
+}
+#guide-info-info-wrapper p {
+    padding: 0 7px;
+    color: gray;
+    font-size: small;
+    float: left;
+}
+#guide-info-password {
+    position: relative;
+    left: 2px;
+}
+#guide-info-state {
+    float: left;
+}
+#guide-info-state + p {
+    padding: 0 7px;
+    color: gray;
+    font-size: small;
+    float: left;
+}
+#guide-info-btn {
+    margin-top: 10px;
+    font-size: 18px;
+    font-weight: bold;
+    width: 60%;
+    padding: 5px;
+    background-repeat: no-repeat;
+    border: 1px solid #e1e8ed;
+    border-radius: 4px;
+    cursor: pointer;
+    display: inline-block;
+    background-color: #ffac33;
+    background-image: linear-gradient(#ffcc4d,#ffac33);
+    -ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorstr=#ffcc4d, endColorstr=#ffac33, GradientType=0)";
+    border-color: #f1a02a;
+    color: #292f33;
+    text-shadow: 0 1px 0 rgba(255,255,255,0.5);
+}
+#guide-info-newacc {
+    margin-top: 10px;
+}
+#guide-info-newacc p {
+    color: gray;
+    font-size: small;
+}
+#guide-info-footer {
+    width: 950px;
+    position: relative;
+    left: 50%;
+    margin-left: -475px;
+    margin-top: 30px;
+    text-align: center;
+    font-weight: bold;
+}
+#guide-info-footer a {
+    color: white;
+    margin-right: 10px;
+}

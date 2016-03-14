@@ -1,4 +1,3 @@
-@(terms: String)
 <!DOCTYPE html>
 <html>
     <head>
@@ -13,9 +12,8 @@
         
         <link rel="stylesheet" href="@routes.Assets.versioned("components/library/bootstrap/css/bootstrap.min.css")" />
         <link rel="stylesheet" href="../../assets/app/custom-css/beautypop-override.css">
-        <link rel="stylesheet" href="../../assets/app/custom-css/textfield.css">
         <link rel="stylesheet" href="../../assets/app/custom-css/login.css">
-        <link rel="stylesheet" href="../../assets/app/custom-css/signup.css">
+        <link rel="stylesheet" href="../../assets/app/custom-css/guide.css">
         <link rel="icon" type="image/png" href="@routes.Assets.versioned("app/images/favicon.ico")">
         <link rel="shortcut icon" type="image/png" href="@routes.Assets.versioned("app/images/favicon.ico")">
         <script src="@routes.Assets.versioned("components/library/jquery/jquery.min.js")"></script>
@@ -37,12 +35,17 @@
                 <img src="../../assets/app/custom-css/images/logo%403x.png" />
             </a>
         </div>
-        <div class="signup-info-container">
-            <div class="signup-info-box" id="signup-info-section">
-                <h3>
-                   使用條款
-                </h3>
-                @Html(terms)
+        <div class="guide-info-container">
+            <div class="guide-info-box guide-main" id="guide-info-section">
+                <h3>BeautyPop Community Guide</h3>
+                <p>
+                    <ul>
+                        <li><a href='/guide/how-to-payment' class='guide-link'>How is payment made in the app?</a></li>
+                        <li><a href='/guide/how-to-stay-safe' class='guide-link'>How can I stay safe on BeautyPop?</a></li>
+                        <li><a href='/guide/new-post-category' class='guide-link'>Your item can be classified in more than one category. Can you post your item in different categories?</a></li>
+                        <li><a href='/guide/prohibited-items' class='guide-link'>What items are prohibited on BeautyPop?</a></li>
+                    </ul>
+                </p>
             </div>
         </div>
         <div id="login-footer">
