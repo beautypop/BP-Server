@@ -23,7 +23,7 @@ fi
 nowdate=`date +%Y%m%d_%H%M`
 
 # dump mysql
-mysqldump -uroot -p${PASSWORD} beautypop > ${DATA_BACKUP_PATH}/beautypop.sql
+mysqldump -uroot -p${PASSWORD} beautypop-prod > ${DATA_BACKUP_PATH}/beautypop.sql
 
 # zip up backup sql file
 cd ${DATA_BACKUP_PATH}
