@@ -30,16 +30,6 @@ import models.UserInfo;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang3.StringEscapeUtils;
-import org.jinstagram.Instagram;
-import org.jinstagram.auth.InstagramAuthService;
-import org.jinstagram.auth.model.Token;
-import org.jinstagram.auth.model.Verifier;
-import org.jinstagram.auth.oauth.InstagramService;
-import org.jinstagram.entity.common.ImageData;
-import org.jinstagram.entity.common.Images;
-import org.jinstagram.entity.users.feed.MediaFeed;
-import org.jinstagram.entity.users.feed.MediaFeedData;
-import org.jinstagram.exceptions.InstagramException;
 
 import play.Play;
 import play.Routes;
@@ -82,7 +72,6 @@ import common.utils.HtmlUtil;
 import common.utils.UserAgentUtil;
 import common.utils.ValidationUtil;
 import domain.DefaultValues;
-import dto.MediaDto;
 
 public class Application extends Controller {
     private static final play.api.Logger logger = play.api.Logger.apply(Application.class);
@@ -113,65 +102,12 @@ public class Application extends Controller {
     public static final String FLASH_MESSAGE_KEY = "message";
     public static final String FLASH_ERROR_KEY = "error";
 
-	
-	static String clinetId = Play.application().configuration().getString("instagram.clientId");
-	static String clientSecret = Play.application().configuration().getString("instagram.clientSecret");
-	static String redirectUrl = Play.application().configuration().getString("instagram.redirectUrl");
-	
-	static InstagramService service = new InstagramAuthService()
-	.apiKey(clinetId)
-	.apiSecret(clientSecret)
-	.callback(redirectUrl)
-	.build();
     @Inject
     CalcServer calcServer;
     
     @Inject
     FeedHandler feedHandler;
-	
-	public static Result loginInstagram() {
-		String authorizationUrl = service.getAuthorizationUrl();
-		return redirect(authorizationUrl);
-	}
-	
-	public static Result generateAccessTonken(String code){
-		Verifier verifier = new Verifier(code);
-		Token token = service.getAccessToken(verifier);
-		
-		session().put("accessToken", token.getToken());
-		session().put("clientSecret", token.getSecret());
-		return ok();
-	}
-	
-	public static Result getMedia(){
-		Token token = new Token(session().get("accessToken"), session().get("clientSecret"));
-		
-		List<MediaDto> mediaList = new ArrayList<MediaDto>();
-		
-		Instagram instagram = new Instagram(token);
-		
-		MediaFeed mediaInfo = new MediaFeed();
-		try {
-			mediaInfo = instagram.getRecentMediaFeed("self");
-		} catch (InstagramException e) {
-			e.printStackTrace();
-		}
-		
-		List<MediaFeedData> mediaFeeds = mediaInfo.getData();
-		
-		for (MediaFeedData mediaData : mediaFeeds) {
-			MediaDto dto = new MediaDto();
-			
-		    Images images = mediaData.getImages();
-		    ImageData lowResolutionImg = images.getLowResolution();
-		    dto.setImageUrl(lowResolutionImg.getImageUrl());
-		    dto.setCaption(mediaData.getCaption().getText());
-		    mediaList.add(dto);
-		    
-		}
-		return ok(Json.toJson(mediaList));
-		
-	}
+    
     public static enum DeviceType {
         NA,
         ANDROID,
@@ -227,11 +163,6 @@ public class Application extends Controller {
         return home();
     }   
     
-	@Transactional
-    public Result indexInstagram() {
-        //return home();
-		return redirect("/assets/main.html");
-    }
     //
     // Entry points
     //
@@ -676,92 +607,7 @@ public class Application extends Controller {
             return UsernamePasswordAuthProvider.handleSignup(ctx());
         }
     }
-	
-	
-	@Transactional
-	public static Result doSignupInstagram() {
-		com.feth.play.module.pa.controllers.Authenticate.noCache(response());
-		Form<MySignup> filledForm = MyUsernamePasswordAuthProvider.SIGNUP_FORM.bindFromRequest();
-		
-		if (!filledForm.hasErrors() && filledForm.get() != null) {
-    		String email = filledForm.get().email;
-    		if (email != null) {
-    		    final User existingUser = User.findByEmail(email);
-                if (existingUser != null && existingUser.emailValidated) {
-        		    List<ValidationError> errors = new ArrayList<>();
-        	        errors.add(new ValidationError(Signup.EMAIL_EXISTS_ERROR_KEY, Signup.EMAIL_EXISTS_ERROR_MESSAGE));
-        	        filledForm.errors().put(Signup.EMAIL_EXISTS_ERROR_KEY, errors);
-        	        logger.underlyingLogger().info("[email="+email+"] already registered");
-                }
-    		}
-		}
-		
-		if (filledForm.hasErrors()) {
-		    String errorRequired = Messages.get("error.required") + " - ";
-		    String errorRequiredFields = "";
-		    String errorOther = "";
-		    for (Entry<String, List<ValidationError>> errorEntry : filledForm.errors().entrySet()) {
-		        List<ValidationError> errors = errorEntry.getValue();
-		        for (ValidationError error : errors) {
-		            if ("error.required".equalsIgnoreCase(error.message())) {
-		                if ("lname".equalsIgnoreCase(error.key())) {
-		                    errorRequiredFields += "'姓' ";
-		                } else if ("fname".equalsIgnoreCase(error.key())) {
-		                    errorRequiredFields += "'名' ";
-                        } else if ("email".equalsIgnoreCase(error.key())) {
-                            errorRequiredFields += "'電郵' ";
-                        } else if ("password".equalsIgnoreCase(error.key())) {
-                            errorRequiredFields += "'密碼' ";
-                        } else if ("repeatPassword".equalsIgnoreCase(error.key())) {
-                            errorRequiredFields += "'重複密碼' ";
-                        } else {
-                            errorRequiredFields += error.key() + " ";
-                        }
-		            } if ("error.minLength".equalsIgnoreCase(error.message()) ||
-		                    "error.maxLength".equalsIgnoreCase(error.message())) {
-		                if (!errorOther.isEmpty()) {
-                            break;
-                        }
-		                if ("password".equalsIgnoreCase(error.key()) ||
-		                        "repeatPassword".equalsIgnoreCase(error.key())) {
-		                    errorOther += "密碼" + String.format(Messages.get(error.message()), error.arguments().get(0));
-                        } else {
-                            errorOther += error.key() + String.format(Messages.get(error.message()), error.arguments().get(0));
-                        }
-		            } else {
-		                if (!errorOther.isEmpty()) {
-		                    break;
-		                }
-		                errorOther += Messages.get(error.message());      // + " - " + error.key();
-		            }
-		        }
-		    }
-		    
-		    if (!errorRequiredFields.isEmpty()) {
-		        flash().put(controllers.Application.FLASH_ERROR_KEY, errorRequired + errorRequiredFields);
-		    } else if (!errorOther.isEmpty()) {
-		        flash().put(controllers.Application.FLASH_ERROR_KEY, errorOther);
-		    } else {
-                flash().put(controllers.Application.FLASH_ERROR_KEY, Messages.get("error.invalid"));
-		    }
-			//return badRequest(views.html.signup.render(filledForm));
-		    return redirect("/assets/main.html#/signup");
-		} else {
-			// Everything was filled
-		    String email = filledForm.get().email;
-		    session().put(SIGNUP_EMAIL, email);
-
-            // native signup with promoCode
-            String promoCode = session().get(SESSION_PROMOCODE);
-            if (promoCode != null) {
-               // GameAccountReferral.addNonValidatedReferral(promoCode, email);
-            }
-
-            logger.underlyingLogger().info("STS [email="+email+"] Native signup submitted");
-			//return UsernamePasswordAuthProvider.handleSignup(ctx());
-            return redirect("/assets/main.html");
-		}
-	}
+    
     //
     // Mobile
     //

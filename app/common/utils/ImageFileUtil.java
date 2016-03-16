@@ -7,12 +7,9 @@ import play.Play;
 
 import javax.imageio.ImageIO;
 
-import org.apache.commons.io.FileUtils;
-
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-import java.net.URL;
 
 /**
  * Created by IntelliJ IDEA.
@@ -37,14 +34,7 @@ public class ImageFileUtil {
         //FileUtils.copyFile(file, fileTo);
         return fileTo;
     }
-    
-    public static File copyImageFileFromUrl(String fileName, String url) throws IOException {
-        final File fileTo = new File(IMAGE_TEMP_PATH+fileName);
-        URL urlNew = new URL(url); 
-        FileUtils.copyURLToFile(urlNew, fileTo);
-        return fileTo;
-    }
-    
+
     public static void writeFileWithImage(File file, BufferedImage image) throws IOException {
         String ext = "jpg";
         if (file.getName().toLowerCase().endsWith("png")) {

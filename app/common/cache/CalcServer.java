@@ -604,7 +604,7 @@ public class CalcServer {
     
     private void buildHomeFollowingFeedQueue(Long id) {
         NanoSecondStopWatch sw = new NanoSecondStopWatch();
-        logger.underlyingLogger().debug("buildHomeFollowingFeedQueue starts - u="+id);
+        logger.underlyingLogger().debug("buildHomeFollowingQueue starts - u="+id);
         
         List<Long> followings = getUserFollowingsFeed(id);
         for (Long followingUser : followings){
@@ -620,7 +620,7 @@ public class CalcServer {
         jedisCache.expire(getKey(FeedType.HOME_FOLLOWING,id), FEED_SNAPSHOT_EXPIRY_SECS);
         
         sw.stop();
-        logger.underlyingLogger().debug("buildHomeFollowingFeedQueue completed. Took "+sw.getElapsedSecs()+"s");
+        logger.underlyingLogger().debug("buildHomeFollowingQueue completed. Took "+sw.getElapsedSecs()+"s");
     }
     
     public void buildUserRecommendedSellersFeedQueueIfNotExist(Long id) {
