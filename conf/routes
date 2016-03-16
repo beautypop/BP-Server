@@ -42,6 +42,14 @@ GET     /home                                       @controllers.Application.hom
 GET     /login                                      controllers.Application.login
 GET     /signup                                     controllers.Application.signup
 
+# Instagtam
+GET     /instagram                                  @controllers.Application.indexInstagram
+GET     /loginInstagram             		    	controllers.Application.loginInstagram
+GET		/connect/:code				    			controllers.Application.generateAccessTonken(code:String)
+GET		/import					   	 				controllers.Application.getMedia
+POST    /instagram/product/new                      controllers.InstagramController.newProductWithForm()
+POST    /instagram/signup                           controllers.Application.doSignupInstagram
+
 # Login
 POST    /login                                      @controllers.Application.doLogin
 POST    /login/popup                                controllers.Application.doLoginPopup

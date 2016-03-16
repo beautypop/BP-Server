@@ -1,0 +1,148 @@
+
+<html>
+<head></head>
+<body class="SG">
+	<div class="main-view">
+		<div class="hero">
+			<div class="header-bar">
+				<div class="logo"></div>
+			</div>
+			<div class="home-container">
+				<div class="fifty-child" style="margin-top: 150px;">
+					<div class="big-text-logo"></div>
+					<p class="hero-text">
+						Import your Instashop in 3 minutes.<br>Reach more buyers,
+						chat privately and accept<br>online payment on Babybox - for
+						free.
+					</p>
+					<a class="new-import-button import-now" style="margin-top: 60px;"
+						data-toggle="modal" data-target="#loginModal">Import Now</a>
+				</div>
+				<div class="fifty-child">
+					<div class="shopee-transition-main" style="margin-top: 100px;"></div>
+				</div>
+			</div>
+		</div>
+		<div class="shopee-benefits">
+			<div class="shop-container" style="padding: 160px 0;">
+				<div class="" style="margin-top: 70px;">
+					<div class="title">Highly Recommended By Instagram Sellers</div>
+					<div class="title-content" style="margin-top: 20px;">Join
+						thousands of others who are harnessing the power of in-app payment
+						and private messaging on Babybox.</div>
+				</div>
+
+			</div>
+		</div>
+		<div class="store-on-the-go">
+			<div class="container" style="padding: 160px 0;">
+				<div class="fifty-child">
+					<div class="love-to-shop"></div>
+				</div>
+				<div class="fifty-child" style="margin-top: 115px;">
+					<div class="title">Run Your Store On The Go</div>
+					<div class="content" style="margin-top: 20px;">Babybox makes
+						it easy for you to manage your inventory and orders anytime,
+						anywhere with tools like Seller Assistant built into our app.</div>
+				</div>
+			</div>
+		</div>
+		<div class="shopee-benefits" style="overflow: auto;">
+			<div class="" style="padding: 160px 0; text-align: center;">
+				<div class="fifty-child" style="margin-top: 140px;">
+					<div class="title">All You Need for an Online Store</div>
+					<div class="content" style="margin-top: 20px; padding-right: 40px;">
+						Babybox is full of easy-to-use, powerful features to help you grow
+						your sales.</div>
+				</div>
+				<div class="fifty-child">
+					<div class="perks" style="margin-top: 40px;">
+						<div class="entry clearfix">
+							<div class="image">
+								<img src="stylesheets/images/easy-shopping.png">
+							</div>
+							<div class="description one">
+								<div class="header">Reach more buyers</div>
+								<div class="content">Tag your products to the relevant
+									category and Babybox automatically drives new shoppers to you.</div>
+							</div>
+						</div>
+						<div class="entry reversed clearfix">
+							<div class="description two">
+								<div class="header">Accept payment in-app</div>
+								<div class="content">Expand your business by accepting
+									more payment options via our secure checkout system.</div>
+							</div>
+							<div class="image">
+								<img src="stylesheets/images/shopee-guarantee.png">
+							</div>
+						</div>
+						<div class="entry clearfix">
+							<div class="image">
+								<img src="stylesheets/images/chat.png">
+							</div>
+							<div class="description three">
+								<div class="header">Chat privately</div>
+								<div class="content">With the in-app chat function,
+									effortlessly respond to your buyer enquiries and order updates
+									- all in one place.</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<div style="background: #e9e4e4; padding-bottom: 200px;">
+			<a class="new-import-button import-now clickable"
+				style="margin: 40px auto 0;" data-toggle="modal"
+				data-target="#loginModal">Import Now</a>
+		</div>
+	</div>
+
+	<div class="modal fade login-dialog" id="loginModal" tabindex="-1"
+		role="dialog" aria-labelledby="myModalLabel" aria-hidden="true"
+		style="display: none;">
+		<div class="modal-dialog" role="document">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal"
+					aria-label="Close">
+					<span aria-hidden="true">x</span>
+				</button>
+			</div>
+			<div class="modal-content">
+				<div class="login-modal" id="login-view">
+					<div class="header">
+						<img src="stylesheets/images/logo-2.png"
+							style="">
+						<div class="close-modal"></div>
+					</div>
+					<div class="modal-content" style="padding-bottom: 20px">
+
+						<div class="half-round error-message" style="display: none;">
+						</div>
+							<form name="loginForm">
+								<input autocorrect="off" autocapitalize="none" type="text" name="email"
+								class="half-round mall" placeholder="Email/Phone/Username"
+								ng-model="login.email" tabindex="1" required> 
+							
+								<input type="password" name="pasword"
+								ng-model="login.password" class="half-round mall" placeholder="Password" tabindex="2" required>
+							
+						<div style="width: 100%; text-align: right; padding: 20px 10px;">
+							<!-- <a href="#">Forgot Password?</a> -->
+						</div>
+						<button type="button submit" ng-disabled="!loginForm.$valid" class="btn btn-default half-round" ng-click="onLogin(login)" style="background: #f1582a;margin-left:21%">Login</button>
+						<!-- <a class="half-round clickable" type="submit" style="background: #f1582a;" ng-click="onLogin(login)">Login</a> -->
+						<a href="main.html#/signup" class="half-round secondary clickable">Sign Up</a>
+						</form>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div class="overlay" style="display: none;"></div>
+
+</body>
+</html>
