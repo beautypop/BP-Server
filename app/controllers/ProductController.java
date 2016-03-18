@@ -76,9 +76,26 @@ public class ProductController extends Controller{
 	    String hashtags = dynamicForm.get("hashtags");
 	    String deviceType = dynamicForm.get("deviceType");
 	    List<FilePart> images = request().body().asMultipartFormData().getFiles();
-		return newProduct(
-		        title, body, Long.parseLong(catId), Double.parseDouble(price), Post.parseConditionType(conditionType), images, 
-		        Double.parseDouble(originalPrice), freeDelivery, Post.parseCountryCode(countryCode), hashtags, Application.parseDeviceType(deviceType));
+	    
+	    if (StringUtils.isEmpty(originalPrice)) {
+            originalPrice = "-1";
+        }
+        
+        if (StringUtils.isEmpty(countryCode)) {
+            countryCode = CountryCode.NA.name();
+        }
+        
+        if (StringUtils.isEmpty(deviceType)) {
+            deviceType = DeviceType.WEB.name();
+        }
+        
+        try {
+            return newProduct(
+                    title, body, Long.parseLong(catId), Double.parseDouble(price), Post.parseConditionType(conditionType), images, 
+                    Double.parseDouble(originalPrice), freeDelivery, Post.parseCountryCode(countryCode), hashtags, Application.parseDeviceType(deviceType));    
+        } catch (Exception e) {
+            return badRequest();
+        }
 	}
 	
 	@Transactional
@@ -98,10 +115,6 @@ public class ProductController extends Controller{
 	    
 	    if (catId == null) {
 	        catId = -1L;
-	    }
-	    
-	    if (price == null) {
-	        price = -1D;
 	    }
 	    
 	    if (originalPrice == null) {

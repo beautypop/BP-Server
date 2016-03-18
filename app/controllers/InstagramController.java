@@ -12,6 +12,7 @@ import models.User;
 import models.Country.CountryCode;
 import models.Post.ConditionType;
 
+import org.apache.commons.lang.StringUtils;
 import org.jinstagram.Instagram;
 import org.jinstagram.auth.InstagramAuthService;
 import org.jinstagram.auth.model.Token;
@@ -40,17 +41,17 @@ import viewmodel.ResponseStatusVM;
 public class InstagramController extends Controller {
     private static final play.api.Logger logger = play.api.Logger.apply(InstagramController.class);
 
-    static String clinetId = Play.application().configuration().getString("instagram.clientId");
-	static String clientSecret = Play.application().configuration().getString("instagram.clientSecret");
-	static String redirectUrl = Play.application().configuration().getString("instagram.redirectUrl");
+    private static String clientId = Play.application().configuration().getString("instagram.clientId");
+    private static String clientSecret = Play.application().configuration().getString("instagram.clientSecret");
+    private static String redirectUrl = Play.application().configuration().getString("instagram.redirectUrl");
 	
 	static InstagramService service = new InstagramAuthService()
-	.apiKey(clinetId)
+	.apiKey(clientId)
 	.apiSecret(clientSecret)
 	.callback(redirectUrl)
 	.build();
     
-    @Transactional
+	@Transactional
     public Result index() {
     	return redirect("assets/insta/importer/main.html");
     }   
@@ -60,13 +61,16 @@ public class InstagramController extends Controller {
 		return redirect(authorizationUrl);
 	}
    
-    public static Result generateAccessTonken(String code){
+    public static Result generateAccessToken(String code){
 		Verifier verifier = new Verifier(code);
-		Token token = service.getAccessToken(verifier);
-		
-		session().put("accessToken", token.getToken());
-		session().put("clientSecret", token.getSecret());
-		return ok();
+		try {
+		    Token token = service.getAccessToken(verifier);
+    		session().put("accessToken", token.getToken());
+    		session().put("clientSecret", token.getSecret());
+    		return ok();
+		} catch (Exception e) {
+		}
+		return redirect("assets/insta/importer/main.html");
 	}
     
     public static Result getMedia(){
@@ -112,11 +116,27 @@ public class InstagramController extends Controller {
 	    String countryCode = dynamicForm.get("countryCode");
 	    String hashtags = dynamicForm.get("hashtags");
 	    String deviceType = dynamicForm.get("deviceType");
-	    //List<FilePart> images = request().body().asMultipartFormData().getFiles();
 	    String images = dynamicForm.get("images");
-		return newProduct(
-		        title, body, Long.parseLong(catId), Double.parseDouble(price), Post.parseConditionType(conditionType), images, 
-		        Double.parseDouble(originalPrice), freeDelivery, Post.parseCountryCode(countryCode), hashtags, Application.parseDeviceType(deviceType));
+	    
+	    if (StringUtils.isEmpty(originalPrice)) {
+	        originalPrice = "-1";
+        }
+	    
+	    if (StringUtils.isEmpty(countryCode)) {
+            countryCode = CountryCode.NA.name();
+        }
+	    
+	    if (StringUtils.isEmpty(deviceType)) {
+	        deviceType = DeviceType.WEB.name();
+        }
+	    
+	    try {
+	        return newProduct(
+	                title, body, Long.parseLong(catId), Double.parseDouble(price), Post.parseConditionType(conditionType), images, 
+	                Double.parseDouble(originalPrice), freeDelivery, Post.parseCountryCode(countryCode), hashtags, Application.parseDeviceType(deviceType));    
+	    } catch (Exception e) {
+	        return badRequest();
+	    }
 	}
 
 	private static Result newProduct(
@@ -133,7 +153,8 @@ public class InstagramController extends Controller {
 		
 		Category category = Category.findById(catId);
         if (category == null) {
-            return notFound();
+            logger.underlyingLogger().debug("[u="+localUser.getId()+"][catId="+catId+"] createProduct() Invalid catId");
+            return badRequest("Failed to create product. Invalid catId="+catId);
         }
         
 		try {
@@ -141,12 +162,14 @@ public class InstagramController extends Controller {
 			        title, body, category, price, conditionType, 
 			        originalPrice, freeDelivery, countryCode, deviceType);
 			if (newPost == null) {
-				return badRequest("Failed to create product. Invalid parameters.");
+			    logger.underlyingLogger().debug("[u="+localUser.getId()+"][catId="+catId+"][title="+title+"][body="+body+"][price="+price+"][conditionType="+conditionType+"] createProduct() Invalid catId");
+                return badRequest("Failed to create product. Invalid parameters.");
 			}
 			
 			File fileTo =  ImageFileUtil.copyImageFileFromUrl(title.replaceAll(" ", "_").toLowerCase()+".png", images);
 			newPost.addPostPhoto(fileTo);
 			
+			ProductController.addHashtagsToPost(hashtags, newPost);
 			SocialRelationHandler.recordNewPost(newPost, localUser);
 			ResponseStatusVM response = new ResponseStatusVM(SocialObjectType.POST, newPost.id, localUser.id, true);
 			

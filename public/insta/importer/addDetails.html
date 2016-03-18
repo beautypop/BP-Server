@@ -194,25 +194,13 @@
 						</select>
 					</div>
 					
-					 <div class="row clearfix">
-						<i class="icon category"></i> <select
-							class="ui fluid dropdown beautypop rounded required has-icon" ng-model="listing.deviceType">
-							<option value="">Device Type</option>
-							<option value="0">NA</option>
-							<option value="1">ANDROID</option>
-							<option value="2">IOS</option>
-							<option value="3">WEB</option>
-							<option value="4">WAP</option>
-						</select>
-					</div>
-					
 					<div class="row clearfix">
 						<i class="icon condition"></i> <select
 							class="ui fluid dropdown beautypop rounded required has-icon" ng-model="listing.conditionType">
 							<option value="">Condition</option>
-							<option value="0">New (Sealed/with Tags)</option>
-							<option value="1">New (Unsealed/without Tags)</option>
-							<option value="2">Used</option>
+							<option value="NEW_WITH_TAG">New (Sealed/with Tags)</option>
+							<option value="NEW_WITHOUT_TAG">New (Unsealed/without Tags)</option>
+							<option value="USED">Used</option>
 						</select>
 						<div class="ui-checkbox-wrapper">
 							<div class="white-tooltip fade-transition" style="display: none;">Apply
@@ -245,6 +233,7 @@ input,.edit-component .ui.dropdown,.edit-component select {
 	display: inline-block !important;
 	height: 45px;
 	margin-bottom: 10px;
+	text-align: right;
 	width: 440px;
 }
 
