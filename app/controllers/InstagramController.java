@@ -27,7 +27,7 @@ import common.utils.ImageFileUtil;
 import common.utils.NanoSecondStopWatch;
 import controllers.Application.DeviceType;
 import domain.SocialObjectType;
-import insta.dto.MediaDto;
+import insta.importer.dto.MediaDto;
 import play.Play;
 import play.data.DynamicForm;
 import play.db.jpa.Transactional;
@@ -52,7 +52,7 @@ public class InstagramController extends Controller {
     
     @Transactional
     public Result index() {
-    	return redirect("assets/main.html");
+    	return redirect("assets/insta/importer/main.html");
     }   
     
     public static Result loginInstagram() {

@@ -1,4 +1,4 @@
-package insta.dto;
+package insta.importer.dto;
 
 public class MediaDto{
 	String imageUrl;

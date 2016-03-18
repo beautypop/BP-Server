@@ -60,12 +60,12 @@ app.controller('importController',function($scope,$http,$state,$location,$rootSc
 		if($(event.currentTarget).find('div.checkbox').hasClass('selected')){
 			$(event.currentTarget).find('div.checkbox').removeClass('selected');
 			$(event.currentTarget).find('div.overlay').css('display', 'none');
-			$(event.currentTarget).find('div.checkbox').css("background", "url(stylesheets/images/unselected.png) center no-repeat");
+			$(event.currentTarget).find('div.checkbox').css("background", "url(images/unselected.png) center no-repeat");
 			selectedImageCount--;
 		}else{
 			$(event.currentTarget).find('div.checkbox').addClass('selected');
 			$(event.currentTarget).find('div.overlay').css('display', 'block');
-			$(event.currentTarget).find('div.checkbox').css("background", "url(stylesheets/images/selected.png) center no-repeat");
+			$(event.currentTarget).find('div.checkbox').css("background", "url(images/selected.png) center no-repeat");
 			selectedImageCount++;
 		}
 		
@@ -89,9 +89,9 @@ app.controller('importController',function($scope,$http,$state,$location,$rootSc
 		}
 		
 		if(selectedImageCount == $(".checkbox").length){
-			$('.ui-checkbox').css("background", "url(stylesheets/images/selected.png) center no-repeat");
+			$('.ui-checkbox').css("background", "url(images/selected.png) center no-repeat");
 		}else{
-			$('.ui-checkbox').css("background", "url(stylesheets/images/unselected.png) center no-repeat");
+			$('.ui-checkbox').css("background", "url(images/unselected.png) center no-repeat");
 		}
 	}
 	
@@ -99,16 +99,16 @@ app.controller('importController',function($scope,$http,$state,$location,$rootSc
 	$scope.onSelectAll = function() {
 		if($(event.currentTarget).hasClass('selected')){
 			$(".checkbox").removeClass("selected");
-			$('.checkbox').css("background", "url(stylesheets/images/unselected.png) center no-repeat");
+			$('.checkbox').css("background", "url(images/unselected.png) center no-repeat");
 			$('.overlay').css('display', 'none');
-			$(event.currentTarget).css("background", "url(stylesheets/images/unselected.png) center no-repeat");
+			$(event.currentTarget).css("background", "url(images/unselected.png) center no-repeat");
 			$(event.currentTarget).removeClass("selected");
 			selectedImageCount = 0;
 		}else{
 			$(".checkbox").addClass("selected");
-			$('.checkbox').css("background", "url(stylesheets/images/selected.png) center no-repeat");
+			$('.checkbox').css("background", "url(images/selected.png) center no-repeat");
 			$('.overlay').css('display', 'block');
-			$(event.currentTarget).css("background", "url(stylesheets/images/selected.png) center no-repeat");
+			$(event.currentTarget).css("background", "url(images/selected.png) center no-repeat");
 			$(event.currentTarget).addClass("selected");
 			selectedImageCount = $(".checkbox").length;
 		}

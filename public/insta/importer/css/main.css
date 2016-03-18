@@ -1,5 +1,5 @@
 .header-bar>.logo {
-	background: url(images/logo-2.png) no-repeat center;
+	background: url(../images/logo-2.png) no-repeat center;
 	width: 280px;
 	height: 40px;
 	margin: 10px auto 0;
@@ -103,7 +103,7 @@ a:active,a:hover {
 	position: absolute;
 	right: 10px;
 	bottom: 10px;
-	background: url(images/unselected.png) center no-repeat;
+	background: url(../images/unselected.png) center no-repeat;
 	width: 24px;
 	height: 24px;
 	z-index: 1001;
@@ -124,7 +124,7 @@ a:active,a:hover {
 
 .ui-checkbox {
 	display: inline-block;
-	background: url(images/unselected-white.png) center no-repeat;
+	background: url(../images/unselected-white.png) center no-repeat;
 	outline: 0;
 	overflow: hidden;
 	width: 24px;
@@ -170,7 +170,7 @@ a:active,a:hover {
 .img.delete .delete-icon {
 	width: 100px;
 	height: 100px;
-	background: url(images/remove-hover.png) center no-repeat;
+	background: url(../images/remove-hover.png) center no-repeat;
 	position: absolute;
 	left: 0;
 	top: 0;
@@ -283,7 +283,7 @@ button,input,optgroup,select,textarea {
 }
 
 .hero {
-	background: url("images/hero.png") no-repeat;
+	background: url("../images/hero.png") no-repeat;
 	background-size: cover;
 	position: relative;
 	overflow: hidden;
@@ -317,7 +317,7 @@ button,input,optgroup,select,textarea {
 }
 
 .big-text-logo {
-	background: url(images/hero-text-logo.png) center no-repeat;
+	background: url(../images/hero-text-logo.png) center no-repeat;
 	width: 432px;
 	height: 46px;
 	display: block;
@@ -333,7 +333,7 @@ p.hero-text {
 
 a.new-import-button {
 	display: block;
-	background: url(images/btn.png) center no-repeat;
+	background: url(../images/btn.png) center no-repeat;
 	width: 409px;
 	height: 78px;
 	text-align: center;
@@ -344,13 +344,13 @@ a.new-import-button {
 }
 
 a:hover.new-import-button {
-	background: url(images/btn-hover.png) center no-repeat;
+	background: url(../images/btn-hover.png) center no-repeat;
 }
 
 .shopee-transition-main {
 	display: block;
 	margin: 0 auto;
-	background: url(images/shopee.png) center no-repeat;
+	background: url(../images/shopee.png) center no-repeat;
 	width: 568px;
 	height: 376px;
 }
@@ -386,7 +386,7 @@ a:hover.new-import-button {
 
 .love-to-shop {
 	display: inline-block;
-	background: url(images/love-to-shop.png) no-repeat center;
+	background: url(../images/love-to-shop.png) no-repeat center;
 	width: 540px;
 	height: 433px;
 	position: relative;
@@ -549,23 +549,23 @@ a {
 }
 
 i.category {
-    background: url(images/category.png) center no-repeat;
+    background: url(../images/category.png) center no-repeat;
 }
 
 i.price {
-    background: url(images/price.png) center no-repeat;
+    background: url(../images/price.png) center no-repeat;
 }
 
 i.stock {
-    background: url(images/stock.png) center no-repeat;
+    background: url(../images/stock.png) center no-repeat;
 }
 
 i.days-to-ship {
-    background: url(images/ship-out-in.png) center no-repeat;
+    background: url(../images/ship-out-in.png) center no-repeat;
 }
 
 i.condition {
-    background: url(images/condition.png) center no-repeat;
+    background: url(../images/condition.png) center no-repeat;
 }
 
 i.icon {
@@ -580,7 +580,7 @@ i.icon {
 }
 
 .shopee-instagram-import-logo {
-    background: url(images/step-logo.png) center no-repeat;
+    background: url(../images/step-logo.png) center no-repeat;
     width: 293px;
     height: 72px;
     display: block;
@@ -589,7 +589,7 @@ i.icon {
 
 .container .instagram-logo {
     display: inline-block;
-    background: url(images/transition-instashop.png) center no-repeat;
+    background: url(../images/transition-instashop.png) center no-repeat;
     height: 48px;
     width: 48px;
     top: -3px;
@@ -623,7 +623,7 @@ i.icon {
 
 .container .shopee-logo {
     display: inline-block;
-    background: url(images/transition-shopee.png) center no-repeat;
+    background: url(../images/transition-shopee.png) center no-repeat;
     height: 48px;
     width: 48px;
     top: -8px;
@@ -631,7 +631,7 @@ i.icon {
 }
 
 .step-header {
-    background: url(images/hero.png) center no-repeat;
+    background: url(../images/hero.png) center no-repeat;
     background-size: cover;
     width: 100%;
     height: 330px;
