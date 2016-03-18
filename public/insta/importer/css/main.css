@@ -34,7 +34,7 @@ a:active,a:hover {
 .round-button {
 	margin-top: 50px;
 	display: inline-block;
-	background: #f1582c;
+	background: #fd4e64;
 }
 
 .clickable {
@@ -185,7 +185,7 @@ a:active,a:hover {
 	padding: 0 10px;
 }
 
-.shopee.rounded {
+.beautypop.rounded {
 	border-radius: 4px;
 	height: 45px;
 	padding: 6px;
@@ -199,12 +199,12 @@ a:active,a:hover {
 	width: 440px;
 }
 
-textarea.shopee,input.shopee {
+textarea.beautypop,input.beautypop {
 	-webkit-appearance: none;
 	-moz-appearance: none;
 }
 
-textarea.shopee,input.shopee,select.shopee,div.shopee {
+textarea.beautypop,input.beautypop,select.beautypop,div.beautypop {
 	outline: 0;
 	-webkit-tap-highlight-color: rgba(255, 255, 255, 0);
 	border: 1px solid #e6e6e6;
@@ -249,7 +249,7 @@ button,input,optgroup,select,textarea {
 	width: 440px;
 }
 
-textarea.shopee,input.shopee,select.shopee,div.shopee {
+textarea.beautypop,input.beautypop,select.beautypop,div.beautypop {
 	outline: 0;
 	-webkit-tap-highlight-color: rgba(255, 255, 255, 0);
 	border: 1px solid #e6e6e6;
@@ -347,22 +347,22 @@ a:hover.new-import-button {
 	background: url(../images/btn-hover.png) center no-repeat;
 }
 
-.shopee-transition-main {
+.beautypop-transition-main {
 	display: block;
 	margin: 0 auto;
-	background: url(../images/shopee.png) center no-repeat;
+	background: url(../images/beautypop.png) center no-repeat;
 	width: 568px;
 	height: 376px;
 }
 
-.shopee-benefits {
+.beautypop-benefits {
 	width: 100%;
 	background: #faf8f8;
 }
 
 .title {
 	font-size: 36px;
-	color: #f1582a;
+	color: #fd4e64;
 	text-transform: uppercase;
 }
 
@@ -530,8 +530,8 @@ input.mall {
 
 .half-round.secondary {
 	background: none;
-	color: #f1582a;
-	border: 1px solid #f1582a;
+	color: #fd4e64;
+	border: 1px solid #fd4e64;
 }
 
 .divider {
@@ -579,7 +579,7 @@ i.icon {
     border-right: 1px solid #eaeaea;
 }
 
-.shopee-instagram-import-logo {
+.beautypop-instagram-import-logo {
     background: url(../images/step-logo.png) center no-repeat;
     width: 293px;
     height: 72px;
@@ -602,9 +602,20 @@ i.icon {
 }
 
 .steps .step.active {
-    background: #f1582b;
+    background: #fd4e64;
     color: #fff;
 }
+
+.steps .step.active a {
+    color: #fff;
+    text-decoration: none;
+}
+
+.steps .step.active a:focus, .steps .step.active a:hover {
+    color: #23527c;
+    text-decoration: none;
+}
+
 .steps .step {
     position: relative;
     display: inline-block;
@@ -621,9 +632,9 @@ i.icon {
     z-index: 1;
 }
 
-.container .shopee-logo {
+.container .beautypop-logo {
     display: inline-block;
-    background: url(../images/transition-shopee.png) center no-repeat;
+    background: url(../images/transition-beautypop.png) center no-repeat;
     height: 48px;
     width: 48px;
     top: -8px;
