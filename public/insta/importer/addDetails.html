@@ -31,21 +31,17 @@
 			any selected listing.</div>
 		<div id="edit-view">
 
-			<a class="clickable round-button post-photos" ng-click="postPhotos(listingData)">Post
-				{{imagesCount}} on Beautypop</a> 
-			
-				<br>
+			<a class="clickable round-button post-photos" ng-click="postPhotos(listingData)">Post {{imagesCount}} on Beautypop</a> 
+            <br>
 			<br>
-			<div class="empty" style="display: none;">Highlighted fields
-				cannot be empty</div>
+			<div class="empty" style="display: none;">Highlighted fields cannot be empty</div>
 			<br>
 			<div class="clearfix">
 				<div style="display: none;">
 					No photos selected. Why not <a href="/ig/import/">import</a> some?
 				</div>
 				<div style="display: none;">
-					<div style="color: #faad96; padding-bottom: 20px; font-size: 18px;">You
-						can do a group update of all now.</div>
+					<div style="color: #faad96; padding-bottom: 20px; font-size: 18px;">You can do a group update of all now.</div>
 				</div>
 				<div class="edit-component" ng-repeat="listing in listingData">
 					<div class="row clearfix first">
@@ -58,8 +54,7 @@
 								<textarea class="beautypop rounded required" maxlength="100"
 									placeholder="Name" ng-model="listing.title"></textarea>
 								<div class="ui-checkbox-wrapper">
-									<div class="white-tooltip fade-transition"
-										style="display: none;">Apply to all products</div>
+									<div class="white-tooltip fade-transition" style="display: none;">Apply to all products</div>
 									<div class="ui-checkbox"></div>
 								</div>
 							</div>
@@ -69,8 +64,7 @@
 						<input class="beautypop rounded" type="text" maxlength="3000"
 							placeholder="Description" ng-model="listing.body" value="{{image.caption}}">
 						<div class="ui-checkbox-wrapper">
-							<div class="white-tooltip fade-transition" style="display: none;">Apply
-								to all products</div>
+							<div class="white-tooltip fade-transition" style="display: none;">Apply to all products</div>
 							<div class="ui-checkbox"></div>
 						</div>
 					</div>
@@ -101,14 +95,12 @@
 							<option value="21">Health &amp; Beauty</option>
 						</select>
 						<div class="ui-checkbox-wrapper">
-							<div class="white-tooltip fade-transition" style="display: none;">Apply
-								to all products</div>
+							<div class="white-tooltip fade-transition" style="display: none;">Apply to all products</div>
 							<div class="ui-checkbox"></div>
 						</div>
 						
 					</div>
 					
-
 					<div class="row clearfix">
 						<div class="error-message" style="display: none;">
 							<i class="critical"></i>false
@@ -117,8 +109,7 @@
 							class="beautypop rounded required has-icon" type="number"
 							placeholder="Price (S$)" ng-model="listing.price">
 						<div class="ui-checkbox-wrapper">
-							<div class="white-tooltip fade-transition" style="display: none;">Apply
-								to all products</div>
+							<div class="white-tooltip fade-transition" style="display: none;">Apply to all products</div>
 							<div class="ui-checkbox"></div>
 						</div>
 					</div>
@@ -127,43 +118,28 @@
 						<div class="error-message" style="display: none;">
 							<i class="critical"></i>false
 						</div>
-						<i class="icon price"></i> <input
+						<i class="icon price"></i> 
+                        <input
 							class="beautypop rounded required has-icon" type="number"
 							placeholder="Original Price (S$)" ng-model="listing.originalPrice">
 						<div class="ui-checkbox-wrapper">
-							<div class="white-tooltip fade-transition" style="display: none;">Apply
-								to all products</div>
+							<div class="white-tooltip fade-transition" style="display: none;">Apply to all products</div>
 							<div class="ui-checkbox"></div>
 						</div>
 					</div>
 
 					<div class="row clearfix">
-						<div class="error-message" style="display: none;">
-							<i class="critical"></i>false
-						</div>
-						<i class="icon stock"></i> <input
-							class="beautypop rounded required has-icon" type="text"
-							placeholder="Hashtags" ng-model="listing.hashtags">
-						<div class="ui-checkbox-wrapper">
-							<div class="white-tooltip fade-transition" style="display: none;">Apply
-								to all products</div>
-							<div class="ui-checkbox"></div>
-						</div>
-					</div>
-
-					
-					<div class="row clearfix">
-						<i class="icon days-to-ship"></i> <select
-							class="ui fluid dropdown beautypop rounded required has-icon" ng-model="listing.freeDelivery">
+						<i class="icon days-to-ship"></i> 
+						<select class="ui fluid dropdown beautypop rounded required has-icon" ng-model="listing.freeDelivery">
 							<option value="">Free Delivery</option>
-							<option value="0">Yes</option>
-							<option value="1">No</option>
+							<option value="true">Yes</option>
+							<option value="false">No</option>
 						</select>
 					</div>
 
 					<div class="row clearfix">
-						<i class="icon condition"></i> <select
-							class="ui fluid dropdown beautypop rounded required has-icon" ng-model="listing.countryCode">
+						<i class="icon condition"></i> 
+						<select class="ui fluid dropdown beautypop rounded required has-icon" ng-model="listing.countryCode">
 							<option value="">Country Codes</option>
 							<option value="0">NA</option>
 							<option value="1">International</option>
@@ -190,7 +166,6 @@
 							<option value="22">Switzerland</option>
 							<option value="23">Iceland</option>
 							<option value="24">Canada</option>
-							
 						</select>
 					</div>
 					
@@ -203,22 +178,17 @@
 							<option value="USED">Used</option>
 						</select>
 						<div class="ui-checkbox-wrapper">
-							<div class="white-tooltip fade-transition" style="display: none;">Apply
-								to all products</div>
+							<div class="white-tooltip fade-transition" style="display: none;">Apply to all products</div>
 							<div class="ui-checkbox"></div>
 						</div>
 					</div> 
 				</div>
 			</div>
 			<div style="display: none;">
-				<div style="color: #faad96; font-size: 18px;">You can do a
-					group update of all now.</div>
+				<div style="color: #faad96; font-size: 18px;">You can do a group update of all now.</div>
 			</div>
-			<div class="empty" style="display: none;">Highlighted fields
-				cannot be empty</div>
-			<a class="clickable round-button post-photos" style="display: none;">Post
-				2 Listings on Beautypop</a>
-
+			<div class="empty" style="display: none;">Highlighted fields cannot be empty</div>
+			<a class="clickable round-button post-photos" style="display: none;">Post 2 Listings on Beautypop</a>
 		</div>
 
 	</div>
@@ -236,7 +206,6 @@ input,.edit-component .ui.dropdown,.edit-component select {
 	text-align: right;
 	width: 440px;
 }
-
 .edit-component input,.edit-component .ui.dropdown,.edit-component select
 	{
 	display: inline-block !important;

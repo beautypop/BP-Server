@@ -44,10 +44,10 @@ GET     /signup                                     controllers.Application.sign
 
 # Instagram
 GET     /instagram                                  @controllers.InstagramController.index
-GET     /loginInstagram								controllers.InstagramController.loginInstagram
-GET		/connect/:code								controllers.InstagramController.generateAccessTonken(code:String)
-GET		/import										controllers.InstagramController.getMedia
-POST    /instagram/product/new						controllers.InstagramController.newProductWithForm()
+GET     /loginInstagram                             controllers.InstagramController.loginInstagram
+GET     /connect/:code                              controllers.InstagramController.generateAccessToken(code:String)
+GET     /import                                     controllers.InstagramController.getMedia
+POST    /instagram/product/new                      controllers.InstagramController.newProductWithForm()
 
 # Login
 POST    /login                                      @controllers.Application.doLogin
