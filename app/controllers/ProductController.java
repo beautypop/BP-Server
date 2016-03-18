@@ -135,7 +135,8 @@ public class ProductController extends Controller{
 		
 		Category category = Category.findById(catId);
         if (category == null) {
-            return notFound();
+            logger.underlyingLogger().debug("[u="+localUser.getId()+"][catId="+catId+"] createProduct() Invalid catId");
+            return badRequest("Failed to create product. Invalid catId="+catId);
         }
         
 		try {
@@ -143,6 +144,7 @@ public class ProductController extends Controller{
 			        title, body, category, price, conditionType, 
 			        originalPrice, freeDelivery, countryCode, deviceType);
 			if (newPost == null) {
+			    logger.underlyingLogger().debug("[u="+localUser.getId()+"][catId="+catId+"][title="+title+"][body="+body+"][price="+price+"][conditionType="+conditionType+"] createProduct() Invalid catId");
 				return badRequest("Failed to create product. Invalid parameters.");
 			}
 			
@@ -692,11 +694,13 @@ public class ProductController extends Controller{
 		
 		Post post = Post.findById(id);
 		if (post == null) {
+		    logger.underlyingLogger().error(String.format("[u=%d][p="+id+"] soldPost() Post not found", localUser.id));
 		    return notFound();
 		}
 		
 		if (post.owner.id == localUser.id || localUser.isSuperAdmin()) {
 			SocialRelationHandler.recordSoldPost(post, localUser);
+			logger.underlyingLogger().debug(String.format("[u=%d][p="+id+"] soldPost() Post marked as sold", localUser.id));
 		}
 		return ok();
 	}

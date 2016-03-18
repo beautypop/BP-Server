@@ -6,14 +6,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 import models.Category;
-import models.Hashtag;
 import models.Post;
 import models.PostToMark;
 import models.User;
 import models.Country.CountryCode;
 import models.Post.ConditionType;
 
-import org.apache.commons.lang3.StringUtils;
 import org.jinstagram.Instagram;
 import org.jinstagram.auth.InstagramAuthService;
 import org.jinstagram.auth.model.Token;
@@ -27,20 +25,14 @@ import org.jinstagram.exceptions.InstagramException;
 
 import common.utils.ImageFileUtil;
 import common.utils.NanoSecondStopWatch;
-import common.utils.StringUtil;
 import controllers.Application.DeviceType;
 import domain.SocialObjectType;
-import dto.MediaDto;
+import insta.dto.MediaDto;
 import play.Play;
-import play.Routes;
 import play.data.DynamicForm;
-import play.data.Form;
-import play.data.validation.ValidationError;
 import play.db.jpa.Transactional;
-import play.i18n.Messages;
 import play.libs.Json;
 import play.mvc.Controller;
-import play.mvc.Http.Session;
 import play.mvc.Result;
 import service.SocialRelationHandler;
 import viewmodel.ResponseStatusVM;
@@ -174,6 +166,4 @@ public class InstagramController extends Controller {
 		
 		return badRequest();
 	}
-	
-    
 }
