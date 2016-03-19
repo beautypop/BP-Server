@@ -44,6 +44,14 @@
 					<div style="color: #faad96; padding-bottom: 20px; font-size: 18px;">You can do a group update of all now.</div>
 				</div>
 				<div class="edit-component" ng-repeat="listing in listingData">
+                    <div class="row clearfix">
+                        <input class="beautypop rounded" type="text" maxlength="100"
+                            placeholder="Title" ng-model="listing.title">
+                        <div class="ui-checkbox-wrapper">
+                            <div class="white-tooltip fade-transition" style="display: none;">Apply to all products</div>
+                            <div class="ui-checkbox"></div>
+                        </div>
+                    </div>
 					<div class="row clearfix first">
 						<div class="img delete">
 							<div class="delete-icon"></div>
@@ -51,21 +59,13 @@
 						</div>
 						<div class="name-desc">
 							<div class="row clearfix">
-								<textarea class="beautypop rounded required" maxlength="100"
-									placeholder="Name" ng-model="listing.title"></textarea>
+								<textarea class="beautypop rounded required" maxlength="2000"
+									placeholder="Description" ng-model="listing.body" value="{{image.caption}}"></textarea>
 								<div class="ui-checkbox-wrapper">
 									<div class="white-tooltip fade-transition" style="display: none;">Apply to all products</div>
 									<div class="ui-checkbox"></div>
 								</div>
 							</div>
-						</div>
-					</div>
-					<div class="row clearfix">
-						<input class="beautypop rounded" type="text" maxlength="3000"
-							placeholder="Description" ng-model="listing.body" value="{{image.caption}}">
-						<div class="ui-checkbox-wrapper">
-							<div class="white-tooltip fade-transition" style="display: none;">Apply to all products</div>
-							<div class="ui-checkbox"></div>
 						</div>
 					</div>
 					<div class="row clearfix">
