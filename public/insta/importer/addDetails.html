@@ -8,13 +8,9 @@
 		<div class="container step">
 			<div class="instagram-logo"></div>
 			<div class="steps">
-				<div class="step">Connect</div>
-				<div class="step">Import</div>
-				<div class="step active">
-
-					<a href=""> Edit </a>
-
-				</div>
+				<div class="step active">Connect</div>
+				<div class="step active">Import</div>
+				<div class="step active">Edit</div>
 				<div class="step">Complete</div>
 				<div class="bar"></div>
 			</div>
@@ -43,13 +39,14 @@
 				<div style="display: none;">
 					<div style="color: #faad96; padding-bottom: 20px; font-size: 18px;">You can do a group update of all now.</div>
 				</div>
-				<div class="edit-component" ng-repeat="listing in listingData">
+				<form name="myform" novalidate>
+				<div class="edit-component" ng-class="{true: 'error'}[submitted && myForm.$invalid]" ng-repeat="listing in listingData">
                     <div class="row clearfix">
                         <input class="beautypop rounded" type="text" maxlength="100"
-                            placeholder="Title" ng-model="listing.title">
+                            placeholder="Title" ng-model="listing.title" ng-keyup = "makeAllSame(listing.title, 'title')" required>
                         <div class="ui-checkbox-wrapper">
                             <div class="white-tooltip fade-transition" style="display: none;">Apply to all products</div>
-                            <div class="ui-checkbox"></div>
+                            <div class="ui-checkbox checkbox-title" ng-click="onApplyAll(listing.title,'checkbox-title', 'title')"></div>
                         </div>
                     </div>
 					<div class="row clearfix first">
@@ -60,43 +57,24 @@
 						<div class="name-desc">
 							<div class="row clearfix">
 								<textarea class="beautypop rounded required" maxlength="2000"
-									placeholder="Description" ng-model="listing.body" value="{{image.caption}}"></textarea>
+									placeholder="Description" ng-model="listing.body" value="{{image.caption}}" ng-keyup = "makeAllSame(listing.body, 'body')" required></textarea>
 								<div class="ui-checkbox-wrapper">
 									<div class="white-tooltip fade-transition" style="display: none;">Apply to all products</div>
-									<div class="ui-checkbox"></div>
+									<div class="ui-checkbox checkbox-body" ng-click="onApplyAll(listing.body,'checkbox-body', 'body')"></div>
 								</div>
 							</div>
 						</div>
 					</div>
 					<div class="row clearfix">
 						<i class="icon category"></i> <select
-							class="ui fluid dropdown beautypop rounded required has-icon" ng-model="listing.catId">
+							class="ui fluid dropdown beautypop rounded required has-icon" ng-model="listing.catId" ng-change = "makeAllSame(listing.catId, 'catId')" required>
 							<option value="">Category</option>
-							<option value="1">Miscellaneous</option>
-							<option value="2">Tickets &amp; Vouchers</option>
-							<option value="3">Books</option>
-							<option value="4">Pet Accessories</option>
-							<option value="5">Design &amp; Crafts</option>
-							<option value="6">Watches</option>
-							<option value="7">Men's Shoes</option>
-							<option value="8">Men's Apparel</option>
-							<option value="9">Bags</option>
-							<option value="10">Women's Shoes</option>
-							<option value="11">Food</option>
-							<option value="12">Home Appliances</option>
-							<option value="13">Sports &amp; Hobbies</option>
-							<option value="14">Toys, Kids &amp; Babies</option>
-							<option value="15">Home &amp; Living</option>
-							<option value="16">Computers &amp; Peripherals</option>
-							<option value="17">Games &amp; Collectibles</option>
-							<option value="18">Mobile &amp; Gadgets</option>
-							<option value="19">Accessories</option>
-							<option value="20">Women's Apparel</option>
-							<option value="21">Health &amp; Beauty</option>
+							<option ng-repeat="category in categoriesData" value="{{category.id}}">{{category.name}}</option>
+							
 						</select>
 						<div class="ui-checkbox-wrapper">
 							<div class="white-tooltip fade-transition" style="display: none;">Apply to all products</div>
-							<div class="ui-checkbox"></div>
+							<div class="ui-checkbox checkbox-catId" ng-click="onApplyAll(listing.catId,'checkbox-catId', 'catId')"></div>
 						</div>
 						
 					</div>
@@ -107,71 +85,55 @@
 						</div>
 						<i class="icon price"></i> <input
 							class="beautypop rounded required has-icon" type="number"
-							placeholder="Price (S$)" ng-model="listing.price">
+							placeholder="Price (S$)" ng-model="listing.price" ng-change = "makeAllSame(listing.price, 'price')" required>
 						<div class="ui-checkbox-wrapper">
 							<div class="white-tooltip fade-transition" style="display: none;">Apply to all products</div>
-							<div class="ui-checkbox"></div>
+							<div class="ui-checkbox checkbox-price" ng-click="onApplyAll(listing.price,'checkbox-price', 'price')"></div>
 						</div>
 					</div>
 
-					<div class="row clearfix">
+					<div class="row clearfix" ng-hide="hidePromotedSellerFields">
 						<div class="error-message" style="display: none;">
 							<i class="critical"></i>false
 						</div>
 						<i class="icon price"></i> 
                         <input
 							class="beautypop rounded required has-icon" type="number"
-							placeholder="Original Price (S$)" ng-model="listing.originalPrice">
+							placeholder="Original Price (S$)" ng-model="listing.originalPrice" ng-change = "makeAllSame(listing.originalPrice, 'originalPrice')" required>
 						<div class="ui-checkbox-wrapper">
 							<div class="white-tooltip fade-transition" style="display: none;">Apply to all products</div>
-							<div class="ui-checkbox"></div>
+							<div class="ui-checkbox checkbox-originalPrice" ng-click="onApplyAll(listing.originalPrice,'checkbox-originalPrice', 'originalPrice')"></div>
 						</div>
 					</div>
 
-					<div class="row clearfix">
+					<div class="row clearfix" ng-hide="hidePromotedSellerFields">
 						<i class="icon days-to-ship"></i> 
-						<select class="ui fluid dropdown beautypop rounded required has-icon" ng-model="listing.freeDelivery">
+						<select class="ui fluid dropdown beautypop rounded required has-icon" ng-model="listing.freeDelivery" ng-change = "makeAllSame(listing.freeDelivery, 'freeDelivery')" required>
 							<option value="">Free Delivery</option>
 							<option value="true">Yes</option>
 							<option value="false">No</option>
 						</select>
+						<div class="ui-checkbox-wrapper">
+                            <div class="white-tooltip fade-transition" style="display: none;">Apply to all products</div>
+                            <div class="ui-checkbox checkbox-freeDelivery" ng-click="onApplyAll(listing.freeDelivery,'checkbox-freeDelivery', 'freeDelivery')"></div>
+                        </div>
 					</div>
 
-					<div class="row clearfix">
+					<div class="row clearfix" ng-hide="hidePromotedSellerFields">
 						<i class="icon condition"></i> 
-						<select class="ui fluid dropdown beautypop rounded required has-icon" ng-model="listing.countryCode">
+						<select class="ui fluid dropdown beautypop rounded required has-icon" ng-model="listing.countryCode" ng-change = "makeAllSame(listing.countryCode, 'countryCode')" required>
 							<option value="">Country Codes</option>
-							<option value="0">NA</option>
-							<option value="1">International</option>
-							<option value="2">Hong Kong</option>
-							<option value="3">US</option>
-							<option value="4">Japan</option>
-							<option value="5">South Korea</option>
-							<option value="6">Taiwan</option>
-							<option value="7">Thailand</option>
-							<option value="8">Malaysia</option>
-							<option value="9">Indonesia</option>
-							<option value="10">Australia</option>
-							<option value="11">New Zealand</option>
-							<option value="12">Germany</option>
-							<option value="13">UK</option>
-							<option value="14">Italy</option>
-							<option value="15">France</option>
-							<option value="16">Spain</option>
-							<option value="17">Netherlands</option>
-							<option value="18">Norway</option>
-							<option value="19">Ireland</option>
-							<option value="20">Denmark</option>
-							<option value="21">Sweden</option>
-							<option value="22">Switzerland</option>
-							<option value="23">Iceland</option>
-							<option value="24">Canada</option>
+							<option ng-repeat="contry in countriesData" value="{{contry.id}}">{{contry.name}}</option>
 						</select>
+						<div class="ui-checkbox-wrapper">
+                            <div class="white-tooltip fade-transition" style="display: none;">Apply to all products</div>
+                            <div class="ui-checkbox checkbox-countryCode" ng-click="onApplyAll(listing.countryCode,'checkbox-countryCode', 'countryCode')"></div>
+                        </div>
 					</div>
 					
 					<div class="row clearfix">
 						<i class="icon condition"></i> <select
-							class="ui fluid dropdown beautypop rounded required has-icon" ng-model="listing.conditionType">
+							class="ui fluid dropdown beautypop rounded required has-icon" ng-model="listing.conditionType" ng-change = "makeAllSame(listing.conditionType, 'conditionType')" required>
 							<option value="">Condition</option>
 							<option value="NEW_WITH_TAG">New (Sealed/with Tags)</option>
 							<option value="NEW_WITHOUT_TAG">New (Unsealed/without Tags)</option>
@@ -179,10 +141,11 @@
 						</select>
 						<div class="ui-checkbox-wrapper">
 							<div class="white-tooltip fade-transition" style="display: none;">Apply to all products</div>
-							<div class="ui-checkbox"></div>
+							<div class="ui-checkbox checkbox-conditionType" ng-click="onApplyAll(listing.conditionType,'checkbox-conditionType', 'conditionType')"></div>
 						</div>
-					</div> 
+					</div>
 				</div>
+				</form> 
 			</div>
 			<div style="display: none;">
 				<div style="color: #faad96; font-size: 18px;">You can do a group update of all now.</div>

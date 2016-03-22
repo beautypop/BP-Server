@@ -57,6 +57,18 @@ $urlRouterProvider.otherwise("/");
                 }
             }
 
+        }).state('complete', {
+            url: "/complete",
+            templateUrl: "complete.html",
+            controller: "completeController",
+            resolve: {
+                loadPlugin: function ($ocLazyLoad) {
+                    return $ocLazyLoad.load([
+
+                    ]);
+                }
+            }
+
         });
 
 });

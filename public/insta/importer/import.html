@@ -10,12 +10,8 @@
 		<div class="container step">
 			<div class="instagram-logo"></div>
 			<div class="steps">
-				<div class="step">Connect</div>
-				<div class="step active">
-				
-					<a href=""> Import </a>
-					
-				</div>
+				<div class="step active">Connect</div>
+				<div class="step active">Import</div>
 				<div class="step">Edit</div>
 				<div class="step">Complete</div>
 				<div class="bar"></div>
@@ -27,7 +23,7 @@
 
 		<div data-country="SG" class="subtitle">Import photos from
 			Instagram to Beautypop</div>
-		<div class="content">Select 20 best photos of what you wish to
+		<div class="content">Select {{maxiumumImageCount}} best photos of what you wish to
 			sell from your Instagram account and import them on to Beautypop. Have
 			more? You can always come back here anytime to import more later.
 			We'll remind you :)</div>
@@ -37,7 +33,7 @@
 				ng-click="importPhoto()">Pick some photos</a>
 			<div class="select-all">
 				<div class="ui-checkbox" ng-click="onSelectAll()"></div>
-				<span>Select All</span>
+				<span>Select First {{maxiumumImageCount}}</span>
 			</div>
 			<div class="cards cardsImages clearfix">
 				<div class="card" ng-click="selectImages()" count="{{image.caption}}" ng-repeat="image in mediaData">

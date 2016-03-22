@@ -1,9 +1,10 @@
 
-app.controller('homeController',function($scope,$http,$state,$window,$cookies,notificationService){
+app.controller('homeController',function($scope,$http,$state,$cookies){
 	/*for login beautypop */
 	$scope.onLogin = function(data){
 		 $http({method:'POST',url:'/login/mobile', data: data})
 		 .success(function(response){
+			 $cookies.put("accessToken", response);
 			 $state.go("connect");
 		 }).error(function(data){
 			 alert("Invalid email or password");
@@ -19,10 +20,11 @@ app.controller('connectController',function($scope,$http,$state,$location,$windo
 	}
 });
 
-app.controller('importController',function($scope,$http,$state,$location,$rootScope){
+app.controller('importController',function($scope,$http,$state,$location,$rootScope,notificationService){
 	$scope.selectedImages = [];
 	$scope.mediaData=[];
 	var selectedImageCount = 0;
+	$scope.maxiumumImageCount = 20;
 	
 	var url = $location.absUrl(); // Returns full URL
 	var code = (url.split("?"))[1]; // Get Code sent by instagram
@@ -63,10 +65,14 @@ app.controller('importController',function($scope,$http,$state,$location,$rootSc
 			$(event.currentTarget).find('div.checkbox').css("background", "url(images/unselected.png) center no-repeat");
 			selectedImageCount--;
 		}else{
-			$(event.currentTarget).find('div.checkbox').addClass('selected');
-			$(event.currentTarget).find('div.overlay').css('display', 'block');
-			$(event.currentTarget).find('div.checkbox').css("background", "url(images/selected.png) center no-repeat");
-			selectedImageCount++;
+			if(selectedImageCount < $scope.maxiumumImageCount){
+				$(event.currentTarget).find('div.checkbox').addClass('selected');
+				$(event.currentTarget).find('div.overlay').css('display', 'block');
+				$(event.currentTarget).find('div.checkbox').css("background", "url(images/selected.png) center no-repeat");
+				selectedImageCount++;
+			}else{
+				notificationService.error("Maximum "+$scope.maxiumumImageCount+" Photos Allowed");
+			}
 		}
 		
 		$scope.validateImport();
@@ -88,7 +94,7 @@ app.controller('importController',function($scope,$http,$state,$location,$rootSc
 			$("#select-view a").text("Pick some photos");
 		}
 		
-		if(selectedImageCount == $(".checkbox").length){
+		if(selectedImageCount == $(".checkbox").length || selectedImageCount == $scope.maxiumumImageCount){
 			$('.ui-checkbox').css("background", "url(images/selected.png) center no-repeat");
 		}else{
 			$('.ui-checkbox').css("background", "url(images/unselected.png) center no-repeat");
@@ -105,12 +111,18 @@ app.controller('importController',function($scope,$http,$state,$location,$rootSc
 			$(event.currentTarget).removeClass("selected");
 			selectedImageCount = 0;
 		}else{
-			$(".checkbox").addClass("selected");
-			$('.checkbox').css("background", "url(images/selected.png) center no-repeat");
-			$('.overlay').css('display', 'block');
+			$('.checkbox').each(function(index,el){
+			    console.log(index);
+			    if(index < $scope.maxiumumImageCount){
+					$(el).addClass("selected");
+				    $(el).css("background", "url(images/selected.png) center no-repeat");
+				    $(el).parent().find('.overlay').css('display', 'block');
+				    selectedImageCount = index+1;
+			    }
+			});
+			
 			$(event.currentTarget).css("background", "url(images/selected.png) center no-repeat");
 			$(event.currentTarget).addClass("selected");
-			selectedImageCount = $(".checkbox").length;
 		}
 		
 		$scope.validateImport();
@@ -118,9 +130,29 @@ app.controller('importController',function($scope,$http,$state,$location,$rootSc
 
 });
 
-app.controller('detailsController',function($scope,$http,$state,$location,$window,$rootScope,$upload,$timeout,notificationService){
+app.controller('detailsController',function($scope,$http,$state,$upload,notificationService,$cookies,$rootScope){
 	var imagesData = $rootScope.importedImages;
 	var detailsData = [];
+	$scope.hidePromotedSellerFields = true;
+	
+	//get countries
+	$http.get('/get-countries',{}).then(function(res){
+		$scope.countriesData=res.data;
+	});
+	
+	//get categories
+	$http.get('/get-categories',{}).then(function(res){
+		$scope.categoriesData=res.data;
+	});
+	
+	//get user info to verify promoted seller or verified seller
+	$http.get('/get-user-info?key='+$cookies.get("accessToken"),{}).then(function(res){
+		console.log(res);
+		if(res.promotedSeller || res.verifiedSeller){
+			$scope.hidePromotedSellerFields = false;
+		}
+		
+	});
 	
 	//create json to post product for beautypop 
 	for(var i=0; i<imagesData.length; i++){
@@ -168,12 +200,43 @@ app.controller('detailsController',function($scope,$http,$state,$location,$windo
 			}).success(function(data) {
 				$scope.sendImages(count+1);
 			}).error(function(data){
+				notificationService.error("Failed to import from Instagram. Please make sure all fields are filled out correctly. Please try again later.");
 			});
 		}else{
-			$state.go("connect");
+			$state.go("complete");
 			notificationService.success("Posted to beautypop successfully");
 		}
 	} 
 	
+	$scope.onApplyAll = function(value, selectedCheckbox, selectedComponent){
+		console.log(value);
+		console.log(selectedCheckbox);
+		if($(event.currentTarget).hasClass('selected')){
+			$("."+selectedCheckbox).removeClass("selected");
+			$("."+selectedCheckbox).css("background", "url(images/unselected.png) center no-repeat");
+		}else{
+			$("."+selectedCheckbox).addClass("selected");
+			$("."+selectedCheckbox).css("background", "url(images/selected.png) center no-repeat");
+			for(var i=0; i<$scope.listingData.length; i++){
+				if(selectedComponent in $scope.listingData[i]){
+					$scope.listingData[i][selectedComponent] = value;
+				}
+			}
+		}
+	}
+	
+	$scope.makeAllSame = function(value, selectedComponent){
+		console.log(value);
+		if($(event.currentTarget).next().find(".ui-checkbox").hasClass('selected')){
+			for(var i=0; i<$scope.listingData.length; i++){
+				if(selectedComponent in $scope.listingData[i]){
+					$scope.listingData[i][selectedComponent] = value;
+				}
+			}
+		}
+	}
+});
+
+app.controller('completeController',function($scope,$http,$state){
 	
 });

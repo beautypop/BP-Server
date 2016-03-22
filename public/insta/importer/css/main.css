@@ -132,6 +132,10 @@ a:active,a:hover {
 	margin: 0;
 }
 
+.ui-checkbox.checked {
+    background: url(../images/selected.png) center no-repeat;
+}
+
 .select-all span {
 	position: relative;
 	left: 10px;
@@ -665,4 +669,12 @@ i.icon {
     width: 100%;
     height: 124px;
     background: #b2a8a5;
+}
+
+.preview-chrome {
+    position: relative;
+    background: url(../images/preview-chrome.png) center no-repeat;
+    width: 527px;
+    height: 998px;
+    margin: 30px auto 0;
 }
