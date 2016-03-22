@@ -8305,15 +8305,15 @@ a:hover {
 
 .lure-hold .dogi-logo {
     margin: 30px auto 24px auto;
-    height: 64px;
-    width: 64px;
-    border-radius: 12px;
+    height: 58px;
+    width: 58px;
+    border-radius: 5px;
     background: #FF2742
 }
 
 .lure-hold .dogi-logo .ic_logo_get {
     position: relative;
-    margin: 8px
+    margin: 3px
 }
 
 .lure-hold .bottom {
@@ -11427,17 +11427,17 @@ a:hover {
 
 @media (-webkit-min-device-pixel-ratio: 2) and (-webkit-max-device-pixel-ratio: 2.99) {
     .ic_logo_get {
-        width: 48px;
-        height: 48px;
-        background-size: 48px 48px
+        width: 52px;
+        height: 52px;
+        background-size: 52px 52px
     }
 }
 
 @media (-webkit-min-device-pixel-ratio: 3) {
     .ic_logo_get {
-        width: 48px;
-        height: 48px;
-        background-size: 48px 48px
+        width: 52px;
+        height: 52px;
+        background-size: 52px 52px
     }
 }
 
