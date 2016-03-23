@@ -47,7 +47,8 @@ app.controller('importController',function($scope,$http,$state,$location,$rootSc
 					var temp = cardsData[i].children[1].style.backgroundImage
 					var imageJson = {
 							"imageUrl": temp.substring(temp.indexOf('"') + 1, temp.lastIndexOf('"')),
-							"caption": cardsData[i].attributes[2].nodeValue
+							"caption": cardsData[i].attributes[2].nodeValue,
+							"imageid": cardsData[i].attributes[3].nodeValue
 					};
 					$scope.selectedImages.push(imageJson);
 				}
@@ -58,25 +59,26 @@ app.controller('importController',function($scope,$http,$state,$location,$rootSc
 	};
 
 	// Select Image to Import
-	$scope.selectImages = function() {  
-		if($(event.currentTarget).find('div.checkbox').hasClass('selected')){
-			$(event.currentTarget).find('div.checkbox').removeClass('selected');
-			$(event.currentTarget).find('div.overlay').css('display', 'none');
-			$(event.currentTarget).find('div.checkbox').css("background", "url(images/unselected.png) center no-repeat");
-			selectedImageCount--;
-		}else{
-			if(selectedImageCount < $scope.maxiumumImageCount){
-				$(event.currentTarget).find('div.checkbox').addClass('selected');
-				$(event.currentTarget).find('div.overlay').css('display', 'block');
-				$(event.currentTarget).find('div.checkbox').css("background", "url(images/selected.png) center no-repeat");
-				selectedImageCount++;
+	$scope.selectImages = function(isImported) {
+		if(!isImported){
+			if($(event.currentTarget).find('div.checkbox').hasClass('selected')){
+				$(event.currentTarget).find('div.checkbox').removeClass('selected');
+				$(event.currentTarget).find('div.overlay').css('display', 'none');
+				$(event.currentTarget).find('div.checkbox').css("background", "url(images/unselected.png) center no-repeat");
+				selectedImageCount--;
 			}else{
-				notificationService.error("Maximum "+$scope.maxiumumImageCount+" Photos Allowed");
+				if(selectedImageCount < $scope.maxiumumImageCount){
+					$(event.currentTarget).find('div.checkbox').addClass('selected');
+					$(event.currentTarget).find('div.overlay').css('display', 'block');
+					$(event.currentTarget).find('div.checkbox').css("background", "url(images/selected.png) center no-repeat");
+					selectedImageCount++;
+				}else{
+					notificationService.error("Maximum "+$scope.maxiumumImageCount+" Photos Allowed");
+				}
 			}
+			
+			$scope.validateImport();
 		}
-		
-		$scope.validateImport();
-
 	};
 	
 	$scope.validateImport = function(){
@@ -94,7 +96,14 @@ app.controller('importController',function($scope,$http,$state,$location,$rootSc
 			$("#select-view a").text("Pick some photos");
 		}
 		
-		if(selectedImageCount == $(".checkbox").length || selectedImageCount == $scope.maxiumumImageCount){
+		var totalCheckbox = 0;
+		$('.checkbox').each(function(index,el){
+			if($(el).next().attr("ng-hide") == "true"){
+				totalCheckbox++;
+			}
+		});
+		
+		if(selectedImageCount == totalCheckbox || selectedImageCount == $scope.maxiumumImageCount){
 			$('.ui-checkbox').css("background", "url(images/selected.png) center no-repeat");
 		}else{
 			$('.ui-checkbox').css("background", "url(images/unselected.png) center no-repeat");
@@ -112,12 +121,13 @@ app.controller('importController',function($scope,$http,$state,$location,$rootSc
 			selectedImageCount = 0;
 		}else{
 			$('.checkbox').each(function(index,el){
-			    console.log(index);
 			    if(index < $scope.maxiumumImageCount){
-					$(el).addClass("selected");
-				    $(el).css("background", "url(images/selected.png) center no-repeat");
-				    $(el).parent().find('.overlay').css('display', 'block');
-				    selectedImageCount = index+1;
+					if($(el).next().attr("ng-hide") == "true"){
+				    	$(el).addClass("selected");
+					    $(el).css("background", "url(images/selected.png) center no-repeat");
+					    $(el).parent().find('.overlay').css('display', 'block');
+					    selectedImageCount = index+1;
+					} 
 			    }
 			});
 			
@@ -147,7 +157,6 @@ app.controller('detailsController',function($scope,$http,$state,$upload,notifica
 	
 	//get user info to verify promoted seller or verified seller
 	$http.get('/get-user-info?key='+$cookies.get("accessToken"),{}).then(function(res){
-		console.log(res);
 		if(res.promotedSeller || res.verifiedSeller){
 			$scope.hidePromotedSellerFields = false;
 		}
@@ -160,14 +169,14 @@ app.controller('detailsController',function($scope,$http,$state,$upload,notifica
 				"title" : "",
 				"body" : imagesData[i].caption,
 				"catId" : "",
-				"price" : "",
-				"originalPrice" : "",
+				"price" : "0",
+				"originalPrice" : "0",
 				"freeDelivery" : "",
 				"conditionType" : "",
 				"countryCode": "",
-				"hashtags": "",
 				"deviceType": "",
-				"images" : imagesData[i].imageUrl
+				"images" : imagesData[i].imageUrl,
+				"imageId" : imagesData[i].imageid
 		}
 		detailsData.push(temp);
 	}
@@ -182,13 +191,21 @@ app.controller('detailsController',function($scope,$http,$state,$upload,notifica
 	}
 	
 	//Post photos to beautypop
+	$scope.errorMessageHide = true;
 	$scope.postPhotos = function(data){
-		$scope.sendImages(0);
+		if($scope.myform.$valid){
+			$scope.sendImages(0);
+		}else{
+			$scope.errorMessageHide = false;
+		}
 	};
 	
 	$scope.sendImages = function(count){
 		if(count != $scope.listingData.length){
 			var postData = $scope.listingData[count];
+			if(postData.originalPrice == null){
+				postData.originalPrice = 0;
+			}
 			var file = [{}];	
 			
 			$upload.upload({
@@ -208,9 +225,8 @@ app.controller('detailsController',function($scope,$http,$state,$upload,notifica
 		}
 	} 
 	
+	//apply to all fields
 	$scope.onApplyAll = function(value, selectedCheckbox, selectedComponent){
-		console.log(value);
-		console.log(selectedCheckbox);
 		if($(event.currentTarget).hasClass('selected')){
 			$("."+selectedCheckbox).removeClass("selected");
 			$("."+selectedCheckbox).css("background", "url(images/unselected.png) center no-repeat");
@@ -226,7 +242,6 @@ app.controller('detailsController',function($scope,$http,$state,$upload,notifica
 	}
 	
 	$scope.makeAllSame = function(value, selectedComponent){
-		console.log(value);
 		if($(event.currentTarget).next().find(".ui-checkbox").hasClass('selected')){
 			for(var i=0; i<$scope.listingData.length; i++){
 				if(selectedComponent in $scope.listingData[i]){

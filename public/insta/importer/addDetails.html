@@ -25,12 +25,12 @@
 			change the Category for multiple listings at once, select photos by
 			tapping on them or tap 'Select all', then tap 'Choose a category' on
 			any selected listing.</div>
-		<div id="edit-view">
-
-			<a class="clickable round-button post-photos" ng-click="postPhotos(listingData)">Post {{imagesCount}} on Beautypop</a> 
+		<form name="myform">
+		<div id="edit-view" class="control-group" ng-class="{true: 'error'}[submitted && form.email.$invalid]">
+			<button class="clickable round-button post-photos" type="submit" ng-click="submitted=true;postPhotos(listingData)">Post {{imagesCount}} on Beautypop</button> 
             <br>
 			<br>
-			<div class="empty" style="display: none;">Highlighted fields cannot be empty</div>
+			<div class="empty" ng-hide="errorMessageHide">Highlighted fields cannot be empty</div>
 			<br>
 			<div class="clearfix">
 				<div style="display: none;">
@@ -39,10 +39,11 @@
 				<div style="display: none;">
 					<div style="color: #faad96; padding-bottom: 20px; font-size: 18px;">You can do a group update of all now.</div>
 				</div>
-				<form name="myform" novalidate>
-				<div class="edit-component" ng-class="{true: 'error'}[submitted && myForm.$invalid]" ng-repeat="listing in listingData">
-                    <div class="row clearfix">
-                        <input class="beautypop rounded" type="text" maxlength="100"
+				
+				
+				<div class="edit-component" ng-repeat="listing in listingData">
+                    <div class="row clearfix controls">
+                        <input class="beautypop rounded" type="text" maxlength="100" name="title"
                             placeholder="Title" ng-model="listing.title" ng-keyup = "makeAllSame(listing.title, 'title')" required>
                         <div class="ui-checkbox-wrapper">
                             <div class="white-tooltip fade-transition" style="display: none;">Apply to all products</div>
@@ -55,8 +56,8 @@
 							<img width="100" height="100" src="{{listing.images}}">
 						</div>
 						<div class="name-desc">
-							<div class="row clearfix">
-								<textarea class="beautypop rounded required" maxlength="2000"
+							<div class="row clearfix controls">
+								<textarea class="beautypop rounded" maxlength="2000" name="body"
 									placeholder="Description" ng-model="listing.body" value="{{image.caption}}" ng-keyup = "makeAllSame(listing.body, 'body')" required></textarea>
 								<div class="ui-checkbox-wrapper">
 									<div class="white-tooltip fade-transition" style="display: none;">Apply to all products</div>
@@ -65,9 +66,9 @@
 							</div>
 						</div>
 					</div>
-					<div class="row clearfix">
+					<div class="row clearfix controls">
 						<i class="icon category"></i> <select
-							class="ui fluid dropdown beautypop rounded required has-icon" ng-model="listing.catId" ng-change = "makeAllSame(listing.catId, 'catId')" required>
+							class="ui fluid dropdown beautypop rounded required has-icon" name="categoryId" ng-model="listing.catId" ng-change = "makeAllSame(listing.catId, 'catId')" required>
 							<option value="">Category</option>
 							<option ng-repeat="category in categoriesData" value="{{category.id}}">{{category.name}}</option>
 							
@@ -79,12 +80,12 @@
 						
 					</div>
 					
-					<div class="row clearfix">
+					<div class="row clearfix controls">
 						<div class="error-message" style="display: none;">
 							<i class="critical"></i>false
 						</div>
 						<i class="icon price"></i> <input
-							class="beautypop rounded required has-icon" type="number"
+							class="beautypop rounded required has-icon" type="number" name="price" min="0"
 							placeholder="Price (S$)" ng-model="listing.price" ng-change = "makeAllSame(listing.price, 'price')" required>
 						<div class="ui-checkbox-wrapper">
 							<div class="white-tooltip fade-transition" style="display: none;">Apply to all products</div>
@@ -92,23 +93,23 @@
 						</div>
 					</div>
 
-					<div class="row clearfix" ng-hide="hidePromotedSellerFields">
+					<div class="row clearfix controls" ng-hide="hidePromotedSellerFields">
 						<div class="error-message" style="display: none;">
 							<i class="critical"></i>false
 						</div>
 						<i class="icon price"></i> 
                         <input
-							class="beautypop rounded required has-icon" type="number"
-							placeholder="Original Price (S$)" ng-model="listing.originalPrice" ng-change = "makeAllSame(listing.originalPrice, 'originalPrice')" required>
+							class="beautypop rounded required has-icon" type="number" name="originalPrice" min="0" ng-required="!hidePromotedSellerFields"
+							placeholder="Original Price (S$)" ng-model="listing.originalPrice" ng-change = "makeAllSame(listing.originalPrice, 'originalPrice')">
 						<div class="ui-checkbox-wrapper">
 							<div class="white-tooltip fade-transition" style="display: none;">Apply to all products</div>
 							<div class="ui-checkbox checkbox-originalPrice" ng-click="onApplyAll(listing.originalPrice,'checkbox-originalPrice', 'originalPrice')"></div>
 						</div>
 					</div>
 
-					<div class="row clearfix" ng-hide="hidePromotedSellerFields">
+					<div class="row clearfix controls" ng-hide="hidePromotedSellerFields">
 						<i class="icon days-to-ship"></i> 
-						<select class="ui fluid dropdown beautypop rounded required has-icon" ng-model="listing.freeDelivery" ng-change = "makeAllSame(listing.freeDelivery, 'freeDelivery')" required>
+						<select class="ui fluid dropdown beautypop rounded required has-icon" name="freeDelivery" ng-model="listing.freeDelivery" ng-change = "makeAllSame(listing.freeDelivery, 'freeDelivery')" ng-required="!hidePromotedSellerFields">
 							<option value="">Free Delivery</option>
 							<option value="true">Yes</option>
 							<option value="false">No</option>
@@ -119,9 +120,9 @@
                         </div>
 					</div>
 
-					<div class="row clearfix" ng-hide="hidePromotedSellerFields">
+					<div class="row clearfix controls" ng-hide="hidePromotedSellerFields">
 						<i class="icon condition"></i> 
-						<select class="ui fluid dropdown beautypop rounded required has-icon" ng-model="listing.countryCode" ng-change = "makeAllSame(listing.countryCode, 'countryCode')" required>
+						<select class="ui fluid dropdown beautypop rounded required has-icon" name="countryName" ng-model="listing.countryCode" ng-change = "makeAllSame(listing.countryCode, 'countryCode')" ng-required="!hidePromotedSellerFields">
 							<option value="">Country Codes</option>
 							<option ng-repeat="contry in countriesData" value="{{contry.id}}">{{contry.name}}</option>
 						</select>
@@ -131,9 +132,9 @@
                         </div>
 					</div>
 					
-					<div class="row clearfix">
+					<div class="row clearfix controls">
 						<i class="icon condition"></i> <select
-							class="ui fluid dropdown beautypop rounded required has-icon" ng-model="listing.conditionType" ng-change = "makeAllSame(listing.conditionType, 'conditionType')" required>
+							class="ui fluid dropdown beautypop rounded required has-icon" name="condition" ng-model="listing.conditionType" ng-change = "makeAllSame(listing.conditionType, 'conditionType')" required>
 							<option value="">Condition</option>
 							<option value="NEW_WITH_TAG">New (Sealed/with Tags)</option>
 							<option value="NEW_WITHOUT_TAG">New (Unsealed/without Tags)</option>
@@ -145,7 +146,7 @@
 						</div>
 					</div>
 				</div>
-				</form> 
+				 
 			</div>
 			<div style="display: none;">
 				<div style="color: #faad96; font-size: 18px;">You can do a group update of all now.</div>
@@ -153,7 +154,7 @@
 			<div class="empty" style="display: none;">Highlighted fields cannot be empty</div>
 			<a class="clickable round-button post-photos" style="display: none;">Post 2 Listings on Beautypop</a>
 		</div>
-
+		</form>
 	</div>
 	<div class="footer">
             

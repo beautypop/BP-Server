@@ -1,11 +1,14 @@
 package controllers;
 
+import java.beans.Transient;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
 import models.Category;
+import models.InstaImportedImg;
+import models.Location;
 import models.Post;
 import models.PostToMark;
 import models.User;
@@ -36,7 +39,12 @@ import play.libs.Json;
 import play.mvc.Controller;
 import play.mvc.Result;
 import service.SocialRelationHandler;
+import viewmodel.InstaImportedImgVM;
 import viewmodel.ResponseStatusVM;
+
+import javax.persistence.Query;
+
+import play.db.jpa.JPA;
 
 public class InstagramController extends Controller {
     private static final play.api.Logger logger = play.api.Logger.apply(InstagramController.class);
@@ -73,6 +81,7 @@ public class InstagramController extends Controller {
 		return redirect("assets/insta/importer/main.html");
 	}
     
+    @Transactional
     public static Result getMedia(){
 		Token token = new Token(session().get("accessToken"), session().get("clientSecret"));
 		
@@ -93,6 +102,14 @@ public class InstagramController extends Controller {
 			MediaDto dto = new MediaDto();
 			
 		    Images images = mediaData.getImages();
+		    dto.setImageId(mediaData.getId());
+		    List<InstaImportedImgVM> imported = getImportedImageById(mediaData.getId());
+		    if(imported.size() > 0){
+		    	dto.setIsImported(true);
+		    }else{
+		    	dto.setIsImported(false);
+		    }
+		    
 		    ImageData lowResolutionImg = images.getLowResolution();
 		    dto.setImageUrl(lowResolutionImg.getImageUrl());
 		    dto.setCaption(mediaData.getCaption().getText());
@@ -117,7 +134,7 @@ public class InstagramController extends Controller {
 	    String hashtags = dynamicForm.get("hashtags");
 	    String deviceType = dynamicForm.get("deviceType");
 	    String images = dynamicForm.get("images");
-	    
+	    String imageId = dynamicForm.get("imageId");
 	    if (StringUtils.isEmpty(originalPrice)) {
 	        originalPrice = "-1";
         }
@@ -133,7 +150,7 @@ public class InstagramController extends Controller {
 	    try {
 	        return newProduct(
 	                title, body, Long.parseLong(catId), Double.parseDouble(price), Post.parseConditionType(conditionType), images, 
-	                Double.parseDouble(originalPrice), freeDelivery, Post.parseCountryCode(countryCode), hashtags, Application.parseDeviceType(deviceType));    
+	                Double.parseDouble(originalPrice), freeDelivery, Post.parseCountryCode(countryCode), hashtags, Application.parseDeviceType(deviceType), imageId);    
 	    } catch (Exception e) {
 	        return badRequest();
 	    }
@@ -141,7 +158,7 @@ public class InstagramController extends Controller {
 
 	private static Result newProduct(
 	        String title, String body, Long catId, Double price, ConditionType conditionType, String images, 
-	        Double originalPrice, Boolean freeDelivery, CountryCode countryCode, String hashtags, DeviceType deviceType) {
+	        Double originalPrice, Boolean freeDelivery, CountryCode countryCode, String hashtags, DeviceType deviceType, String imageId) {
 	    
 	    NanoSecondStopWatch sw = new NanoSecondStopWatch();
 	    
@@ -181,12 +198,28 @@ public class InstagramController extends Controller {
 	        if (logger.underlyingLogger().isDebugEnabled()) {
 	            logger.underlyingLogger().debug("[u="+localUser.getId()+"][p="+newPost.id+"] createProduct(). Took "+sw.getElapsedMS()+"ms");
 	        }
-	        
+	        saveInstagramImportedImageIds(imageId);
 			return ok(Json.toJson(response));
 		} catch (IOException e) {
 			logger.underlyingLogger().error("Error in createProduct", e);
 		}
 		
 		return badRequest();
+	}
+	
+	public static void saveInstagramImportedImageIds(String imageId){
+		InstaImportedImg insta = new InstaImportedImg();
+		insta.user = Application.getLocalUser(session());
+		insta.imageid = imageId;
+		insta.save();
+	}
+	
+	
+	public static List<InstaImportedImgVM> getImportedImageById(String imageId){
+		User localUser = Application.getLocalUser(session());
+		Query q = JPA.em().createQuery("Select l from InstaImportedImg l where user_id = ?1 and imageId = ?2");
+        q.setParameter(1, localUser.getId());
+        q.setParameter(2, imageId);
+        return (List<InstaImportedImgVM>)q.getResultList();
 	}
 }
