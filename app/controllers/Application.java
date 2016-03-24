@@ -517,7 +517,7 @@ public class Application extends Controller {
         
         user.setNewUser(false);
         
-        return ok();
+        return ok(Json.toJson(new UserVM(user)));
     }
     
     public static Result jsRoutes() {
