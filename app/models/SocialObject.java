@@ -47,6 +47,7 @@ public abstract class SocialObject extends domain.Entity implements Serializable
 	@Enumerated(EnumType.STRING)
 	public SocialObjectType objectType;
 
+	@Column(length=1000)
 	public String name;
 
 	@JsonIgnore

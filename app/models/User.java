@@ -355,8 +355,7 @@ public class User extends SocialObject implements Subject, Followable {
 	        String title, String body, Category category, Double price, ConditionType conditionType, 
 	        Double originalPrice, boolean freeDelivery, CountryCode countryCode, DeviceType deviceType) {
 	    
-		if (Strings.isNullOrEmpty(title) || 
-				Strings.isNullOrEmpty(body) || category == null || price == -1D) {
+		if (Strings.isNullOrEmpty(title) || category == null || price == -1D) {
 			logger.underlyingLogger().warn("Missing parameters to createProduct");
 			return null;
 		}
