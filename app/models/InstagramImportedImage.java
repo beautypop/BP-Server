@@ -26,7 +26,7 @@ public class InstagramImportedImage extends domain.Entity {
 	@ManyToOne
 	public User user;
 	
-	public String imageId;
+	public String mediaId;
 	
 	@Column(nullable = false, columnDefinition = "TINYINT(1)")
     public boolean deleted = false;
@@ -54,10 +54,10 @@ public class InstagramImportedImage extends domain.Entity {
         }
     }
 	
-	public static boolean isImported(User user, Long imageId) {
-        Query q = JPA.em().createQuery("SELECT count(i) FROM InstagramImportedImage i where user = ?1 and imageId = ?2 and deleted = false");
+	public static boolean isImported(User user, Long mediaId) {
+        Query q = JPA.em().createQuery("SELECT count(i) FROM InstagramImportedImage i where user = ?1 and mediaId = ?2 and deleted = false");
         q.setParameter(1, user);
-        q.setParameter(2, imageId);
+        q.setParameter(2, mediaId);
         try {
             Long count = (Long)q.getSingleResult();
             return count > 0;

@@ -21,10 +21,9 @@
 	</div>
 	<div class="container nopadding" style="overflow: visible;">
 
-		<div data-country="SG" class="subtitle">Import photos from
-			Instagram to Beautypop</div>
+		<div data-country="SG" class="subtitle">Import photos from Instagram to BeautyPop</div>
 		<div class="content">Select {{maxiumumImageCount}} best photos of what you wish to
-			sell from your Instagram account and import them on to Beautypop. Have
+			sell from your Instagram account and import them on to BeautyPop. Have
 			more? You can always come back here anytime to import more later.
 			We'll remind you :)</div>
 		<div id="select-view">
@@ -36,7 +35,7 @@
 				<span>Select First {{maxiumumImageCount}}</span>
 			</div>
 			<div class="cards cardsImages clearfix">
-				<div class="card" ng-click="selectImages(image.isImported)" count="{{image.caption}}" imageId="{{image.imageId}}" ng-repeat="image in mediaData">
+				<div class="card" ng-click="selectImages(image.isImported)" count="{{image.caption}}" mediaId="{{image.mediaId}}" ng-repeat="image in mediaData">
 					<div class="overlay"
 						style="display: none; background: #fff; opacity: 0.3; width: 100%; height: 100%; left: 0; top: 0; position: absolute; z-index: 1000;"></div>
 					<div class="clickable" 

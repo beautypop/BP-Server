@@ -48,7 +48,7 @@ app.controller('importController',function($scope,$http,$state,$location,$rootSc
 					var imageJson = {
 							"imageUrl": temp.substring(temp.indexOf('"') + 1, temp.lastIndexOf('"')),
 							"caption": cardsData[i].attributes[2].nodeValue,
-							"imageid": cardsData[i].attributes[3].nodeValue
+							"mediaId": cardsData[i].attributes[3].nodeValue
 					};
 					$scope.selectedImages.push(imageJson);
 				}
@@ -160,7 +160,6 @@ app.controller('detailsController',function($scope,$http,$state,$upload,notifica
 		if(res.promotedSeller || res.verifiedSeller){
 			$scope.hidePromotedSellerFields = false;
 		}
-		
 	});
 	
 	//create json to post product for beautypop 
@@ -176,7 +175,7 @@ app.controller('detailsController',function($scope,$http,$state,$upload,notifica
 				"countryCode": "",
 				"deviceType": "",
 				"images" : imagesData[i].imageUrl,
-				"imageId" : imagesData[i].imageid
+				"mediaId" : imagesData[i].mediaId
 		}
 		detailsData.push(temp);
 	}

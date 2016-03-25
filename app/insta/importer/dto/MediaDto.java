@@ -3,7 +3,7 @@ package insta.importer.dto;
 public class MediaDto{
 	String imageUrl;
 	String caption;
-	String imageId;
+	String mediaId;
 	boolean isImported;
 	
 	public boolean getIsImported() {
@@ -12,11 +12,11 @@ public class MediaDto{
 	public void setIsImported(boolean b) {
 		this.isImported = b;
 	}
-	public String getImageId() {
-		return imageId;
+	public String getMediaId() {
+		return mediaId;
 	}
-	public void setImageId(String imageId) {
-		this.imageId = imageId;
+	public void setMediaId(String mediaId) {
+		this.mediaId = mediaId;
 	}
 	public String getImageUrl() {
 		return imageUrl;

@@ -100,7 +100,7 @@ public class InstagramController extends Controller {
 			MediaDto dto = new MediaDto();
 			
 		    Images images = mediaData.getImages();
-		    dto.setImageId(mediaData.getId());
+		    dto.setMediaId(mediaData.getId());
 		    boolean imported = InstagramImportedImage.isImported(localUser, Long.parseLong(mediaData.getId()));
 		    dto.setIsImported(imported);
 		    
@@ -111,7 +111,6 @@ public class InstagramController extends Controller {
 		    
 		}
 		return ok(Json.toJson(mediaList));
-		
 	}
     
     @Transactional
@@ -128,7 +127,7 @@ public class InstagramController extends Controller {
 	    String hashtags = dynamicForm.get("hashtags");
 	    String deviceType = dynamicForm.get("deviceType");
 	    String images = dynamicForm.get("images");
-	    String imageId = dynamicForm.get("imageId");
+	    String mediaId = dynamicForm.get("mediaId");
 	    if (StringUtils.isEmpty(originalPrice)) {
 	        originalPrice = "-1";
         }
@@ -144,7 +143,7 @@ public class InstagramController extends Controller {
 	    try {
 	        return newProduct(
 	                title, body, Long.parseLong(catId), Double.parseDouble(price), Post.parseConditionType(conditionType), images, 
-	                Double.parseDouble(originalPrice), freeDelivery, Post.parseCountryCode(countryCode), hashtags, Application.parseDeviceType(deviceType), imageId);    
+	                Double.parseDouble(originalPrice), freeDelivery, Post.parseCountryCode(countryCode), hashtags, Application.parseDeviceType(deviceType), mediaId);    
 	    } catch (Exception e) {
 	        return badRequest();
 	    }
@@ -152,7 +151,7 @@ public class InstagramController extends Controller {
 
 	private static Result newProduct(
 	        String title, String body, Long catId, Double price, ConditionType conditionType, String images, 
-	        Double originalPrice, Boolean freeDelivery, CountryCode countryCode, String hashtags, DeviceType deviceType, String imageId) {
+	        Double originalPrice, Boolean freeDelivery, CountryCode countryCode, String hashtags, DeviceType deviceType, String mediaId) {
 	    
 	    NanoSecondStopWatch sw = new NanoSecondStopWatch();
 	    
@@ -192,7 +191,7 @@ public class InstagramController extends Controller {
 	        if (logger.underlyingLogger().isDebugEnabled()) {
 	            logger.underlyingLogger().debug("[u="+localUser.getId()+"][p="+newPost.id+"] createProduct(). Took "+sw.getElapsedMS()+"ms");
 	        }
-	        saveInstagramImportedImageIds(imageId);
+	        saveInstagramImportedImage(mediaId);
 			return ok(Json.toJson(response));
 		} catch (IOException e) {
 			logger.underlyingLogger().error("Error in createProduct", e);
@@ -201,10 +200,10 @@ public class InstagramController extends Controller {
 		return badRequest();
 	}
 	
-	public static void saveInstagramImportedImageIds(String imageId){
+	public static void saveInstagramImportedImage(String mediaId){
 	    InstagramImportedImage insta = new InstagramImportedImage();
 		insta.user = Application.getLocalUser(session());
-		insta.imageId = imageId;
+		insta.mediaId = mediaId;
 		insta.save();
 	}
 }

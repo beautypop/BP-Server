@@ -19,15 +19,15 @@
 	</div>
 	<div class="container nopadding" style="overflow: visible;">
 
-		<div class="subtitle">Final step! Add details and post on Beautypop</div>
-		<div class="content">Listings on Beautypop require a title, price
+		<div class="subtitle">Final step! Add details and post on BeautyPop</div>
+		<div class="content">Listings on BeautyPop require a title, price
 			and category. Click in the text box to edit or add details. Tip: To
 			change the Category for multiple listings at once, select photos by
 			tapping on them or tap 'Select all', then tap 'Choose a category' on
 			any selected listing.</div>
 		<form name="myform">
 		<div id="edit-view" class="control-group" ng-class="{true: 'error'}[submitted && form.email.$invalid]">
-			<button class="clickable round-button post-photos" type="submit" ng-click="submitted=true;postPhotos(listingData)">Post {{imagesCount}} on Beautypop</button> 
+			<button class="clickable round-button post-photos" type="submit" ng-click="submitted=true;postPhotos(listingData)">Post {{imagesCount}} on BeautyPop</button> 
             <br>
 			<br>
 			<div class="empty" ng-hide="errorMessageHide">Highlighted fields cannot be empty</div>
@@ -39,7 +39,6 @@
 				<div style="display: none;">
 					<div style="color: #faad96; padding-bottom: 20px; font-size: 18px;">You can do a group update of all now.</div>
 				</div>
-				
 				
 				<div class="edit-component" ng-repeat="listing in listingData">
                     <div class="row clearfix controls">
@@ -133,8 +132,8 @@
 					</div>
 					
 					<div class="row clearfix controls">
-						<i class="icon condition"></i> <select
-							class="ui fluid dropdown beautypop rounded required has-icon" name="condition" ng-model="listing.conditionType" ng-change = "makeAllSame(listing.conditionType, 'conditionType')" required>
+						<i class="icon condition"></i>
+                        <select class="ui fluid dropdown beautypop rounded required has-icon" name="condition" ng-model="listing.conditionType" ng-change = "makeAllSame(listing.conditionType, 'conditionType')" required>
 							<option value="">Condition</option>
 							<option value="NEW_WITH_TAG">New (Sealed/with Tags)</option>
 							<option value="NEW_WITHOUT_TAG">New (Unsealed/without Tags)</option>
@@ -152,7 +151,7 @@
 				<div style="color: #faad96; font-size: 18px;">You can do a group update of all now.</div>
 			</div>
 			<div class="empty" style="display: none;">Highlighted fields cannot be empty</div>
-			<a class="clickable round-button post-photos" style="display: none;">Post 2 Listings on Beautypop</a>
+			<a class="clickable round-button post-photos" style="display: none;">Post 2 Listings on BeautyPop</a>
 		</div>
 		</form>
 	</div>
