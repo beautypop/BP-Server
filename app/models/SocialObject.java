@@ -21,8 +21,6 @@ import org.apache.commons.lang3.builder.EqualsBuilder;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
-import play.data.validation.Constraints.Required;
-
 import com.google.common.base.Objects;
 
 import domain.AuditListener;

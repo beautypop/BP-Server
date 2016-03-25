@@ -1,14 +1,12 @@
 package controllers;
 
-import java.beans.Transient;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
 import models.Category;
-import models.InstaImportedImg;
-import models.Location;
+import models.InstagramImportedImage;
 import models.Post;
 import models.PostToMark;
 import models.User;
@@ -39,12 +37,7 @@ import play.libs.Json;
 import play.mvc.Controller;
 import play.mvc.Result;
 import service.SocialRelationHandler;
-import viewmodel.InstaImportedImgVM;
 import viewmodel.ResponseStatusVM;
-
-import javax.persistence.Query;
-
-import play.db.jpa.JPA;
 
 public class InstagramController extends Controller {
     private static final play.api.Logger logger = play.api.Logger.apply(InstagramController.class);
@@ -82,7 +75,13 @@ public class InstagramController extends Controller {
 	}
     
     @Transactional
-    public static Result getMedia(){
+    public static Result getMedia() {
+        final User localUser = Application.getLocalUser(session());
+        if (!localUser.isLoggedIn()) {
+            logger.underlyingLogger().error(String.format("[u=%d] User not logged in", localUser.id));
+            return notFound();
+        }
+        
 		Token token = new Token(session().get("accessToken"), session().get("clientSecret"));
 		
 		List<MediaDto> mediaList = new ArrayList<MediaDto>();
@@ -97,18 +96,13 @@ public class InstagramController extends Controller {
 		}
 		
 		List<MediaFeedData> mediaFeeds = mediaInfo.getData();
-		
 		for (MediaFeedData mediaData : mediaFeeds) {
 			MediaDto dto = new MediaDto();
 			
 		    Images images = mediaData.getImages();
 		    dto.setImageId(mediaData.getId());
-		    List<InstaImportedImgVM> imported = getImportedImageById(mediaData.getId());
-		    if(imported.size() > 0){
-		    	dto.setIsImported(true);
-		    }else{
-		    	dto.setIsImported(false);
-		    }
+		    boolean imported = InstagramImportedImage.isImported(localUser, Long.parseLong(mediaData.getId()));
+		    dto.setIsImported(imported);
 		    
 		    ImageData lowResolutionImg = images.getLowResolution();
 		    dto.setImageUrl(lowResolutionImg.getImageUrl());
@@ -208,18 +202,9 @@ public class InstagramController extends Controller {
 	}
 	
 	public static void saveInstagramImportedImageIds(String imageId){
-		InstaImportedImg insta = new InstaImportedImg();
+	    InstagramImportedImage insta = new InstagramImportedImage();
 		insta.user = Application.getLocalUser(session());
-		insta.imageid = imageId;
+		insta.imageId = imageId;
 		insta.save();
-	}
-	
-	
-	public static List<InstaImportedImgVM> getImportedImageById(String imageId){
-		User localUser = Application.getLocalUser(session());
-		Query q = JPA.em().createQuery("Select l from InstaImportedImg l where user_id = ?1 and imageId = ?2");
-        q.setParameter(1, localUser.getId());
-        q.setParameter(2, imageId);
-        return (List<InstaImportedImgVM>)q.getResultList();
 	}
 }
