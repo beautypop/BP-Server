@@ -128,6 +128,7 @@ public class InstagramController extends Controller {
 	    String deviceType = dynamicForm.get("deviceType");
 	    String images = dynamicForm.get("images");
 	    String mediaId = dynamicForm.get("mediaId");
+	    
 	    if (StringUtils.isEmpty(originalPrice)) {
 	        originalPrice = "-1";
         }
