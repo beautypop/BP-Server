@@ -45,7 +45,7 @@
                         <input class="beautypop rounded" type="text" maxlength="100" name="title"
                             placeholder="Title" ng-model="listing.title" ng-keyup = "makeAllSame(listing.title, 'title')" required>
                         <div class="ui-checkbox-wrapper">
-                            <div class="white-tooltip fade-transition" style="display: none;">Apply to all products</div>
+                            <div class="white-tooltip fade-transition">Apply to all products</div>
                             <div class="ui-checkbox checkbox-title" ng-click="onApplyAll(listing.title,'checkbox-title', 'title')"></div>
                         </div>
                     </div>
@@ -59,7 +59,7 @@
 								<textarea class="beautypop rounded" maxlength="2000" name="body"
 									placeholder="Description" ng-model="listing.body" value="{{image.caption}}" ng-keyup = "makeAllSame(listing.body, 'body')" required></textarea>
 								<div class="ui-checkbox-wrapper">
-									<div class="white-tooltip fade-transition" style="display: none;">Apply to all products</div>
+									<div class="white-tooltip fade-transition">Apply to all products</div>
 									<div class="ui-checkbox checkbox-body" ng-click="onApplyAll(listing.body,'checkbox-body', 'body')"></div>
 								</div>
 							</div>
@@ -73,7 +73,7 @@
 							
 						</select>
 						<div class="ui-checkbox-wrapper">
-							<div class="white-tooltip fade-transition" style="display: none;">Apply to all products</div>
+							<div class="white-tooltip fade-transition">Apply to all products</div>
 							<div class="ui-checkbox checkbox-catId" ng-click="onApplyAll(listing.catId,'checkbox-catId', 'catId')"></div>
 						</div>
 						
@@ -87,7 +87,7 @@
 							class="beautypop rounded required has-icon" type="number" name="price" min="0"
 							placeholder="Price (S$)" ng-model="listing.price" ng-change = "makeAllSame(listing.price, 'price')" required>
 						<div class="ui-checkbox-wrapper">
-							<div class="white-tooltip fade-transition" style="display: none;">Apply to all products</div>
+							<div class="white-tooltip fade-transition">Apply to all products</div>
 							<div class="ui-checkbox checkbox-price" ng-click="onApplyAll(listing.price,'checkbox-price', 'price')"></div>
 						</div>
 					</div>
@@ -101,7 +101,7 @@
 							class="beautypop rounded required has-icon" type="number" name="originalPrice" min="0" ng-required="!hidePromotedSellerFields"
 							placeholder="Original Price (S$)" ng-model="listing.originalPrice" ng-change = "makeAllSame(listing.originalPrice, 'originalPrice')">
 						<div class="ui-checkbox-wrapper">
-							<div class="white-tooltip fade-transition" style="display: none;">Apply to all products</div>
+							<div class="white-tooltip fade-transition">Apply to all products</div>
 							<div class="ui-checkbox checkbox-originalPrice" ng-click="onApplyAll(listing.originalPrice,'checkbox-originalPrice', 'originalPrice')"></div>
 						</div>
 					</div>
@@ -114,7 +114,7 @@
 							<option value="false">No</option>
 						</select>
 						<div class="ui-checkbox-wrapper">
-                            <div class="white-tooltip fade-transition" style="display: none;">Apply to all products</div>
+                            <div class="white-tooltip fade-transition">Apply to all products</div>
                             <div class="ui-checkbox checkbox-freeDelivery" ng-click="onApplyAll(listing.freeDelivery,'checkbox-freeDelivery', 'freeDelivery')"></div>
                         </div>
 					</div>
@@ -126,7 +126,7 @@
 							<option ng-repeat="contry in countriesData" value="{{contry.id}}">{{contry.name}}</option>
 						</select>
 						<div class="ui-checkbox-wrapper">
-                            <div class="white-tooltip fade-transition" style="display: none;">Apply to all products</div>
+                            <div class="white-tooltip fade-transition">Apply to all products</div>
                             <div class="ui-checkbox checkbox-countryCode" ng-click="onApplyAll(listing.countryCode,'checkbox-countryCode', 'countryCode')"></div>
                         </div>
 					</div>
@@ -140,7 +140,7 @@
 							<option value="USED">Used</option>
 						</select>
 						<div class="ui-checkbox-wrapper">
-							<div class="white-tooltip fade-transition" style="display: none;">Apply to all products</div>
+							<div class="white-tooltip fade-transition">Apply to all products</div>
 							<div class="ui-checkbox checkbox-conditionType" ng-click="onApplyAll(listing.conditionType,'checkbox-conditionType', 'conditionType')"></div>
 						</div>
 					</div>
