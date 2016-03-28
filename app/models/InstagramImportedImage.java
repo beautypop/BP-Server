@@ -54,7 +54,7 @@ public class InstagramImportedImage extends domain.Entity {
         }
     }
 	
-	public static boolean isImported(User user, Long mediaId) {
+	public static boolean isImported(User user, String mediaId) {
         Query q = JPA.em().createQuery("SELECT count(i) FROM InstagramImportedImage i where user = ?1 and mediaId = ?2 and deleted = false");
         q.setParameter(1, user);
         q.setParameter(2, mediaId);

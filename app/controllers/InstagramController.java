@@ -101,7 +101,7 @@ public class InstagramController extends Controller {
 			
 		    Images images = mediaData.getImages();
 		    dto.setMediaId(mediaData.getId());
-		    boolean imported = InstagramImportedImage.isImported(localUser, Long.parseLong(mediaData.getId()));
+		    boolean imported = InstagramImportedImage.isImported(localUser, mediaData.getId());
 		    dto.setIsImported(imported);
 		    
 		    ImageData lowResolutionImg = images.getLowResolution();
