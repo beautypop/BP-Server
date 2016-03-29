@@ -14,6 +14,12 @@ import javax.persistence.criteria.Root;
 import play.db.jpa.JPA;
 import be.objectify.deadbolt.core.models.Role;
 
+/**
+ * insert into user_securityrole (user_id,roles_id) values (5,4);
+ * 
+ * @author keithlei
+ *
+ */
 @Entity
 public class SecurityRole extends domain.Entity implements Role {
     private static final long serialVersionUID = 1L;

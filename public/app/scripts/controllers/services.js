@@ -4,7 +4,11 @@ var beautypop = angular.module('beautypop');
 
 beautypop.run(function($rootScope, $window) {
     $rootScope.doBack = function() {
-    	$window.history.back();
+    	if ($window.history.length > 1) {
+    		$window.history.back();		
+    	} else {
+    		$window.close();
+    	}
     };
 });
 

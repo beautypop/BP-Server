@@ -1,0 +1,4 @@
+update category set name='Magazines & Books',description='Magazines & Books' where name='Maternity' and parent_id=9;
+update category set name='Home',description='Home' where name='Wedding' and parent_id=9;
+update category set name='Maternity',description='Maternity' where name='Other' and parent_id=9;
+insert into category (CREATED_DATE,deleted,name,description,objectType,categoryType,system,icon,maxPercentFeedExposure,minPercentFeedExposure,seq,owner_id,parent_id,customJob,run) values (NOW(),0,'Other','Other','CATEGORY','PUBLIC',1,'http://www.beautypop.com.hk/image/static/category/other_4.jpg',100,0,4,1,9,NULL,0);

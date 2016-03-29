@@ -27,7 +27,7 @@
         
         <ul class="products-holder">
             <li class="product-box" data-ng-repeat="product in seller.posts | limitTo: productsLength track by $index">
-                <a class="" data-ng-href="/product/{{product.id}}" ng-if="!((seller.numMoreProducts > 0) && $last)">
+                <a class="" data-ng-href="/product/{{product.id}}" target="_blank" ng-if="!((seller.numMoreProducts > 0) && $last)">
                     <img data-ng-src="/image/get-post-image-by-id/{{product.images[0]}}">
                 </a>
                 <a class="" data-ng-href="/seller/{{seller.id}}" ng-if="((seller.numMoreProducts > 0) && $last)">
