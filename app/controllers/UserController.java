@@ -901,13 +901,23 @@ public class UserController extends Controller {
     }
   
     @Transactional
+    public Result viewMyProfile() {
+        final User localUser = Application.getLocalUser(session());
+        if (!localUser.isLoggedIn()) {
+            logger.underlyingLogger().error(String.format("[u=%d] User not logged in", localUser.id));
+            return redirect("/login");
+        }
+        return viewProfile(localUser.id);
+    }
+    
+    @Transactional
     public Result viewProfile(Long id) {
         NanoSecondStopWatch sw = new NanoSecondStopWatch();
         
         final User localUser = Application.getLocalUser(session());
         User user = User.findById(id);
         if (user == null) {
-            logger.underlyingLogger().warn(String.format("[user=%d][u=%d] User not found", id, localUser.id));
+            logger.underlyingLogger().warn(String.format("[user=%d][localUser=%d] User not found", id, localUser.id));
             return Application.pathNotFound();
         }
 
@@ -1036,7 +1046,7 @@ public class UserController extends Controller {
         final User localUser = Application.getLocalUser(session());
         User user = User.findById(id);
         if (user == null) {
-            logger.underlyingLogger().warn(String.format("[user=%d][u=%d] User not found", id, localUser.id));
+            logger.underlyingLogger().warn(String.format("[user=%d][localUser=%d] User not found", id, localUser.id));
             return Application.pathNotFound();
         }
         
@@ -1052,7 +1062,7 @@ public class UserController extends Controller {
         final User localUser = Application.getLocalUser(session());    
         User user = User.findById(id);
         if (user == null) {
-            logger.underlyingLogger().warn(String.format("[user=%d][u=%d] User not found", id, localUser.id));
+            logger.underlyingLogger().warn(String.format("[user=%d][localUser=%d] User not found", id, localUser.id));
             return Application.pathNotFound();
         }
         

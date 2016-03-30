@@ -23,7 +23,6 @@ app.controller('connectController',function($scope,$http,$state,$location,$windo
 app.controller('importController',function($scope,$http,$state,$location,$rootScope,notificationService){
 	$scope.selectedImages = [];
 	$scope.mediaData=[];
-	var selectedImageCount = 0;
 	$scope.maxiumumImageCount = 20;
 	
 	var url = $location.absUrl(); // Returns full URL
@@ -59,6 +58,7 @@ app.controller('importController',function($scope,$http,$state,$location,$rootSc
 	};
 
 	// Select Image to Import
+	var selectedImageCount = 0;
 	$scope.selectImages = function(isImported) {
 		if(!isImported){
 			if($(event.currentTarget).find('div.checkbox').hasClass('selected')){

@@ -104,6 +104,7 @@ POST    /story/edit                                 controllers.ProductControlle
 GET     /comments/:postId                           @controllers.ProductController.viewComments(postId:Long)
 
 # User
+GET     /my-profile                                 @controllers.UserController.viewMyProfile()
 GET     /seller/:id                                 @controllers.UserController.viewProfile(id:Long)
 GET     /profile/:id                                @controllers.UserController.viewProfile(id:Long)
 GET     /followings/:id                             @controllers.UserController.viewFollowings(id:Long)
