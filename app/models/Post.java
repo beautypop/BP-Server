@@ -3,6 +3,7 @@ package models;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
@@ -300,7 +301,17 @@ public class Post extends SocialObject implements Likeable, Commentable {
 			return null;
 		}
 	}
-
+	
+	public static List<Post> findByIdList(Long[] ids) {
+		try {
+			Query q = JPA.em().createQuery("SELECT p FROM Post p where id IN :ids_list and deleted = false");
+			q.setParameter("ids_list", Arrays.asList(ids));
+			return (List<Post>) q.getResultList();
+		} catch (NoResultException nre) {
+			return null;
+		}
+	}
+	
 	public static List<Post> getEligiblePostsForFeeds() {
 		try {
 			Query q = JPA.em().createQuery("SELECT p FROM Post p where deleted = false");

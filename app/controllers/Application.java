@@ -516,7 +516,7 @@ public class Application extends Controller {
         calcServer.clearUserQueues(user);
         
         user.setNewUser(false);
-        
+        ElasticSearchController.addUserElasticSearch(user.getId(), user.getFirstName(), user.getLastName(), user.getEmail());
         return ok(Json.toJson(new UserVM(user)));
     }
     

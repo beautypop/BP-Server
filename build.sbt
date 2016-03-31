@@ -11,6 +11,7 @@ val appDependencies = Seq(
   cache,
   javaWs,
   javaJpa,
+  jdbc,
   "org.webjars" % "bootstrap" % "3.2.0",
   "org.easytesting" % "fest-assert" % "1.4" % "test",
   "mysql" % "mysql-connector-java" % "5.1.36",
@@ -34,7 +35,8 @@ val appDependencies = Seq(
   "org.apache.httpcomponents" % "httpmime" % "4.5.1",
   "org.json" % "json" % "20090211",
   "com.mashape.unirest" % "unirest-java" % "1.3.0",
-  "com.sendgrid" % "sendgrid-java" % "2.2.2"
+  "com.sendgrid" % "sendgrid-java" % "2.2.2",
+  "com.clever-age" % "play2-elasticsearch" % "2.1-SNAPSHOT"
 )
 
 // add resolver for deadbolt and easymail snapshots
