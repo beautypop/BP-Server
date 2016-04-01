@@ -774,3 +774,10 @@ i.icon {
        -o-transform: translateY(0px);
           transform: translateY(0px);
 }
+
+.divider span {
+    position: relative;
+    top: -10px;
+    padding: 0 20px;
+    background: #faf7f7;
+}
