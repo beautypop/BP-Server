@@ -133,8 +133,11 @@
 							<!-- <a href="#">Forgot Password?</a> -->
 						</div>
 						<button type="button submit" ng-disabled="!loginForm.$valid" class="btn btn-default half-round" ng-click="onLogin(login)" style="color: white;background: #fd4e64;margin-left:21%">Login</button>
-						<!-- <a class="half-round clickable" type="submit" style="background: #fd4e64;" ng-click="onLogin(login)">Login</a> -->
 						<a href="/signup" class="half-round secondary clickable">Sign Up</a>
+						<div class="divider">
+                			<span>OR</span>
+            			</div>
+						<a href="/authenticate/facebook" class="half-round clickable" style="background:#43639d;">Login with Facebook</a>
 						</form>
 					</div>
 				</div>

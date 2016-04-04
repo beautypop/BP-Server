@@ -302,10 +302,10 @@ public class Post extends SocialObject implements Likeable, Commentable {
 		}
 	}
 	
-	public static List<Post> findByIdList(Long[] ids) {
+	public static List<Post> findByIdList(List<Long> ids) {
 		try {
 			Query q = JPA.em().createQuery("SELECT p FROM Post p where id IN :ids_list and deleted = false");
-			q.setParameter("ids_list", Arrays.asList(ids));
+			q.setParameter("ids_list", ids);
 			return (List<Post>) q.getResultList();
 		} catch (NoResultException nre) {
 			return null;

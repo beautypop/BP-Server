@@ -23,11 +23,12 @@ import com.github.cleverage.elasticsearch.IndexResults;
 
 public class ElasticSearchController extends Controller {
 
-    public static void addPostElasticSearch(Long id, String title, String body){
+    public static void addPostElasticSearch(Long id, String title, String body, Long catId){
 		PostIndex postIndex = new PostIndex();
 		postIndex.id = id+"";
 		postIndex.title = title;
 		postIndex.body = body;
+		postIndex.catId = catId+"";
 		postIndex.index();
 	}
     
@@ -41,30 +42,40 @@ public class ElasticSearchController extends Controller {
 	}
 	
 	@Transactional
-	public static Result elasticSearchPost(String searchKey){
-		
+	public static Result elasticSearchPost(String searchKey, String catId){
 		IndexQuery<PostIndex> indexQuery = PostIndex.find.query();
 		indexQuery.setBuilder(QueryBuilders.queryStringQuery(searchKey));
 		IndexResults<PostIndex> results = PostIndex.find.search(indexQuery);
 		if(results.results.size() == 0){
-			return ok(Json.toJson(""));
+			return notFound();
 		}
-		Long[] postIds = new Long[results.results.size()];
-		for(int i=0; i<results.results.size(); i++){
-			postIds[i] = Long.parseLong(results.results.get(i).id);
+		List<Long> postIds = new ArrayList<Long>();
+		if(catId.equals("0")){
+			for(int i=0; i<results.results.size(); i++){
+				postIds.add(Long.parseLong(results.results.get(i).id));
+			}
+		}else{
+			for(int i=0; i<results.results.size(); i++){
+				if(catId.equals(results.results.get(i).catId+"")){
+					postIds.add(Long.parseLong(results.results.get(i).id));
+				}
+			}
 		}
 		return getProductInfo(postIds);
 	}
 	
-	public static Result getProductInfo(Long[] id) {
-		List<PostVM> post = getPostInfoVM(id);
+	public static Result getProductInfo(List<Long> id) {
+		List<PostVM> post = null;
+		if(id.size() > 0){
+			post = getPostInfoVM(id);
+		}	
 		if (post == null) {
 			return notFound();
 		}
 		return ok(Json.toJson(post));
 	}
 	
-	public static List<PostVM> getPostInfoVM(Long[] ids) {
+	public static List<PostVM> getPostInfoVM(List<Long> ids) {
 		User localUser = Application.getLocalUser(session());
 		List<Post> posts = Post.findByIdList(ids);
 		

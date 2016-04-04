@@ -179,7 +179,7 @@ public class ProductController extends Controller{
 	        if (logger.underlyingLogger().isDebugEnabled()) {
 	            logger.underlyingLogger().debug("[u="+localUser.getId()+"][p="+newPost.id+"] createProduct(). Took "+sw.getElapsedMS()+"ms");
 	        }
-	        
+	        ElasticSearchController.addPostElasticSearch(newPost.getId(),title,body,catId);
 			return ok(Json.toJson(response));
 		} catch (IOException e) {
 			logger.underlyingLogger().error("Error in createProduct", e);

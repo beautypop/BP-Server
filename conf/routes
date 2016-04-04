@@ -50,7 +50,7 @@ GET     /import                                     controllers.InstagramControl
 POST    /instagram/product/new                      controllers.InstagramController.newProductWithForm()
 
 # Elastic
-GET     /elastic/post/:searchKey                    controllers.ElasticSearchController.elasticSearchPost(searchKey:String)
+GET     /elastic/post/:searchKey/:catId             controllers.ElasticSearchController.elasticSearchPost(searchKey:String, catId:String)
 GET     /elastic/user/:searchKey                    controllers.ElasticSearchController.elasticSearchUser(searchKey:String)
 
 # Login
