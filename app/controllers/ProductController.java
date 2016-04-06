@@ -20,7 +20,6 @@ import models.Category;
 import models.Collection;
 import models.Comment;
 import models.Conversation;
-import models.PostToMark;
 import models.Country.CountryCode;
 import models.Hashtag;
 import models.Post;
@@ -171,10 +170,6 @@ public class ProductController extends Controller{
 			SocialRelationHandler.recordNewPost(newPost, localUser);
 			ResponseStatusVM response = new ResponseStatusVM(SocialObjectType.POST, newPost.id, localUser.id, true);
 			
-			// To be marked by PostMarker 
-			PostToMark mark = new PostToMark(newPost.id);
-			mark.save();
-			
 			sw.stop();
 	        if (logger.underlyingLogger().isDebugEnabled()) {
 	            logger.underlyingLogger().debug("[u="+localUser.getId()+"][p="+newPost.id+"] createProduct(). Took "+sw.getElapsedMS()+"ms");
@@ -234,10 +229,6 @@ public class ProductController extends Controller{
             addHashtagsToStory(hashtags, newStory);
             SocialRelationHandler.recordNewStory(newStory, localUser);
             ResponseStatusVM response = new ResponseStatusVM(SocialObjectType.STORY, newStory.id, localUser.id, true);
-            
-            // To be marked by PostMarker 
-            PostToMark mark = new PostToMark(newStory.id);
-            mark.save();
             
             sw.stop();
             if (logger.underlyingLogger().isDebugEnabled()) {
@@ -349,10 +340,6 @@ public class ProductController extends Controller{
         SocialRelationHandler.recordEditPost(post, oldCategory);
         ResponseStatusVM response = new ResponseStatusVM(SocialObjectType.POST, post.id, localUser.id, true);
         
-        // To be marked by PostMarker 
-        PostToMark mark = new PostToMark(post.id);
-        mark.save();
-        
         sw.stop();
         if (logger.underlyingLogger().isDebugEnabled()) {
             logger.underlyingLogger().debug("[u="+localUser.getId()+"][p="+id+"] editProduct(). Took "+sw.getElapsedMS()+"ms");
@@ -422,10 +409,6 @@ public class ProductController extends Controller{
         addHashtagsToPost(hashtags, post);
         SocialRelationHandler.recordEditPost(post, oldCategory);
         ResponseStatusVM response = new ResponseStatusVM(SocialObjectType.POST, post.id, localUser.id, true);
-        
-        // To be marked by PostMarker 
-        PostToMark mark = new PostToMark(post.id);
-        mark.save();
         
         sw.stop();
         if (logger.underlyingLogger().isDebugEnabled()) {
