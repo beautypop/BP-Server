@@ -168,6 +168,7 @@ app.controller('detailsController',function($scope,$http,$state,$upload,notifica
 				"title" : "",
 				"body" : imagesData[i].caption,
 				"catId" : "",
+				"subcatId" : "",
 				"price" : "0",
 				"originalPrice" : "0",
 				"freeDelivery" : "",
@@ -205,6 +206,7 @@ app.controller('detailsController',function($scope,$http,$state,$upload,notifica
 			if(postData.originalPrice == null){
 				postData.originalPrice = 0;
 			}
+			postData.catId = postData.subcatId;
 			var file = [{}];	
 			
 			$upload.upload({
@@ -228,23 +230,51 @@ app.controller('detailsController',function($scope,$http,$state,$upload,notifica
 	$scope.onApplyAll = function(value, selectedCheckbox, selectedComponent){
 		if($(event.currentTarget).hasClass('selected')){
 			$("."+selectedCheckbox).removeClass("selected");
-			$("."+selectedCheckbox).css("background", "url(images/unselected.png) center no-repeat");
+			$("."+selectedCheckbox).css("background", "url(images/unselected-white.png) center no-repeat");
 		}else{
 			$("."+selectedCheckbox).addClass("selected");
 			$("."+selectedCheckbox).css("background", "url(images/selected.png) center no-repeat");
 			for(var i=0; i<$scope.listingData.length; i++){
 				if(selectedComponent in $scope.listingData[i]){
 					$scope.listingData[i][selectedComponent] = value;
+					if(selectedComponent == 'catId'){
+						$scope.listingData[i]['subcatId'] = '';
+					}
 				}
+			}
+			if(selectedComponent == 'catId' && value != ""){
+				$(".subcat-dropdown").removeAttr('disabled');
 			}
 		}
 	}
 	
 	$scope.makeAllSame = function(value, selectedComponent){
+		if(value == undefined){
+			$(event.currentTarget).parent().next().find("select").attr('disabled', 'disabled');
+		}else{
+			$(event.currentTarget).parent().next().find("select").removeAttr('disabled');
+		}
 		if($(event.currentTarget).next().find(".ui-checkbox").hasClass('selected')){
 			for(var i=0; i<$scope.listingData.length; i++){
 				if(selectedComponent in $scope.listingData[i]){
 					$scope.listingData[i][selectedComponent] = value;
+					if(selectedComponent == 'catId'){
+						$scope.listingData[i]['subcatId'] = '';
+					}
+				}
+			}
+			if(selectedComponent == 'catId' && value != ""){
+				$(".subcat-dropdown").removeAttr('disabled');
+			}
+		}
+	}
+	
+	$scope.getSubCat = function(value){
+		if(value != undefined && value != ""){
+			for(var i=0; i<$scope.categoriesData.length; i++){
+				var thisCat = $scope.categoriesData[i];
+				if(thisCat.id == value){
+					return thisCat.subCategories; 
 				}
 			}
 		}

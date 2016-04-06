@@ -62,7 +62,7 @@ GET     /signup/promo-details/:promoCode            controllers.Application.deta
 GET     /logout                                     com.feth.play.module.pa.controllers.Authenticate.logout
 GET     /authenticate/:provider                     com.feth.play.module.pa.controllers.Authenticate.authenticate(provider: String)
 POST    /authenticate/mobile/:provider              com.feth.play.module.pa.controllers.Authenticate.authenticateMobile(provider: String)
-#GET    /authenticatePopup/:provider                com.feth.play.module.pa.controllers.Authenticate.authenticatePopup(provider: String)
+GET    /authenticatePopup/:provider                 com.feth.play.module.pa.controllers.Authenticate.authenticatePopup(provider: String)
  
 GET     /accounts/unverified                        controllers.Signup.unverified
 GET     /authenticate/:provider/denied              controllers.Signup.oAuthDenied(provider: String)

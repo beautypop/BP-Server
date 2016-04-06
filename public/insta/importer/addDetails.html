@@ -67,7 +67,7 @@
 					</div>
 					<div class="row clearfix controls">
 						<i class="icon category"></i> <select
-							class="ui fluid dropdown beautypop rounded required has-icon" name="categoryId" ng-model="listing.catId" ng-change = "makeAllSame(listing.catId, 'catId')" required>
+							class="ui fluid dropdown beautypop rounded required has-icon" name="categoryId" ng-model="listing.catId" ng-change = "listing.subcatId='';makeAllSame(listing.catId, 'catId')" required>
 							<option value="">Category</option>
 							<option ng-repeat="category in categoriesData" value="{{category.id}}">{{category.name}}</option>
 							
@@ -78,7 +78,18 @@
 						</div>
 						
 					</div>
-					
+					<div class="row clearfix controls">
+						<i class="icon category"></i> <select
+							class="ui fluid dropdown beautypop rounded required has-icon subcat-dropdown" name="subcategoryId" ng-model="listing.subcatId" required>
+							<option value="">Sub Category</option>
+							<option ng-repeat="subcategory in getSubCat(listing.catId)" value="{{subcategory.id}}">{{subcategory.name}}</option>
+							
+						</select>
+						<div class="ui-checkbox-wrapper">
+							
+						</div>
+						
+					</div>
 					<div class="row clearfix controls">
 						<div class="error-message" style="display: none;">
 							<i class="critical"></i>false

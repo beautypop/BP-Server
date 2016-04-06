@@ -171,18 +171,6 @@ a:active,a:hover {
 	visibility: visible;
 }
 
-.img.delete .delete-icon {
-	width: 100px;
-	height: 100px;
-	background: url(../images/remove-hover.png) center no-repeat;
-	position: absolute;
-	left: 0;
-	top: 0;
-	opacity: 0;
-	visibility: hidden;
-	transition: opacity 0.5s ease;
-}
-
 .edit-component .name-desc {
 	float: right;
 	width: 380px;
@@ -711,10 +699,11 @@ i.icon {
 }
 
 .ui-checkbox-wrapper .white-tooltip {
+  z-index: 100;
   background: #fff;
   bottom: 100%;
   display: block;
-  left: -25px;
+  left: -80px;
   margin-bottom: 15px;
   opacity: 0;
   padding: 10px;
@@ -780,4 +769,9 @@ i.icon {
     top: -10px;
     padding: 0 20px;
     background: #faf7f7;
+}
+
+.edit-component input:disabled, .edit-component .ui.dropdown:disabled, .edit-component select:disabled, .edit-component input.disabled, .edit-component .ui.dropdown.disabled, .edit-component select.disabled {
+    color: #999;
+    background-color: #eee;
 }

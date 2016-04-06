@@ -12,6 +12,7 @@ import play.data.DynamicForm;
 import play.db.jpa.Transactional;
 import play.mvc.Result;
 import Decoder.BASE64Encoder;
+import play.Play;
 
 import com.feth.play.module.pa.PlayAuthenticate;
 
@@ -19,7 +20,8 @@ import controllers.Application;
 
 public class Authenticate extends AuthenticateBase {
 	private static final play.api.Logger logger = play.api.Logger.apply(Authenticate.class);
-
+	private static String facebookRedirectUrl = Play.application().configuration().getString("instagram.facebook.redirectUrl");
+	
 	@Transactional
 	public static Result authenticateMobile(final String provider) {
 		noCache(response());
@@ -74,7 +76,8 @@ public class Authenticate extends AuthenticateBase {
 	    DynamicForm form = DynamicForm.form().bindFromRequest();
 	
         String redirectURL = form.get("rurl");   // TODO: Need to get actual url from context object
-        session().put(PlayAuthenticate.ORIGINAL_URL, redirectURL);
+        //session().put(PlayAuthenticate.ORIGINAL_URL, redirectURL);
+        session().put(PlayAuthenticate.ORIGINAL_URL, facebookRedirectUrl);
         noCache(response());
 
         final String payload = request().getQueryString(PAYLOAD_KEY);
