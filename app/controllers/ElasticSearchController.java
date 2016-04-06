@@ -21,8 +21,12 @@ import viewmodel.UserVM;
 import com.github.cleverage.elasticsearch.IndexQuery;
 import com.github.cleverage.elasticsearch.IndexResults;
 
-public class ElasticSearchController extends Controller {
+import domain.DefaultValues;
 
+public class ElasticSearchController extends Controller {
+	
+	public static final int FEED_RETRIEVAL_COUNT = DefaultValues.FEED_INFINITE_SCROLL_COUNT;
+	
     public static void addPostElasticSearch(Long id, String title, String body, Long catId){
 		PostIndex postIndex = new PostIndex();
 		postIndex.id = id+"";
@@ -42,10 +46,12 @@ public class ElasticSearchController extends Controller {
 	}
 	
 	@Transactional
-	public static Result elasticSearchPost(String searchKey, String catId){
+	public static Result elasticSearchPost(String searchKey, String catId, Integer offset){
+		int fromCount = offset * FEED_RETRIEVAL_COUNT;
 		IndexQuery<PostIndex> indexQuery = PostIndex.find.query();
-		indexQuery.setBuilder(QueryBuilders.queryStringQuery(searchKey));
+		indexQuery.setBuilder(QueryBuilders.queryStringQuery(searchKey)).from(fromCount).size(FEED_RETRIEVAL_COUNT);
 		IndexResults<PostIndex> results = PostIndex.find.search(indexQuery);
+
 		if(results.results.size() == 0){
 			return notFound();
 		}
@@ -93,13 +99,13 @@ public class ElasticSearchController extends Controller {
 	}
 	
 	@Transactional
-	public static Result elasticSearchUser(String searchKey){
-		
+	public static Result elasticSearchUser(String searchKey, Integer offset){
+		int fromCount = offset * FEED_RETRIEVAL_COUNT;
 		IndexQuery<UserIndex> indexQuery = UserIndex.find.query();
-		indexQuery.setBuilder(QueryBuilders.queryStringQuery(searchKey));
+		indexQuery.setBuilder(QueryBuilders.queryStringQuery(searchKey)).from(fromCount).size(FEED_RETRIEVAL_COUNT);
 		IndexResults<UserIndex> results = UserIndex.find.search(indexQuery);
 		if(results.results.size() == 0){
-			return ok(Json.toJson(""));
+			return notFound();
 		}
 		Long[] userIds = new Long[results.results.size()];
 		for(int i=0; i<results.results.size(); i++){
