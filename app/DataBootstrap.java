@@ -398,21 +398,17 @@ public class DataBootstrap {
         desc = "Fragrance";
         createCategory(name, desc, "http://www.beautypop.com.hk/image/static/category/beauty_2.jpg", 2, beautyCategory);
 
-        name = "Bath & Body";
-        desc = "Bath & Body";
-        createCategory(name, desc, "http://www.beautypop.com.hk/image/static/category/beauty_3.jpg", 3, beautyCategory);
-
         name = "Nails";
         desc = "Nails";
-        createCategory(name, desc, "http://www.beautypop.com.hk/image/static/category/beauty_4.jpg", 4, beautyCategory);
+        createCategory(name, desc, "http://www.beautypop.com.hk/image/static/category/beauty_3.jpg", 3, beautyCategory);
 
         name = "Haircare";
         desc = "Haircare";
-        createCategory(name, desc, "http://www.beautypop.com.hk/image/static/category/beauty_5.jpg", 5, beautyCategory);
+        createCategory(name, desc, "http://www.beautypop.com.hk/image/static/category/beauty_4.jpg", 4, beautyCategory);
 
         name = "Other";
         desc = "Other";
-        createCategory(name, desc, "http://www.beautypop.com.hk/image/static/category/beauty_6.jpg", 6, beautyCategory);
+        createCategory(name, desc, "http://www.beautypop.com.hk/image/static/category/beauty_5.jpg", 5, beautyCategory);
         
         // skincare
         name = "Face";
