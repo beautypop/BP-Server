@@ -20,27 +20,27 @@ import play.db.jpa.JPA;
 public class PushNotificationToken extends domain.Entity {
     private static final play.api.Logger logger = play.api.Logger.apply(PushNotificationToken.class);
     
-	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
-	public Long id;
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    public Long id;
 
-	@Required
-	public Long userId;
-	
-	@Required
-	public String token;
-	
-	@Required
+    @Required
+    public Long userId;
+    
+    @Required
+    public String token;
+    
+    @Required
     public String appVersion;
     
-	@Required
-	public Long versionCode = 0L;
-	
-	@Enumerated(EnumType.STRING)
+    @Required
+    public Long versionCode = 0L;
+    
+    @Enumerated(EnumType.STRING)
     public DeviceType deviceType;
 
-	@Column(nullable = false, columnDefinition = "TINYINT(1)")
-	public boolean deleted = false;
+    @Column(nullable = false, columnDefinition = "TINYINT(1)")
+    public boolean deleted = false;
 
     /**
      * Ctor
@@ -49,7 +49,8 @@ public class PushNotificationToken extends domain.Entity {
     }
 
     public static void createUpdateToken(Long userId, String token, String appVersion, DeviceType deviceType) {
-        PushNotificationToken pushNotificationToken = findByUserIdAppVersion(userId, appVersion);
+        //PushNotificationToken pushNotificationToken = getToken(userId, appVersion, deviceType);
+        PushNotificationToken pushNotificationToken = findByUserId(userId);
         if (pushNotificationToken == null) {
             markDelete(userId);     // mark delete old versions
             pushNotificationToken = new PushNotificationToken();
@@ -70,34 +71,35 @@ public class PushNotificationToken extends domain.Entity {
     }
 
     ///////////////////////// Find APIs /////////////////////////
-	public static PushNotificationToken findByUserId(Long userId) {
-		try { 
-			Query q = JPA.em().createQuery("SELECT t FROM PushNotificationToken t where userId = ?1 and deleted = false order by CREATED_DATE desc");
-			q.setParameter(1, userId);
-			q.setMaxResults(1);
-			
-			if (q.getMaxResults() > 1) {
-	            logger.underlyingLogger().error("[u="+userId+"] has "+q.getMaxResults()+" tokens!!");
-	        }
-			
-			return (PushNotificationToken) q.getSingleResult();
-		} catch (NoResultException e) {
-			return null;
-		} 
-	}
-	
-	public static PushNotificationToken findByUserIdAppVersion(Long userId, String appVersion) {
+    public static PushNotificationToken findByUserId(Long userId) {
         try { 
-            Query q = JPA.em().createQuery("SELECT t FROM PushNotificationToken t where userId = ?1 and appVersion = ?2 and deleted = false");
+            Query q = JPA.em().createQuery("SELECT t FROM PushNotificationToken t where userId = ?1 and deleted = false order by CREATED_DATE desc");
+            q.setParameter(1, userId);
+            q.setMaxResults(1);
+            
+            if (q.getMaxResults() > 1) {
+                logger.underlyingLogger().error("[u="+userId+"] has "+q.getMaxResults()+" tokens!!");
+            }
+            
+            return (PushNotificationToken) q.getSingleResult();
+        } catch (NoResultException e) {
+            return null;
+        } 
+    }
+    
+    public static PushNotificationToken getToken(Long userId, String appVersion, DeviceType deviceType) {
+        try { 
+            Query q = JPA.em().createQuery("SELECT t FROM PushNotificationToken t where userId = ?1 and appVersion = ?2 and deviceType = ?3 and deleted = false");
             q.setParameter(1, userId);
             q.setParameter(2, appVersion);
+            q.setParameter(3, deviceType);
             return (PushNotificationToken) q.getSingleResult();
         } catch (NoResultException e) {
             return null;
         } 
     }
 
-	public static void markDelete(Long userId) {
+    public static void markDelete(Long userId) {
         try {
             Query q = JPA.em().createQuery("update PushNotificationToken set deleted = 1 where userId = ?1");
             q.setParameter(1, userId);
