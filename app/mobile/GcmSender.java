@@ -16,6 +16,10 @@ import com.google.android.gcm.server.Result;
 import common.utils.StringUtil;
 import controllers.Application;
 
+import javapns.Push;
+import javapns.notification.Payload;
+import javapns.notification.PushNotificationPayload;
+
 public class GcmSender {
     private static final play.api.Logger logger = play.api.Logger.apply(GcmSender.class);
 
@@ -23,6 +27,11 @@ public class GcmSender {
     
     public static final String API_SERVER_KEY = Play.application().configuration().getString("gcm.api.server.key");
     
+    public static final String NOTIF_CERT_DEV = Play.application().configuration().getString("apn.dev.cert");
+    public static final String NOTIF_CERT_PROD = Play.application().configuration().getString("apn.prod.cert");
+    public static final String API_APN_PASS = Play.application().configuration().getString("apn.api.pass");
+    public static final String APN_IS_PROD = Play.application().configuration().getString("apn.api.isprod");
+
     private static final int TTL = 30;
     private static final int RETRIES = 2;
     
@@ -42,7 +51,7 @@ public class GcmSender {
         map.put("message", StringUtil.shortMessage(message));
         map.put("messageType", NotificationType.COMMENT.name());
         map.put("postId", postId.toString());
-        sendNotification(userId, Json.stringify(Json.toJson(map)));
+        sendNotification(userId, map);
     }
     
     public static void sendNewMessageNotification(Long userId, String actor, String message) {
@@ -54,7 +63,7 @@ public class GcmSender {
         map.put("actor", actor);
         map.put("message", StringUtil.shortMessage(message));
         map.put("messageType", NotificationType.CONVERSATION.name());
-        sendNotification(userId, Json.stringify(Json.toJson(map)));
+        sendNotification(userId, map);
     }
     
     public static void sendNewFollowNotification(Long userId, String actor) {
@@ -66,10 +75,10 @@ public class GcmSender {
         map.put("actor", actor);
         map.put("message", "");
         map.put("messageType", NotificationType.FOLLOW.name());
-        sendNotification(userId, Json.stringify(Json.toJson(map)));
+        sendNotification(userId, map);
     }
     
-    private static void sendNotification(Long userId, String message) {
+    private static void sendNotification(Long userId,  Map<String, String> map) {
         if (Application.isDev()) {
             return;
         }
@@ -77,17 +86,36 @@ public class GcmSender {
         PushNotificationToken token = PushNotificationToken.findByUserId(userId);
         if (token != null) {
             if (Application.DeviceType.IOS.equals(token.deviceType)) {
-                sendToApn(userId, token.token, message);
+                sendToApn(userId, token.token, map);
             } else if (Application.DeviceType.ANDROID.equals(token.deviceType)) {
-                sendToGcm(userId, token.token, message);
+                sendToGcm(userId, token.token, Json.stringify(Json.toJson(map)));
             }
         } else {
             logger.underlyingLogger().info("[u="+userId+"] User does not have push notification token");
         }
     }
 
-    private static boolean sendToApn(Long userId, String token, String msg) {
-        return true;
+    private static boolean sendToApn(Long userId, String token, Map<String, String> map) {
+    	try {
+    		
+			String pass = API_APN_PASS;
+			Boolean prod = Boolean.parseBoolean(APN_IS_PROD);
+			String cert = null;
+
+			if(prod == false){
+				cert = NOTIF_CERT_DEV;
+			} else {
+				cert = NOTIF_CERT_PROD;
+			}
+			
+			PushNotificationPayload payload=PushNotificationPayload.fromJSON("{\"aps\":{\"content-available\":1,\"actor\":\""+map.get("actor")+"\",\"messageType\":\""+map.get("messageType")+"\",\"sound\":\"default\",\"alert\":\""+map.get("message")+"\"}}");
+			
+			Push.payload(payload, cert, pass, prod, token);
+			return true;
+    	} catch (Exception e) {
+			e.printStackTrace();
+			return false;
+		}
     }
     
     private static boolean sendToGcm(Long userId, String token, String msg) {
