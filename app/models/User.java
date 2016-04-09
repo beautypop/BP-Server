@@ -792,7 +792,7 @@ public class User extends SocialObject implements Subject, Followable {
 	
 	@Transactional
 	public boolean isRecommendedSeller() {
-	    if (isSystemUser() || newUser || system || !active || deleted) {
+	    if (newUser || system || !active || deleted) {
 	        return false;
 	    }
 	    
