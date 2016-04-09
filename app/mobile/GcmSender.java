@@ -17,7 +17,6 @@ import common.utils.StringUtil;
 import controllers.Application;
 
 import javapns.Push;
-import javapns.notification.Payload;
 import javapns.notification.PushNotificationPayload;
 
 public class GcmSender {
@@ -97,7 +96,6 @@ public class GcmSender {
 
     private static boolean sendToApn(Long userId, String token, Map<String, String> map) {
     	try {
-    		
 			String pass = API_APN_PASS;
 			Boolean prod = Boolean.parseBoolean(APN_IS_PROD);
 			String cert = null;
@@ -108,12 +106,13 @@ public class GcmSender {
 				cert = NOTIF_CERT_PROD;
 			}
 			
-			PushNotificationPayload payload=PushNotificationPayload.fromJSON("{\"aps\":{\"content-available\":1,\"actor\":\""+map.get("actor")+"\",\"messageType\":\""+map.get("messageType")+"\",\"sound\":\"default\",\"alert\":\""+map.get("message")+"\"}}");
-			
+			PushNotificationPayload payload = PushNotificationPayload.fromJSON("{\"aps\":{\"content-available\":1,\"actor\":\""+map.get("actor")+"\",\"messageType\":\""+map.get("messageType")+"\",\"sound\":\"default\",\"alert\":\""+map.get("message")+"\"}}");
 			Push.payload(payload, cert, pass, prod, token);
+			
+			//logger.underlyingLogger().info("[u="+userId+"][token="+token+"][msg="+msg+"] Gcm send result: "+result);
 			return true;
     	} catch (Exception e) {
-			e.printStackTrace();
+    	    logger.underlyingLogger().error("[u="+userId+"] Error in Apn send", e);
 			return false;
 		}
     }

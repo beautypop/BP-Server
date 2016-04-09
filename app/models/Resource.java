@@ -2,7 +2,6 @@ package models;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import javax.persistence.Entity;
@@ -19,7 +18,6 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import play.Play;
 import play.data.validation.Constraints.Required;
 import play.db.jpa.JPA;
-import domain.DefaultValues;
 import domain.SocialObjectType;
 
 /**
