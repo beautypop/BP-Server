@@ -3,8 +3,6 @@ package controllers;
 import handler.FeedHandler;
 
 import java.io.File;
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
 import java.security.Key;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -29,7 +27,6 @@ import models.User;
 import models.UserInfo;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.commons.lang3.StringEscapeUtils;
 
 import play.Play;
 import play.Routes;
@@ -61,17 +58,14 @@ import com.feth.play.module.pa.providers.password.UsernamePasswordAuthProvider;
 import com.feth.play.module.pa.providers.password.UsernamePasswordAuthUser;
 import com.feth.play.module.pa.user.AuthUser;
 import com.google.common.html.HtmlEscapers;
-import com.ning.http.util.UTF8UrlEncoder;
 
 import common.cache.CalcServer;
 import common.cache.CountryCache;
 import common.cache.FeaturedItemCache;
 import common.cache.LocationCache;
-import common.model.TargetGender;
 import common.utils.HtmlUtil;
 import common.utils.UserAgentUtil;
 import common.utils.ValidationUtil;
-import domain.DefaultValues;
 
 public class Application extends Controller {
     private static final play.api.Logger logger = play.api.Logger.apply(Application.class);

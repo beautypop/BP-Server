@@ -196,6 +196,8 @@ GET     /unfollow-user/:id                          controllers.UserController.u
 GET     /api/get-user/:id                           @controllers.UserController.getUserInfoById(id:Long)
 GET     /get-user/:id                               @controllers.UserController.getUserInfoById(id:Long)
 
+GET     /api/get-user-by-displayname/:displayName   @controllers.UserController.getUserInfoByDisplayName(displayName:String)
+
 GET     /api/get-followings/:id/:offset             @controllers.UserController.getFollowings(id:Long,offset:Long)
 GET     /get-followings/:id/:offset                 @controllers.UserController.getFollowings(id:Long,offset:Long)
 

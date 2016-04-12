@@ -15,22 +15,26 @@ import com.google.android.gcm.server.Result;
 
 import common.utils.StringUtil;
 import controllers.Application;
-
 import javapns.Push;
 import javapns.notification.PushNotificationPayload;
+import javapns.notification.PushedNotifications;
 
-public class GcmSender {
-    private static final play.api.Logger logger = play.api.Logger.apply(GcmSender.class);
+public class PushNotificationSender {
+    private static final play.api.Logger logger = play.api.Logger.apply(PushNotificationSender.class);
 
-    public static final String MESSAGE_KEY = "message";
-    
     public static final String API_SERVER_KEY = Play.application().configuration().getString("gcm.api.server.key");
     
-    public static final String NOTIF_CERT_DEV = Play.application().configuration().getString("apn.dev.cert");
-    public static final String NOTIF_CERT_PROD = Play.application().configuration().getString("apn.prod.cert");
-    public static final String API_APN_PASS = Play.application().configuration().getString("apn.api.pass");
+    public static final String APN_CERT_DEV = Play.application().configuration().getString("apn.dev.cert");
+    public static final String APN_CERT_PROD = Play.application().configuration().getString("apn.prod.cert");
+    public static final String APN_API_PASS = Play.application().configuration().getString("apn.api.pass");
     public static final String APN_IS_PROD = Play.application().configuration().getString("apn.api.isprod");
 
+    public static final String MESSAGE_KEY = "message";
+    public static final String ACTOR = "actor";
+    public static final String MESSAGE = "message";
+    public static final String MESSAGE_TYPE = "messageType";
+    public static final String POST_ID = "postId";
+    
     private static final int TTL = 30;
     private static final int RETRIES = 2;
     
@@ -46,10 +50,10 @@ public class GcmSender {
         }
         
         Map<String, String> map = new HashMap<>();
-        map.put("actor", actor);
-        map.put("message", StringUtil.shortMessage(message));
-        map.put("messageType", NotificationType.COMMENT.name());
-        map.put("postId", postId.toString());
+        map.put(ACTOR, actor);
+        map.put(MESSAGE, StringUtil.shortMessage(message));
+        map.put(MESSAGE_TYPE, NotificationType.COMMENT.name());
+        map.put(POST_ID, postId.toString());
         sendNotification(userId, map);
     }
     
@@ -59,9 +63,9 @@ public class GcmSender {
         }
         
         Map<String, String> map = new HashMap<>();
-        map.put("actor", actor);
-        map.put("message", StringUtil.shortMessage(message));
-        map.put("messageType", NotificationType.CONVERSATION.name());
+        map.put(ACTOR, actor);
+        map.put(MESSAGE, StringUtil.shortMessage(message));
+        map.put(MESSAGE_TYPE, NotificationType.CONVERSATION.name());
         sendNotification(userId, map);
     }
     
@@ -71,9 +75,9 @@ public class GcmSender {
         }
         
         Map<String, String> map = new HashMap<>();
-        map.put("actor", actor);
-        map.put("message", "");
-        map.put("messageType", NotificationType.FOLLOW.name());
+        map.put(ACTOR, actor);
+        map.put(MESSAGE, "");
+        map.put(MESSAGE_TYPE, NotificationType.FOLLOW.name());
         sendNotification(userId, map);
     }
     
@@ -87,7 +91,7 @@ public class GcmSender {
             if (Application.DeviceType.IOS.equals(token.deviceType)) {
                 sendToApn(userId, token.token, map);
             } else if (Application.DeviceType.ANDROID.equals(token.deviceType)) {
-                sendToGcm(userId, token.token, Json.stringify(Json.toJson(map)));
+                sendToGcm(userId, token.token, map);
             }
         } else {
             logger.underlyingLogger().info("[u="+userId+"] User does not have push notification token");
@@ -96,20 +100,29 @@ public class GcmSender {
 
     private static boolean sendToApn(Long userId, String token, Map<String, String> map) {
     	try {
-			String pass = API_APN_PASS;
+			String pass = APN_API_PASS;
 			Boolean prod = Boolean.parseBoolean(APN_IS_PROD);
 			String cert = null;
 
-			if(prod == false){
-				cert = NOTIF_CERT_DEV;
+			if (prod) {
+				cert = APN_CERT_PROD;
 			} else {
-				cert = NOTIF_CERT_PROD;
+				cert = APN_CERT_DEV;
 			}
 			
-			PushNotificationPayload payload = PushNotificationPayload.fromJSON("{\"aps\":{\"content-available\":1,\"actor\":\""+map.get("actor")+"\",\"messageType\":\""+map.get("messageType")+"\",\"sound\":\"default\",\"alert\":\""+map.get("message")+"\"}}");
-			Push.payload(payload, cert, pass, prod, token);
+			String content = 
+			        "{\"aps\":{\"content-available\":1,"+
+			        "\"sound\":\"default"+"\","+
+			        "\"actor\":\""+map.get(ACTOR)+"\","+
+			        "\"postId\":\""+map.get(POST_ID)+"\","+
+			        "\"messageType\":\""+map.get(MESSAGE_TYPE)+"\","+
+			        "\"alert\":\""+map.get(MESSAGE)+"\"}}";
 			
-			//logger.underlyingLogger().info("[u="+userId+"][token="+token+"][msg="+msg+"] Gcm send result: "+result);
+			PushNotificationPayload payload = 
+			        PushNotificationPayload.fromJSON(content);
+			PushedNotifications notifications = Push.payload(payload, cert, pass, prod, token);
+			
+			logger.underlyingLogger().info("[u="+userId+"][token="+token+"][content="+content+"] Apn send result: "+notifications.toString());
 			return true;
     	} catch (Exception e) {
     	    logger.underlyingLogger().error("[u="+userId+"] Error in Apn send", e);
@@ -117,16 +130,17 @@ public class GcmSender {
 		}
     }
     
-    private static boolean sendToGcm(Long userId, String token, String msg) {
+    private static boolean sendToGcm(Long userId, String token, Map<String, String> map) {
         try {
+            String content = Json.stringify(Json.toJson(map));
             Sender sender = new Sender(API_SERVER_KEY);
             Message message = new Message.Builder().timeToLive(TTL)
                     .collapseKey(MESSAGE_KEY)
                     .delayWhileIdle(true)
-                    .addData(MESSAGE_KEY, msg).build();
+                    .addData(MESSAGE_KEY, content).build();
 
             Result result = sender.send(message, token, RETRIES);
-            logger.underlyingLogger().info("[u="+userId+"][token="+token+"][msg="+msg+"] Gcm send result: "+result);
+            logger.underlyingLogger().info("[u="+userId+"][token="+token+"][content="+content+"] Gcm send result: "+result);
             return true;
         } catch (Exception e) {
             logger.underlyingLogger().error("[u="+userId+"] Error in Gcm send", e);

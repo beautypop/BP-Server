@@ -3,7 +3,7 @@ package events.listener;
 import java.util.HashSet;
 import java.util.Set;
 
-import mobile.GcmSender;
+import mobile.PushNotificationSender;
 import models.Activity;
 import models.Comment;
 import models.Post;
@@ -50,8 +50,8 @@ public class CommentEventListener extends EventListener {
                                         StringUtil.shortMessage(comment.body));
                                 activity.ensureUniqueAndMerge();    // only record latest comment activity from sender
                                 
-                                // GCM
-                                GcmSender.sendNewCommentNotification(
+                                // Push notification
+                                PushNotificationSender.sendNewCommentNotification(
                                         post.owner.id, 
                                         comment.owner.name,
                                         post.title, 
