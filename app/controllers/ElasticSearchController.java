@@ -10,6 +10,8 @@ import models.Post;
 import models.User;
 
 import org.elasticsearch.index.query.QueryBuilders;
+import org.elasticsearch.index.query.BoolQueryBuilder;
+import org.elasticsearch.index.query.QueryStringQueryBuilder;
 
 import play.db.jpa.Transactional;
 import play.libs.Json;
@@ -49,24 +51,35 @@ public class ElasticSearchController extends Controller {
 	public static Result elasticSearchPost(String searchKey, String catId, Integer offset){
 		int fromCount = offset * FEED_RETRIEVAL_COUNT;
 		IndexQuery<PostIndex> indexQuery = PostIndex.find.query();
-		indexQuery.setBuilder(QueryBuilders.queryStringQuery(searchKey)).from(fromCount).size(FEED_RETRIEVAL_COUNT);
+		
+		if(!catId.equals("0")){
+			BoolQueryBuilder booleanQueryBuilder = QueryBuilders.boolQuery();
+			QueryStringQueryBuilder queryBuilderTitle = QueryBuilders.queryStringQuery(searchKey).defaultField("title");
+			booleanQueryBuilder.should(queryBuilderTitle);
+			
+			QueryStringQueryBuilder queryBuilderBody = QueryBuilders.queryStringQuery(searchKey).defaultField("body");
+			booleanQueryBuilder.should(queryBuilderBody);
+			
+			QueryStringQueryBuilder queryBuilderCat = QueryBuilders.queryStringQuery(catId).defaultField("catId");
+			booleanQueryBuilder.must(queryBuilderCat);
+			
+			booleanQueryBuilder.minimumShouldMatch("1");
+			
+			indexQuery.setBuilder(booleanQueryBuilder).from(fromCount).size(FEED_RETRIEVAL_COUNT);
+		}else{
+			indexQuery.setBuilder(QueryBuilders.queryStringQuery(searchKey)).from(fromCount).size(FEED_RETRIEVAL_COUNT);
+		}
+		
 		IndexResults<PostIndex> results = PostIndex.find.search(indexQuery);
 
 		if(results.results.size() == 0){
 			return notFound();
 		}
 		List<Long> postIds = new ArrayList<Long>();
-		if(catId.equals("0")){
-			for(int i=0; i<results.results.size(); i++){
-				postIds.add(Long.parseLong(results.results.get(i).id));
-			}
-		}else{
-			for(int i=0; i<results.results.size(); i++){
-				if(catId.equals(results.results.get(i).catId+"")){
-					postIds.add(Long.parseLong(results.results.get(i).id));
-				}
-			}
+		for(int i=0; i<results.results.size(); i++){
+			postIds.add(Long.parseLong(results.results.get(i).id));
 		}
+		
 		return getProductInfo(postIds);
 	}
 	
