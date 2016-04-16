@@ -46,11 +46,13 @@ public class PostEventListener extends EventListener {
                             mark.save();
                             
                             // game badge
+                            /*
                             if (user.numProducts == 1) {
                                 GameBadgeAwarded.recordGameBadge(user, BadgeType.POST_1);
                             } else if (user.numProducts == 10) {
                                 GameBadgeAwarded.recordGameBadge(user, BadgeType.POST_10);
                             }
+                            */
                             
                             if (user.numProducts == 1) {
                                 // activity

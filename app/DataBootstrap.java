@@ -36,7 +36,7 @@ public class DataBootstrap {
         bootstrapLocation();
         bootstrapUser();
         bootstrapCategory();
-        bootstrapGameBadge();
+        //bootstrapGameBadge();
 	}
     
     private static void bootstrapTermsAndConditions() {

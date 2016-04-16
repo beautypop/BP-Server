@@ -169,15 +169,16 @@ public class UserController extends Controller {
         FilePart image = HttpUtil.getMultipartFormDataFile(request().body().asMultipartFormData(), "profile-photo");
         String fileName = image.getFilename();
         try {
-            boolean firstTimeUploadProfilePhoto = (localUser.getPhotoProfile() == null);
+            //boolean firstTimeUploadProfilePhoto = (localUser.getPhotoProfile() == null);
             
             File fileTo = ImageFileUtil.copyImageFileToTemp(image.getFile(), fileName);
             localUser.setPhotoProfile(fileTo);
             
+            /*
             if (firstTimeUploadProfilePhoto) {
-                // game badge
                 GameBadgeAwarded.recordGameBadge(localUser, BadgeType.PROFILE_PHOTO);
             }
+            */
         } catch (IOException e) {
             logger.underlyingLogger().error("["+localUser.id+"] Error in uploadProfilePhoto", e);
             return badRequest();
@@ -329,9 +330,9 @@ public class UserController extends Controller {
         localUser.userInfo.save();
         localUser.save();
         
-        if (localUser.hasCompleteInfo()) {
-            GameBadgeAwarded.recordGameBadge(localUser, BadgeType.PROFILE_INFO);
-        }
+        //if (localUser.hasCompleteInfo()) {
+        //    GameBadgeAwarded.recordGameBadge(localUser, BadgeType.PROFILE_INFO);
+        //}
         
         return ok(Json.toJson(new UserVM(localUser)));
     }
