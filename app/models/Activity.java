@@ -80,11 +80,25 @@ public class Activity  extends domain.Entity implements Serializable, Creatable,
 		LIKED,
 		FOLLOWED,
 		SOLD,
-		NEW_GAME_BADGE
+		NEW_GAME_BADGE,
+		TIPS_NEW_USER
 	}
 
 	public Activity() {
 	}
+	
+	public Activity(ActivityType activityType, Long userId,   
+            Long actor, Long actorImage, String actorName) {
+        this.activityType = activityType;
+        this.userId = userId;
+        this.actor = actor;
+        this.actorImage = actorImage;
+        this.actorName = actorName;
+        setActorTargetType();
+        
+        // increment notification counter for the recipient
+        NotificationCounter.incrementActivitiesCount(userId);
+    }
 	
 	public Activity(ActivityType activityType, Long userId, boolean userIsOwner,  
 			Long actor, Long actorImage, String actorName,  
@@ -134,10 +148,14 @@ public class Activity  extends domain.Entity implements Serializable, Creatable,
 		    this.actorType = SocialObjectType.USER;
             this.targetType = null;
 		    break;
+		case TIPS_NEW_USER:
+            this.actorType = SocialObjectType.USER;
+            this.targetType = null;
+            break;
 		default:
 		    logger.underlyingLogger().error("setActorTargetType: set to default.. unknown activityType="+activityType.name());
 		    this.actorType = SocialObjectType.USER;
-            this.targetType = SocialObjectType.POST;
+            this.targetType = null;
             break;
 		}
 	}

@@ -16,12 +16,15 @@ import javax.inject.Inject;
 
 import models.Country;
 import models.FeaturedItem;
+import models.Activity.ActivityType;
 import models.FeaturedItem.ItemType;
 import models.GameBadge.BadgeType;
+import models.Activity;
 import models.GameBadgeAwarded;
 import models.Location;
 import models.Resource;
 import models.SecurityRole;
+import models.SystemInfo;
 import models.TermsAndConditions;
 import models.User;
 import models.UserInfo;
@@ -64,6 +67,7 @@ import common.cache.CountryCache;
 import common.cache.FeaturedItemCache;
 import common.cache.LocationCache;
 import common.utils.HtmlUtil;
+import common.utils.StringUtil;
 import common.utils.UserAgentUtil;
 import common.utils.ValidationUtil;
 
@@ -508,6 +512,16 @@ public class Application extends Controller {
             GameBadgeAwarded.recordGameBadge(user, BadgeType.PROFILE_INFO);
         }
         */
+        
+        // activity
+        User beautypopUser = SystemInfo.getInfo().getBeautyPopCustomerCare();
+        Activity activity = new Activity(
+                ActivityType.TIPS_NEW_USER, 
+                user.id,
+                beautypopUser.id,
+                beautypopUser.id,
+                "");
+        activity.save();
         
         calcServer.clearUserQueues(user);
         

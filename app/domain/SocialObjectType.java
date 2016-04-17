@@ -13,6 +13,5 @@ public enum SocialObjectType {
      POST_PHOTO,
      STORY_PHOTO,
      MESSAGE_PHOTO,
-     FOLDER,
-     PHOTO
+     FOLDER
 }

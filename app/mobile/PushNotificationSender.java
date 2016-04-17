@@ -3,21 +3,22 @@ package mobile;
 import java.util.HashMap;
 import java.util.Map;
 
+import javapns.Push;
+import javapns.notification.PushNotificationPayload;
+import javapns.notification.PushedNotifications;
+import models.PushNotificationToken;
+
 import org.apache.commons.lang3.StringUtils;
 
 import play.Play;
 import play.libs.Json;
-import models.PushNotificationToken;
 
-import com.google.android.gcm.server.Sender;
 import com.google.android.gcm.server.Message;
 import com.google.android.gcm.server.Result;
-
+import com.google.android.gcm.server.Sender;
 import common.utils.StringUtil;
+
 import controllers.Application;
-import javapns.Push;
-import javapns.notification.PushNotificationPayload;
-import javapns.notification.PushedNotifications;
 
 public class PushNotificationSender {
     private static final play.api.Logger logger = play.api.Logger.apply(PushNotificationSender.class);
@@ -89,7 +90,7 @@ public class PushNotificationSender {
         PushNotificationToken token = PushNotificationToken.findByUserId(userId);
         if (token != null) {
             if (Application.DeviceType.IOS.equals(token.deviceType)) {
-                sendToApn(userId, token.token, map);
+                //sendToApn(userId, token.token, map);
             } else if (Application.DeviceType.ANDROID.equals(token.deviceType)) {
                 sendToGcm(userId, token.token, map);
             }
@@ -118,8 +119,7 @@ public class PushNotificationSender {
 			        "\"messageType\":\""+map.get(MESSAGE_TYPE)+"\","+
 			        "\"alert\":\""+map.get(MESSAGE)+"\"}}";
 			
-			PushNotificationPayload payload = 
-			        PushNotificationPayload.fromJSON(content);
+			PushNotificationPayload payload = PushNotificationPayload.fromJSON(content);
 			PushedNotifications notifications = Push.payload(payload, cert, pass, prod, token);
 			
 			logger.underlyingLogger().info("[u="+userId+"][token="+token+"][content="+content+"] Apn send result: "+notifications.toString());

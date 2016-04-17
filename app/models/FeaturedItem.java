@@ -59,6 +59,9 @@ public class FeaturedItem extends domain.Entity  implements Serializable, Creata
     
     public String destinationObjName;
     
+    @Column(length=1000)
+    public String url;
+    
     @Column(nullable = false, columnDefinition = "TINYINT(1)")
     public boolean deleted = false;
     
