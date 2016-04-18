@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
@@ -938,7 +939,17 @@ public class User extends SocialObject implements Subject, Followable {
 			return null;
 		}
 	}
-
+	
+	public static List<User> findByIdList(Long[] ids) {
+		try { 
+			Query q = JPA.em().createQuery("SELECT u FROM User u where id IN :ids_list and deleted = false");
+			q.setParameter("ids_list", Arrays.asList(ids));
+			return (List<User>) q.getResultList();
+		} catch (NoResultException e) {
+			return null;
+		}
+	}
+	
 	public static File getDefaultUserPhoto() throws FileNotFoundException {
 		return new File(STORAGE_USER_NOIMAGE);
 	}

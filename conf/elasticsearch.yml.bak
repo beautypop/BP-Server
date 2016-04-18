@@ -1,0 +1,8 @@
+##################### ElasticSearch Configuration exemple on local mode #####################
+
+cluster.name: play2-elasticsearch
+
+path.data: "d:\\elastic\\data"
+#path.home: "d:\\elastic\\home"
+
+script.engine.groovy.inline.update: on

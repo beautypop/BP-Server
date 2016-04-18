@@ -193,6 +193,7 @@ public class InstagramController extends Controller {
 	            logger.underlyingLogger().debug("[u="+localUser.getId()+"][p="+newPost.id+"] createProduct(). Took "+sw.getElapsedMS()+"ms");
 	        }
 	        saveInstagramImportedImage(mediaId);
+	        ElasticSearchController.addPostElasticSearch(newPost.getId(),title,body,catId);
 			return ok(Json.toJson(response));
 		} catch (IOException e) {
 			logger.underlyingLogger().error("Error in createProduct", e);

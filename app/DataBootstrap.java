@@ -1,11 +1,12 @@
 import java.util.Collections;
+import java.util.List;
 
 import javax.persistence.Query;
 
 import org.apache.commons.lang.exception.ExceptionUtils;
 
 import common.cache.LocationCache;
-
+import controllers.ElasticSearchController;
 import models.Category;
 import models.Country;
 import models.Country.CountryCode;
@@ -15,6 +16,7 @@ import models.SystemInfo;
 import models.GameBadge.BadgeType;
 import models.Location;
 import models.Location.LocationCode;
+import models.Post;
 import models.SecurityRole;
 import models.TermsAndConditions;
 import models.User;
@@ -37,6 +39,7 @@ public class DataBootstrap {
         bootstrapUser();
         bootstrapCategory();
         //bootstrapGameBadge();
+        bootstarpElasticIndexes();
 	}
     
     private static void bootstrapTermsAndConditions() {
@@ -678,4 +681,25 @@ public class DataBootstrap {
             }
         }
     }
+    
+    private static void bootstarpElasticIndexes() {
+    	elasticPost();
+    	elasticUser();
+    }
+    
+    private static void elasticPost() {
+		 Query query = JPA.em().createQuery("from Post");
+		 List<Post> articles = query.getResultList();
+		 for (Post post : articles) {
+			ElasticSearchController.addPostElasticSearch(post.getId(), post.title, post.body, post.category.id);
+		}
+	}
+	
+	private static void elasticUser() {
+		Query query = JPA.em().createQuery("from User");
+		 List<User> users = query.getResultList();
+		 for (User user : users) {
+			ElasticSearchController.addUserElasticSearch(user.getId(), user.getFirstName(), user.getLastName(), user.getEmail());
+		}
+	}
 }
