@@ -1,7 +1,6 @@
 package common.cache;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -44,8 +43,8 @@ public class CalcServer {
     public static final Boolean FEED_INIT_FLUSH_ALL = Play.application().configuration().getBoolean("feed.init.flush.all", true);
     public static final Long FEED_SCORE_COMPUTE_SCHEDULE = Play.application().configuration().getLong("feed.score.compute.schedule");
     public static final Long FEED_SCORE_HIGH_BASE = Play.application().configuration().getLong("feed.score.high.base");
-    public static final Long FEED_HOME_COUNT = Play.application().configuration().getLong("feed.home.count");
-    public static final Long FEED_PRODUCT_SUGGEST_COUNT = Play.application().configuration().getLong("feed.product.suggest.count");
+    public static final int FEED_HOME_COUNT = Play.application().configuration().getInt("feed.home.count");
+    public static final int FEED_PRODUCT_SUGGEST_COUNT = Play.application().configuration().getInt("feed.product.suggest.count");
     public static final int FEED_SNAPSHOT_EXPIRY_SECS = Play.application().configuration().getInt("feed.snapshot.expiry.secs");
     public static final int FEED_SNAPSHOT_LONG_EXPIRY_SECS = Play.application().configuration().getInt("feed.snapshot.long.expiry.secs");
     public static final int FEED_RANDOMIZE_MULTIPLIER = Play.application().configuration().getInt("feed.randomize.multiplier");
@@ -569,7 +568,7 @@ public class CalcServer {
                 percentage = category.maxPercentFeedExposure;
             }
 
-            Long catPostSize = FEED_HOME_COUNT * percentage / 100;
+            int catPostSize = FEED_HOME_COUNT * percentage / 100;
             Set<String> values = jedisCache.getSortedSetDscStartEnd(getKey(FeedType.CATEGORY_POPULAR,category.id), 0L, catPostSize - 1);
             
             List<Long> catPostIds = new ArrayList<>();
