@@ -128,7 +128,7 @@ public class Application extends Controller {
     
     public static String generateHeaderMeta(String title, String description, String image) {
         if (StringUtils.isEmpty(description)) {
-            description = "Everymom is a Seller!";
+            description = "Sell Your Style";
         }
         
         title = HtmlEscapers.htmlEscaper().escape(title);
