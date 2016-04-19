@@ -683,6 +683,8 @@ public class DataBootstrap {
     }
     
     private static void bootstarpElasticIndexes() {
+    	ElasticSearchController.cleanIndex();
+    	ElasticSearchController.refresh();
     	elasticPost();
     	elasticUser();
     }

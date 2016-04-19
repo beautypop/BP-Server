@@ -9,6 +9,9 @@ import java.util.List;
 import models.Post;
 import models.User;
 
+import org.elasticsearch.action.admin.indices.refresh.RefreshRequest;
+import org.elasticsearch.action.delete.DeleteRequestBuilder;
+import org.elasticsearch.action.delete.DeleteResponse;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.QueryStringQueryBuilder;
@@ -20,8 +23,11 @@ import play.mvc.Result;
 import viewmodel.PostVM;
 import viewmodel.UserVM;
 
+import com.github.cleverage.elasticsearch.IndexClient;
 import com.github.cleverage.elasticsearch.IndexQuery;
+import com.github.cleverage.elasticsearch.IndexQueryPath;
 import com.github.cleverage.elasticsearch.IndexResults;
+import com.github.cleverage.elasticsearch.IndexService;
 
 import domain.DefaultValues;
 
@@ -48,11 +54,25 @@ public class ElasticSearchController extends Controller {
 	}
     
     public static void removePostElasticSearch(Long id){
-        
+    	IndexQuery<PostIndex> indexQuery = PostIndex.find.query();
+    	BoolQueryBuilder booleanQueryBuilder = QueryBuilders.boolQuery();
+		QueryStringQueryBuilder queryBuilder = QueryBuilders.queryStringQuery(id+"").defaultField("id");
+		booleanQueryBuilder.must(queryBuilder);
+		indexQuery.setBuilder(booleanQueryBuilder);
+		IndexResults<PostIndex> results = PostIndex.find.search(indexQuery);
+		delete(results.results.get(0).getIndexPath(),results.results.get(0).searchHit.id());
+		refresh();
     }
     
     public static void removeUserElasticSearch(Long id){
-        
+    	IndexQuery<UserIndex> indexQuery = UserIndex.find.query();
+    	BoolQueryBuilder booleanQueryBuilder = QueryBuilders.boolQuery();
+		QueryStringQueryBuilder queryBuilder = QueryBuilders.queryStringQuery(id+"").defaultField("id");
+		booleanQueryBuilder.must(queryBuilder);
+		indexQuery.setBuilder(booleanQueryBuilder);
+		IndexResults<UserIndex> results = UserIndex.find.search(indexQuery);
+		delete(results.results.get(0).getIndexPath(),results.results.get(0).searchHit.id());
+		refresh();
     }
 	
 	@Transactional
@@ -154,5 +174,70 @@ public class ElasticSearchController extends Controller {
 		}
         
         return ok(Json.toJson(userVm));
+    }
+	
+	/**
+     * Clean full index
+     */
+	public static void cleanIndex() {
+
+        String[] indexNames = IndexClient.config.indexNames;
+        for (String indexName : indexNames) {
+            cleanIndex(indexName);
+        }
+    }
+
+	/**
+     * Clean an index
+     * @param indexName
+     */
+    public static void cleanIndex(String indexName) {
+
+        if (IndexService.existsIndex(indexName)) {
+            IndexService.deleteIndex(indexName);
+        }
+        IndexService.createIndex(indexName);
+        IndexService.prepareIndex(indexName);
+    }
+    
+    /**
+     * Refresh full index
+     */
+    public static void refresh() {
+        String[] indexNames = IndexClient.config.indexNames;
+        for (String indexName : indexNames) {
+            refresh(indexName);
+        }
+    }
+
+    /**
+     * Refresh an index
+     * @param indexName
+     */
+    private static void refresh(String indexName) {
+        IndexClient.client.admin().indices().refresh(new RefreshRequest(indexName)).actionGet();
+    }
+    
+    /**
+     * Delete element in index
+     * @param indexPath
+     * 
+     */
+    public static void delete(IndexQueryPath indexPath, String id) {
+    	DeleteResponse deleteResponse = getDeleteRequestBuilder(indexPath, id)
+                .execute()
+                .actionGet();
+
+        //System.out.println("ElasticSearch : Delete " + deleteResponse.toString());
+    }
+    
+    /**
+     * Create a DeleteRequestBuilder
+     * @param indexPath
+     * @param id
+     * @return
+     */
+    public static DeleteRequestBuilder getDeleteRequestBuilder(IndexQueryPath indexPath, String id) {
+        return IndexClient.client.prepareDelete(indexPath.index, indexPath.type, id);
     }
 }
