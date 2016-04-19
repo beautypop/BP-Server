@@ -695,9 +695,6 @@ public class DataBootstrap {
 	
 	private static void elasticUser() {
 	    for(User user : User.getEligibleUsersForFeed()){
-	        if ("jbhouse".equals(user.displayName)) {
-	            logger.underlyingLogger().debug("ES index... "+user.displayName);
-	        }
 			ElasticSearchController.addUserElasticSearch(user.id, user.displayName, user.firstName, user.lastName);
 		}
 	}

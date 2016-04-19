@@ -334,6 +334,10 @@ public class UserController extends Controller {
         //    GameBadgeAwarded.recordGameBadge(localUser, BadgeType.PROFILE_INFO);
         //}
         
+        // ES
+        ElasticSearchController.removeUserElasticSearch(localUser.id);
+        ElasticSearchController.addUserElasticSearch(localUser.id, localUser.displayName, localUser.firstName, localUser.lastName);
+
         return ok(Json.toJson(new UserVM(localUser)));
     }
     

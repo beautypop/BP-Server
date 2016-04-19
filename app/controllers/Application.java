@@ -482,13 +482,13 @@ public class Application extends Controller {
     
     @Transactional
     public Result initNewUser() {
-        final User user = getLocalUser(session());
-        if (!User.isLoggedIn(user)) {
-            logger.underlyingLogger().error(String.format("[u=%d] User not logged in", user.id));
+        final User localUser = getLocalUser(session());
+        if (!User.isLoggedIn(localUser)) {
+            logger.underlyingLogger().error(String.format("[u=%d] User not logged in", localUser.id));
             return notFound();
         }
         
-        user.setNewUser(false);
+        localUser.setNewUser(false);
         
         //String promoCode = session().get(SESSION_PROMOCODE);
         //GameAccountReferral.processAnyReferral(promoCode, user);
@@ -502,22 +502,22 @@ public class Application extends Controller {
         */
                 
         // CalcServer
-        calcServer.clearUserQueues(user);
+        calcServer.clearUserQueues(localUser);
         
         // ES
-        ElasticSearchController.addUserElasticSearch(user.id, user.displayName, user.firstName, user.lastName);
+        ElasticSearchController.addUserElasticSearch(localUser.id, localUser.displayName, localUser.firstName, localUser.lastName);
 
         // activity
         User beautypopUser = SystemInfo.getInfo().getBeautyPopCustomerCare();
         Activity activity = new Activity(
                 ActivityType.TIPS_NEW_USER, 
-                user.id,
+                localUser.id,
                 beautypopUser.id,
                 beautypopUser.id,
                 "");
         activity.save();
         
-        return ok(Json.toJson(new UserVM(user)));
+        return ok(Json.toJson(new UserVM(localUser)));
     }
     
     public static Result jsRoutes() {
