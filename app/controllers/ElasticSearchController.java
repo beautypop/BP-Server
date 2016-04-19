@@ -38,21 +38,29 @@ public class ElasticSearchController extends Controller {
 		postIndex.index();
 	}
     
-    public static void addUserElasticSearch(Long id, String fname, String lname, String email){
+    public static void addUserElasticSearch(Long id, String displayName, String firstName, String lastName){
 		UserIndex userIndex = new UserIndex();
 		userIndex.id = id+"";
-		userIndex.fname = fname;
-		userIndex.lname = lname;
-		userIndex.email = email;
+		userIndex.displayName = displayName;
+		userIndex.firstName = firstName;
+		userIndex.lastName = lastName;
 		userIndex.index();
 	}
+    
+    public static void removePostElasticSearch(Long id){
+        
+    }
+    
+    public static void removeUserElasticSearch(Long id){
+        
+    }
 	
 	@Transactional
 	public static Result elasticSearchPost(String searchKey, String catId, Integer offset){
 		int fromCount = offset * FEED_RETRIEVAL_COUNT;
 		IndexQuery<PostIndex> indexQuery = PostIndex.find.query();
 		
-		if(!catId.equals("-1")){
+		if (!catId.equals("-1")) {
 			BoolQueryBuilder booleanQueryBuilder = QueryBuilders.boolQuery();
 			QueryStringQueryBuilder queryBuilderTitle = QueryBuilders.queryStringQuery(searchKey).defaultField("title");
 			booleanQueryBuilder.should(queryBuilderTitle);
@@ -66,17 +74,18 @@ public class ElasticSearchController extends Controller {
 			booleanQueryBuilder.minimumShouldMatch("1");
 			
 			indexQuery.setBuilder(booleanQueryBuilder).from(fromCount).size(FEED_RETRIEVAL_COUNT);
-		}else{
+		} else {
 			indexQuery.setBuilder(QueryBuilders.queryStringQuery(searchKey)).from(fromCount).size(FEED_RETRIEVAL_COUNT);
 		}
 		
 		IndexResults<PostIndex> results = PostIndex.find.search(indexQuery);
 
-		if(results.results.size() == 0){
+		if (results.results.size() == 0) {
 			return notFound();
 		}
+		
 		List<Long> postIds = new ArrayList<Long>();
-		for(int i=0; i<results.results.size(); i++){
+		for (int i=0; i<results.results.size(); i++) {
 			postIds.add(Long.parseLong(results.results.get(i).id));
 		}
 		
@@ -85,7 +94,7 @@ public class ElasticSearchController extends Controller {
 	
 	public static Result getProductInfo(List<Long> id) {
 		List<PostVM> post = null;
-		if(id.size() > 0){
+		if (id.size() > 0) {
 			post = getPostInfoVM(id);
 		}	
 		if (post == null) {
@@ -101,6 +110,7 @@ public class ElasticSearchController extends Controller {
 		if (posts == null) {
 			return null;
 		}
+		
 		//onView(post, localUser);
 		List<PostVM> postVm = new ArrayList<PostVM>();
 		for (Post post : posts) {
@@ -120,10 +130,12 @@ public class ElasticSearchController extends Controller {
 		if(results.results.size() == 0){
 			return notFound();
 		}
+		
 		Long[] userIds = new Long[results.results.size()];
 		for(int i=0; i<results.results.size(); i++){
 			userIds[i] = Long.parseLong(results.results.get(i).id);
 		}
+		
 		return getUserInfoById(userIds);
 	}
 	
@@ -134,6 +146,7 @@ public class ElasticSearchController extends Controller {
         if (localUser == null || users == null) {
             return notFound();
         }
+        
         List<UserVM> userVm = new ArrayList<UserVM>();
         for (User user : users) {
         	UserVM vm = new UserVM(user, localUser);

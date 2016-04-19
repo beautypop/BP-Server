@@ -9,7 +9,6 @@ import java.util.Map;
 
 @IndexType(name = "postIndex")
 public class PostIndex extends Index {
-
     public String id;
 	public String title;
 	public String body;

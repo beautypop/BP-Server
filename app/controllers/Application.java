@@ -488,6 +488,8 @@ public class Application extends Controller {
             return notFound();
         }
         
+        user.setNewUser(false);
+        
         //String promoCode = session().get(SESSION_PROMOCODE);
         //GameAccountReferral.processAnyReferral(promoCode, user);
 
@@ -498,7 +500,13 @@ public class Application extends Controller {
             GameBadgeAwarded.recordGameBadge(user, BadgeType.PROFILE_INFO);
         }
         */
+                
+        // CalcServer
+        calcServer.clearUserQueues(user);
         
+        // ES
+        ElasticSearchController.addUserElasticSearch(user.id, user.displayName, user.firstName, user.lastName);
+
         // activity
         User beautypopUser = SystemInfo.getInfo().getBeautyPopCustomerCare();
         Activity activity = new Activity(
@@ -509,10 +517,6 @@ public class Application extends Controller {
                 "");
         activity.save();
         
-        calcServer.clearUserQueues(user);
-        
-        user.setNewUser(false);
-        ElasticSearchController.addUserElasticSearch(user.getId(), user.getFirstName(), user.getLastName(), user.getEmail());
         return ok(Json.toJson(new UserVM(user)));
     }
     

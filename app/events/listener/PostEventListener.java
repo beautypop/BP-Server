@@ -18,6 +18,7 @@ import com.google.common.eventbus.Subscribe;
 import common.cache.CalcServer;
 import common.thread.TransactionalRunnableTask;
 import common.utils.StringUtil;
+import controllers.ElasticSearchController;
 import email.SendgridEmailClient;
 
 public class PostEventListener extends EventListener {
@@ -29,12 +30,16 @@ public class PostEventListener extends EventListener {
     		final Post post = (Post) map.get("post");
     		final User user = (User) map.get("user");
 
+    		// CalcServer
     		CalcServer.instance().addToCategoryQueues(post);
             CalcServer.instance().addToUserPostedQueue(post);
             
             if (user.isRecommendedSeller()) {
                 CalcServer.instance().addToRecommendedSellersQueue(user);
             }
+            
+            // ES
+            ElasticSearchController.addPostElasticSearch(post.id, post.title, post.body, post.category.id);
             
             final Long postImageId = post.getImage();
     		executeAsync(
@@ -92,7 +97,12 @@ public class PostEventListener extends EventListener {
                 }
             }
             
+            // CalcServer
             CalcServer.instance().addToCategoryQueues(post);
+            
+            // ES
+            ElasticSearchController.removePostElasticSearch(post.id);
+            ElasticSearchController.addPostElasticSearch(post.id, post.title, post.body, post.category.id);
             
             executeAsync(
                     new TransactionalRunnableTask() {
@@ -113,9 +123,13 @@ public class PostEventListener extends EventListener {
 	    try {
     		final Post post = (Post) map.get("post");
     		
+    		// CalcServer
     		CalcServer.instance().removeFromCategoryQueues(post);
     		CalcServer.instance().removeFromUserPostedQueue(post, post.owner);
     		CalcServer.instance().removeFromAllUsersLikedQueues(post);
+    		
+    		// ES
+    		ElasticSearchController.removePostElasticSearch(post.id);
     		
     		if (!post.owner.isRecommendedSeller()) {
                 CalcServer.instance().removeFromRecommendedSellersQueue(post.owner);

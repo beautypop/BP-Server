@@ -688,18 +688,17 @@ public class DataBootstrap {
     }
     
     private static void elasticPost() {
-		 Query query = JPA.em().createQuery("from Post");
-		 List<Post> articles = query.getResultList();
-		 for (Post post : articles) {
-			ElasticSearchController.addPostElasticSearch(post.getId(), post.title, post.body, post.category.id);
+        for(Post post : Post.getEligiblePostsForFeeds()){
+			ElasticSearchController.addPostElasticSearch(post.id, post.title, post.body, post.category.id);
 		}
 	}
 	
 	private static void elasticUser() {
-		Query query = JPA.em().createQuery("from User");
-		 List<User> users = query.getResultList();
-		 for (User user : users) {
-			ElasticSearchController.addUserElasticSearch(user.getId(), user.getFirstName(), user.getLastName(), user.getEmail());
+	    for(User user : User.getEligibleUsersForFeed()){
+	        if ("jbhouse".equals(user.displayName)) {
+	            logger.underlyingLogger().debug("ES index... "+user.displayName);
+	        }
+			ElasticSearchController.addUserElasticSearch(user.id, user.displayName, user.firstName, user.lastName);
 		}
 	}
 }
