@@ -1,8 +1,8 @@
 ##################### ElasticSearch Configuration exemple on local mode #####################
 
-cluster.name: play2-elasticsearch
+cluster.name: bp-elasticsearch
 
-path.data: "d:\\elastic\\data"
-path.home: "d:\\elastic\\home"
+path.data: "/Users/keithlei/_Sourcecode/BeautyPop/BP-Server_master/elasticsearch/data"
+path.home: "/Users/keithlei/_Sourcecode/BeautyPop/BP-Server_master/elasticsearch/home"
 
 script.engine.groovy.inline.update: on

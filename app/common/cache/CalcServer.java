@@ -6,6 +6,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
@@ -43,9 +44,11 @@ public class CalcServer {
     public static final Boolean FEED_INIT_FLUSH_ALL = Play.application().configuration().getBoolean("feed.init.flush.all", true);
     public static final Long FEED_SCORE_COMPUTE_SCHEDULE = Play.application().configuration().getLong("feed.score.compute.schedule");
     public static final Long FEED_SCORE_HIGH_BASE = Play.application().configuration().getLong("feed.score.high.base");
-    public static final Long FEED_HOME_COUNT_MAX = Play.application().configuration().getLong("feed.home.count.max");
+    public static final Long FEED_HOME_COUNT = Play.application().configuration().getLong("feed.home.count");
+    public static final Long FEED_PRODUCT_SUGGEST_COUNT = Play.application().configuration().getLong("feed.product.suggest.count");
     public static final int FEED_SNAPSHOT_EXPIRY_SECS = Play.application().configuration().getInt("feed.snapshot.expiry.secs");
     public static final int FEED_SNAPSHOT_LONG_EXPIRY_SECS = Play.application().configuration().getInt("feed.snapshot.long.expiry.secs");
+    public static final int FEED_RANDOMIZE_MULTIPLIER = Play.application().configuration().getInt("feed.randomize.multiplier");
     public static final int FEED_SOLD_CLEANUP_DAYS = Play.application().configuration().getInt("feed.sold.cleanup.days");
     public static final int FEED_RETRIEVAL_COUNT = DefaultValues.FEED_INFINITE_SCROLL_COUNT;
     
@@ -53,6 +56,8 @@ public class CalcServer {
     public static final String CACHED_PRODUCTS = "CACHED_PRODUCTS";
     
     private CalcFormula formula = new CalcFormula();
+    
+    private Random random = new Random();
     
     private static CalcServer instance;
     
@@ -265,11 +270,11 @@ public class CalcServer {
         }
         if(post.hasHashtag(hashtag)) {
             Double timeScore = calculateTimeScore(post, true);
-            jedisCache.putToSortedSet(getKey(FeedType.HASHTAG_POPULAR,hashtag.id),  timeScore.doubleValue() * FEED_SCORE_HIGH_BASE, post.id.toString());
+            jedisCache.putToSortedSet(getKey(FeedType.HASHTAG_POPULAR,hashtag.id), timeScore.doubleValue() * FEED_SCORE_HIGH_BASE, post.id.toString());
             if (post.isNewCondition()) {
-                jedisCache.putToSortedSet(getKey(FeedType.HASHTAG_POPULAR_NEW,hashtag.id),  timeScore.doubleValue() * FEED_SCORE_HIGH_BASE, post.id.toString());    
+                jedisCache.putToSortedSet(getKey(FeedType.HASHTAG_POPULAR_NEW,hashtag.id), timeScore.doubleValue() * FEED_SCORE_HIGH_BASE, post.id.toString());    
             } else {
-                jedisCache.putToSortedSet(getKey(FeedType.HASHTAG_POPULAR_USED,hashtag.id),  timeScore.doubleValue() * FEED_SCORE_HIGH_BASE, post.id.toString());
+                jedisCache.putToSortedSet(getKey(FeedType.HASHTAG_POPULAR_USED,hashtag.id), timeScore.doubleValue() * FEED_SCORE_HIGH_BASE, post.id.toString());
             }
         }
     }
@@ -432,18 +437,18 @@ public class CalcServer {
             return;
         }
         Double timeScore = calculateTimeScore(post, true);
-        jedisCache.putToSortedSet(getKey(FeedType.CATEGORY_POPULAR,category.id),  timeScore.doubleValue() * FEED_SCORE_HIGH_BASE, post.id.toString());
+        jedisCache.putToSortedSet(getKey(FeedType.CATEGORY_POPULAR,category.id), timeScore.doubleValue() * FEED_SCORE_HIGH_BASE, post.id.toString());
         if (post.isNewCondition()) {
-            jedisCache.putToSortedSet(getKey(FeedType.CATEGORY_POPULAR_NEW,category.id),  timeScore.doubleValue() * FEED_SCORE_HIGH_BASE, post.id.toString());    
+            jedisCache.putToSortedSet(getKey(FeedType.CATEGORY_POPULAR_NEW,category.id), timeScore.doubleValue() * FEED_SCORE_HIGH_BASE, post.id.toString());    
         } else {
-            jedisCache.putToSortedSet(getKey(FeedType.CATEGORY_POPULAR_USED,category.id),  timeScore.doubleValue() * FEED_SCORE_HIGH_BASE, post.id.toString());
+            jedisCache.putToSortedSet(getKey(FeedType.CATEGORY_POPULAR_USED,category.id), timeScore.doubleValue() * FEED_SCORE_HIGH_BASE, post.id.toString());
         }
         if (category.parent != null) {
-            jedisCache.putToSortedSet(getKey(FeedType.CATEGORY_POPULAR,category.parent.id),  timeScore.doubleValue() * FEED_SCORE_HIGH_BASE, post.id.toString());
+            jedisCache.putToSortedSet(getKey(FeedType.CATEGORY_POPULAR,category.parent.id), timeScore.doubleValue() * FEED_SCORE_HIGH_BASE, post.id.toString());
             if (post.isNewCondition()) {
-                jedisCache.putToSortedSet(getKey(FeedType.CATEGORY_POPULAR_NEW,category.parent.id),  timeScore.doubleValue() * FEED_SCORE_HIGH_BASE, post.id.toString());    
+                jedisCache.putToSortedSet(getKey(FeedType.CATEGORY_POPULAR_NEW,category.parent.id), timeScore.doubleValue() * FEED_SCORE_HIGH_BASE, post.id.toString());    
             } else {
-                jedisCache.putToSortedSet(getKey(FeedType.CATEGORY_POPULAR_USED,category.parent.id),  timeScore.doubleValue() * FEED_SCORE_HIGH_BASE, post.id.toString());
+                jedisCache.putToSortedSet(getKey(FeedType.CATEGORY_POPULAR_USED,category.parent.id), timeScore.doubleValue() * FEED_SCORE_HIGH_BASE, post.id.toString());
             }
         }
     }
@@ -564,8 +569,8 @@ public class CalcServer {
                 percentage = category.maxPercentFeedExposure;
             }
 
-            Long catPostSize = FEED_HOME_COUNT_MAX * percentage / 100;
-            Set<String> values = jedisCache.getSortedSetDsc(getKey(FeedType.CATEGORY_POPULAR,category.id), 0L, catPostSize - 1);
+            Long catPostSize = FEED_HOME_COUNT * percentage / 100;
+            Set<String> values = jedisCache.getSortedSetDscStartEnd(getKey(FeedType.CATEGORY_POPULAR,category.id), 0L, catPostSize - 1);
             
             List<Long> catPostIds = new ArrayList<>();
             for (String value : values) {
@@ -608,7 +613,7 @@ public class CalcServer {
         
         List<Long> followings = getUserFollowingsFeed(id);
         for (Long followingUser : followings){
-            Set<String> values = jedisCache.getSortedSetDsc(getKey(FeedType.USER_POSTED,followingUser));
+            Set<String> values = jedisCache.getSortedSetDscStartEnd(getKey(FeedType.USER_POSTED,followingUser));
             for (String value : values) {
                 try {
                     Long postId = Long.parseLong(value);
@@ -634,7 +639,7 @@ public class CalcServer {
         logger.underlyingLogger().debug("buildUserRecommendedSellersFeedQueue starts - u="+id);
         
         // randomize RECOMMENDED_SELLERS queue
-        Set<String> values = jedisCache.getSortedSetDsc(getKey(FeedType.RECOMMENDED_SELLERS));
+        Set<String> values = jedisCache.getSortedSetDscStartEnd(getKey(FeedType.RECOMMENDED_SELLERS));
         for (String value : values) {
             try {
                 Long sellerId = Long.parseLong(value);
@@ -657,10 +662,15 @@ public class CalcServer {
         NanoSecondStopWatch sw = new NanoSecondStopWatch();
         logger.underlyingLogger().debug("buildSuggestedProductQueue starts - p="+postId);
         
+        Post post = Post.findById(postId);
+        List<Long> suggestedPostIds = getCategoryPopularRandomFeed(post.category.id, FEED_PRODUCT_SUGGEST_COUNT);
+        
+        /*
+        // what other users liked
         List<Long> users = getProductLikesQueue(postId);
         List<Long> suggestedPostIds = new ArrayList<>();
         for (Long userId : users){
-            Set<String> values = jedisCache.getSortedSetDsc(getKey(FeedType.USER_LIKED, userId));
+            Set<String> values = jedisCache.getSortedSetDscStartEnd(getKey(FeedType.USER_LIKED, userId));
             for (String value : values) {
                 try {
                     Long suggestedPostId = Long.parseLong(value);
@@ -671,12 +681,16 @@ public class CalcServer {
         }
         Collections.shuffle(suggestedPostIds);
         suggestedPostIds = suggestedPostIds.subList(0, suggestedPostIds.size() <= 20 ? suggestedPostIds.size() : 20 );
+        */
         
         for(Long suggestedPostId : suggestedPostIds){
+            if (postId.equals(suggestedPostId)) {
+                continue;
+            }
             jedisCache.putToSortedSet(getKey(FeedType.PRODUCT_SUGGEST, postId), Math.random() * FEED_SCORE_HIGH_BASE, suggestedPostId.toString());
         }
         
-        jedisCache.expire(getKey(FeedType.PRODUCT_SUGGEST, postId), FEED_SNAPSHOT_EXPIRY_SECS);
+        jedisCache.expire(getKey(FeedType.PRODUCT_SUGGEST, postId), FEED_SNAPSHOT_LONG_EXPIRY_SECS);
         
         sw.stop();
         logger.underlyingLogger().debug("buildSuggestedProductQueue completed. Took "+sw.getElapsedSecs()+"s");
@@ -805,6 +819,23 @@ public class CalcServer {
         for (String value : values) {
             try {
                 postIds.add(Long.parseLong(value));
+            } catch (Exception e) {
+            }
+        }
+        return postIds;
+    }
+    
+    public List<Long> getCategoryPopularRandomFeed(Long id, int count) {
+        Set<String> values = jedisCache.getSortedSetDsc(getKey(FeedType.CATEGORY_POPULAR,id), 0D, count * FEED_RANDOMIZE_MULTIPLIER);
+        
+        final List<String> allPostIds = new ArrayList<>(values);
+        final List<Long> postIds = new ArrayList<>();
+        count = Math.min(allPostIds.size(), count);     // don't go out of bound
+        for (int i = 0; i < count; i++) {
+            try {
+                int randomIndex = random.nextInt(allPostIds.size());
+                Long randomId = Long.parseLong(allPostIds.remove(randomIndex));
+                postIds.add(randomId);
             } catch (Exception e) {
             }
         }
@@ -966,7 +997,7 @@ public class CalcServer {
     }
        
     public List<Long> getUserFollowingsFeed(Long id) {
-        Set<String> values = jedisCache.getSortedSetDsc(getKey(FeedType.USER_FOLLOWINGS,id));
+        Set<String> values = jedisCache.getSortedSetDscStartEnd(getKey(FeedType.USER_FOLLOWINGS,id));
         final List<Long> userIds = new ArrayList<>();
         for (String value : values) {
             try {
@@ -980,7 +1011,7 @@ public class CalcServer {
     public List<Long> getUserFollowingsFeed(Long id, Double offset) {
         long start = offset.longValue() * CalcServer.FEED_RETRIEVAL_COUNT;
         long end = start + CalcServer.FEED_RETRIEVAL_COUNT - 1;
-        Set<String> values = jedisCache.getSortedSetDsc(getKey(FeedType.USER_FOLLOWINGS,id),start,end);
+        Set<String> values = jedisCache.getSortedSetDscStartEnd(getKey(FeedType.USER_FOLLOWINGS,id),start,end);
         final List<Long> userIds = new ArrayList<>();
         for (String value : values) {
             try {
@@ -992,7 +1023,7 @@ public class CalcServer {
     }
     
     public List<Long> getUserFollowersFeed(Long id) {
-        Set<String> values = jedisCache.getSortedSetDsc(getKey(FeedType.USER_FOLLOWERS,id));
+        Set<String> values = jedisCache.getSortedSetDscStartEnd(getKey(FeedType.USER_FOLLOWERS,id));
         final List<Long> userIds = new ArrayList<>();
         for (String value : values) {
             try {
@@ -1006,7 +1037,7 @@ public class CalcServer {
     public List<Long> getUserFollowersFeed(Long id, Double offset) {
         long start = offset.longValue() * CalcServer.FEED_RETRIEVAL_COUNT;
         long end = start + CalcServer.FEED_RETRIEVAL_COUNT - 1;
-        Set<String> values = jedisCache.getSortedSetDsc(getKey(FeedType.USER_FOLLOWERS,id),start,end);
+        Set<String> values = jedisCache.getSortedSetDscStartEnd(getKey(FeedType.USER_FOLLOWERS,id),start,end);
         final List<Long> userIds = new ArrayList<>();
         for (String value : values) {
             try {
@@ -1020,7 +1051,7 @@ public class CalcServer {
     public List<Long> getSuggestedProducts(Long id) {
         buildSuggestedProductQueueIfNotExist(id);
         
-        Set<String> values = jedisCache.getSortedSetDsc(getKey(FeedType.PRODUCT_SUGGEST, id));
+        Set<String> values = jedisCache.getSortedSetDscStartEnd(getKey(FeedType.PRODUCT_SUGGEST, id));
         final List<Long> postIds = new ArrayList<>();
         for (String value : values) {
             try {
@@ -1033,7 +1064,7 @@ public class CalcServer {
     }
     
     public List<Long> getProductLikesQueue(Long postId) {
-        Set<String> values = jedisCache.getSortedSetDsc(getKey(FeedType.PRODUCT_LIKES,postId));
+        Set<String> values = jedisCache.getSortedSetDscStartEnd(getKey(FeedType.PRODUCT_LIKES,postId));
         final List<Long> userIds = new ArrayList<>();
         for (String value : values) {
             try {

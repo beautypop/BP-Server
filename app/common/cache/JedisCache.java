@@ -207,11 +207,11 @@ public class JedisCache {
         }
     }
     
-    public Set<String> getSortedSetDsc(String key) {
-        return getSortedSetDsc(key, 0L, -1L);
+    public Set<String> getSortedSetDscStartEnd(String key) {
+        return getSortedSetDscStartEnd(key, 0L, -1L);
     }
     
-    public Set<String> getSortedSetDsc(String key, long start, long end) {
+    public Set<String> getSortedSetDscStartEnd(String key, long start, long end) {
         Jedis j = null;
         try {
             j = getResource();
