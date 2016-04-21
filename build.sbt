@@ -8,9 +8,9 @@ scalaVersion := "2.11.6"
 version := "%s-%s".format("git rev-parse --abbrev-ref HEAD".!!.trim, "git rev-parse --short HEAD".!!.trim)
 
 val appDependencies = Seq(
-  cache,
+  //cache,
   javaWs,
-  javaJpa,
+  javaJpa exclude("net.sf.ehcache","ehcache-core"),
   jdbc,
   "org.webjars" % "bootstrap" % "3.2.0",
   "org.easytesting" % "fest-assert" % "1.4" % "test",
@@ -37,7 +37,8 @@ val appDependencies = Seq(
   "com.mashape.unirest" % "unirest-java" % "1.3.0",
   "com.sendgrid" % "sendgrid-java" % "2.2.2",
   "com.clever-age" % "play2-elasticsearch" % "2.1-SNAPSHOT",
-  "com.github.fernandospr" % "javapns-jdk16" % "2.2.1"
+  "com.github.fernandospr" % "javapns-jdk16" % "2.2.1",
+  "org.hibernate" % "hibernate-ehcache" % "4.3.11.Final"
 )
 
 // add resolver for deadbolt and easymail snapshots

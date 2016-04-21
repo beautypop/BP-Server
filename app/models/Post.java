@@ -44,6 +44,7 @@ import domain.SocialObjectType;
  * @author keithlei
  */
 @Entity
+@Cache(usage=CacheConcurrencyStrategy.TRANSACTIONAL ,region="post")
 public class Post extends SocialObject implements Likeable, Commentable {
 	private static final play.api.Logger logger = play.api.Logger.apply(Post.class);
 	
@@ -294,6 +295,8 @@ public class Post extends SocialObject implements Likeable, Commentable {
 	public static Post findById(Long id) {
 		try {
 			Query q = JPA.em().createQuery("SELECT p FROM Post p where id = ?1 and deleted = false");
+			q.setHint("org.hibernate.cacheable", true);
+			q.setHint("org.hibernate.cacheRegion", "query.post.id");
 			q.setParameter(1, id);
 			return (Post) q.getSingleResult();
 		} catch (NoResultException nre) {

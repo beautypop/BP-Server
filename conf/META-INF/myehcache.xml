@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<ehcache>
+	<diskStore path="java.io.tmpdir" />
+
+	<cache name="org.hibernate.cache.UpdateTimestampsCache"
+		maxElementsInMemory="50000" eternal="true" overflowToDisk="true" />
+
+	<cache name="org.hibernate.cache.StandardQueryCache"
+		maxElementsInMemory="50000" eternal="false" timeToIdleSeconds="120"
+		timeToLiveSeconds="120" overflowToDisk="true" diskPersistent="false"
+		diskExpiryThreadIntervalSeconds="120" memoryStoreEvictionPolicy="LRU" />
+
+	<cache name="query.post.id" maxEntriesLocalHeap="10000" eternal="false"
+		timeToIdleSeconds="12000" timeToLiveSeconds="12000">
+		<persistence strategy="localTempSwap" />
+	</cache>
+	
+	<cache name="query.user.id" maxEntriesLocalHeap="10000" eternal="false"
+		overflowToDisk="true"
+		timeToIdleSeconds="12000" timeToLiveSeconds="12000">
+		<persistence strategy="localTempSwap" />
+	</cache>
+	
+
+	<defaultCache maxElementsInMemory="50000" eternal="false"
+		timeToIdleSeconds="120" timeToLiveSeconds="120" overflowToDisk="true"
+		diskPersistent="false" diskExpiryThreadIntervalSeconds="120"
+		memoryStoreEvictionPolicy="LRU" />
+
+</ehcache>
+<!-- 
+for more information visit this page
+https://java.net/nonav/projects/atleap/sources/svn/content/trunk/application/web/WEB-INF/classes/ehcache-hibernate.xml 
+ -->

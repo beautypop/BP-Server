@@ -69,6 +69,7 @@ import domain.Followable;
 import domain.SocialObjectType;
 
 @Entity
+@Cache(usage=CacheConcurrencyStrategy.TRANSACTIONAL ,region="user")
 public class User extends SocialObject implements Subject, Followable {
 	private static final play.api.Logger logger = play.api.Logger.apply(User.class);
 
@@ -933,6 +934,8 @@ public class User extends SocialObject implements Subject, Followable {
 	public static User findById(Long id) {
 		try { 
 			Query q = JPA.em().createQuery("SELECT u FROM User u where id = ?1 and deleted = false");
+			q.setHint("org.hibernate.cacheable", true);
+			q.setHint("org.hibernate.cacheRegion", "query.user.id");
 			q.setParameter(1, id);
 			return (User) q.getSingleResult();
 		} catch (NoResultException e) {
