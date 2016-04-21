@@ -9,7 +9,7 @@ var ga_send_pv = function(page_code) {
     m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
     })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
 
-    ga('create', 'UA-69507450-2', 'auto');
+    ga('create', 'UA-76753221-2', 'auto');
     ga('send', 'pageview');
     console.log('ga_send_pv - '+window.location.host);
 }
