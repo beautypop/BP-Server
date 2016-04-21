@@ -20,6 +20,7 @@ import models.SecurityRole;
 import models.TermsAndConditions;
 import models.User;
 import models.UserInfo;
+import play.Play;
 import play.db.jpa.JPA;
 import providers.MyUsernamePasswordAuthUser;
 import providers.MyUsernamePasswordAuthProvider.MySignup;
@@ -29,6 +30,8 @@ import providers.MyUsernamePasswordAuthProvider.MySignup;
  */
 public class DataBootstrap {
     private static final play.api.Logger logger = play.api.Logger.apply(DataBootstrap.class);
+    
+    public static final Boolean ELASTICSEARCH_DATA_BOOTSTRAP = Play.application().configuration().getBoolean("elasticsearch.data.bootstrap", false);
     
     public static void bootstrap() {
         bootstrapTermsAndConditions();
@@ -682,10 +685,12 @@ public class DataBootstrap {
     }
     
     private static void bootstrapElasticIndexes() {
-    	ElasticSearchController.cleanIndex();
-    	ElasticSearchController.refresh();
-    	elasticPost();
-    	elasticUser();
+        if (ELASTICSEARCH_DATA_BOOTSTRAP) {
+        	ElasticSearchController.cleanIndex();
+        	ElasticSearchController.refresh();
+        	elasticPost();
+        	elasticUser();
+        }
     }
     
     private static void elasticPost() {

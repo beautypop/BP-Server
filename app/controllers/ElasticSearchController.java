@@ -29,10 +29,12 @@ import com.github.cleverage.elasticsearch.IndexQueryPath;
 import com.github.cleverage.elasticsearch.IndexResults;
 import com.github.cleverage.elasticsearch.IndexService;
 
+import common.utils.NanoSecondStopWatch;
 import domain.DefaultValues;
 
 public class ElasticSearchController extends Controller {
-	
+    private static final play.api.Logger logger = play.api.Logger.apply(UserController.class);
+    
 	public static final int FEED_RETRIEVAL_COUNT = DefaultValues.FEED_INFINITE_SCROLL_COUNT;
 	
     public static void addPostElasticSearch(Long id, String title, String body, Long catId){
@@ -76,11 +78,18 @@ public class ElasticSearchController extends Controller {
     }
 	
 	@Transactional
-	public static Result elasticSearchPosts(String searchKey, String catId, Integer offset){
+	public static Result searchPosts(String searchKey, Long catId, Integer offset){
+	    NanoSecondStopWatch sw = new NanoSecondStopWatch();
+	    
+	    final User localUser = Application.getLocalUser(session());
+	    if (localUser == null) {
+            return notFound();
+        }
+        
 		int fromCount = offset * FEED_RETRIEVAL_COUNT;
 		IndexQuery<PostIndex> indexQuery = PostIndex.find.query();
 		
-		if (!catId.equals("-1")) {
+		if (catId <= 0) {
 			BoolQueryBuilder booleanQueryBuilder = QueryBuilders.boolQuery();
 			QueryStringQueryBuilder queryBuilderTitle = QueryBuilders.queryStringQuery(searchKey).defaultField("title");
 			booleanQueryBuilder.should(queryBuilderTitle);
@@ -88,7 +97,7 @@ public class ElasticSearchController extends Controller {
 			QueryStringQueryBuilder queryBuilderBody = QueryBuilders.queryStringQuery(searchKey).defaultField("body");
 			booleanQueryBuilder.should(queryBuilderBody);
 			
-			QueryStringQueryBuilder queryBuilderCat = QueryBuilders.queryStringQuery(catId).defaultField("catId");
+			QueryStringQueryBuilder queryBuilderCat = QueryBuilders.queryStringQuery(catId.toString()).defaultField("catId");
 			booleanQueryBuilder.must(queryBuilderCat);
 			
 			booleanQueryBuilder.minimumShouldMatch("1");
@@ -99,9 +108,12 @@ public class ElasticSearchController extends Controller {
 		}
 		
 		IndexResults<PostIndex> results = PostIndex.find.search(indexQuery);
-
 		if (results.results.size() == 0) {
-			return notFound();
+		    sw.stop();
+            if (logger.underlyingLogger().isDebugEnabled()) {
+                logger.underlyingLogger().debug("[u="+localUser.getId()+"][searchkey="+searchKey+"][posts.size=0] searchPosts(). Took "+sw.getElapsedMS()+"ms");
+            }
+			return ok(Json.toJson(new ArrayList<Long>()));
 		}
 		
 		List<Long> postIds = new ArrayList<Long>();
@@ -109,34 +121,44 @@ public class ElasticSearchController extends Controller {
 			postIds.add(Long.parseLong(results.results.get(i).id));
 		}
 		
-		return getPostInfos(postIds);
+		List<PostVM> posts = getPostInfos(postIds, localUser);
+		
+		sw.stop();
+        if (logger.underlyingLogger().isDebugEnabled()) {
+            logger.underlyingLogger().debug("[u="+localUser.getId()+"][searchkey="+searchKey+"][posts.size="+posts.size()+"] searchPosts(). Took "+sw.getElapsedMS()+"ms");
+        }
+		return ok(Json.toJson(posts));
 	}
 	
-	public static Result getPostInfos(List<Long> ids) {
-        final User localUser = Application.getLocalUser(session());
+	public static List<PostVM> getPostInfos(List<Long> ids, User localUser) {
         final List<Post> posts = Post.getPosts(ids);
-        
-        if (localUser == null || posts == null) {
-            return notFound();
-        }
-        
         List<PostVM> vms = new ArrayList<PostVM>();
         for (Post post : posts) {
             PostVM vm = new PostVM(post, localUser);
             vms.add(vm);
         }
-        
-        return ok(Json.toJson(vms));
+        return vms;
     }
 	
 	@Transactional
-	public static Result elasticSearchUsers(String searchKey, Integer offset){
+	public static Result searchUsers(String searchKey, Integer offset){
+	    NanoSecondStopWatch sw = new NanoSecondStopWatch();
+        
+	    final User localUser = Application.getLocalUser(session());
+	    if (localUser == null) {
+            return notFound();
+        }
+	    
 		int fromCount = offset * FEED_RETRIEVAL_COUNT;
 		IndexQuery<UserIndex> indexQuery = UserIndex.find.query();
 		indexQuery.setBuilder(QueryBuilders.queryStringQuery(searchKey)).from(fromCount).size(FEED_RETRIEVAL_COUNT);
 		IndexResults<UserIndex> results = UserIndex.find.search(indexQuery);
-		if(results.results.size() == 0){
-			return notFound();
+		if (results.results.size() == 0) {
+		    sw.stop();
+	        if (logger.underlyingLogger().isDebugEnabled()) {
+	            logger.underlyingLogger().debug("[u="+localUser.getId()+"][searchkey="+searchKey+"][users.size=0] searchUsers(). Took "+sw.getElapsedMS()+"ms");
+	        }
+	        return ok(Json.toJson(new ArrayList<Long>()));
 		}
 		
 		List<Long> userIds = new ArrayList<Long>();
@@ -144,24 +166,23 @@ public class ElasticSearchController extends Controller {
             userIds.add(Long.parseLong(results.results.get(i).id));
         }
 		
-		return getUserInfos(userIds);
+		List<UserVM> users = getUserInfos(userIds, localUser);
+        
+        sw.stop();
+        if (logger.underlyingLogger().isDebugEnabled()) {
+            logger.underlyingLogger().debug("[u="+localUser.getId()+"][searchkey="+searchKey+"][users.size="+users.size()+"] searchUsers(). Took "+sw.getElapsedMS()+"ms");
+        }
+        return ok(Json.toJson(users));
 	}
 	
-	public static Result getUserInfos(List<Long> ids) {
-        final User localUser = Application.getLocalUser(session());
+	public static List<UserVM> getUserInfos(List<Long> ids, User localUser) {
         final List<User> users = User.getUsers(ids);
-        
-        if (localUser == null || users == null) {
-            return notFound();
-        }
-        
         List<UserVM> vms = new ArrayList<UserVM>();
         for (User user : users) {
         	UserVM vm = new UserVM(user, localUser);
         	vms.add(vm);
 		}
-        
-        return ok(Json.toJson(vms));
+        return vms;
     }
 	
 	/**
