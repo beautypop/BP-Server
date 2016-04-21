@@ -335,8 +335,8 @@ public class UserController extends Controller {
         //}
         
         // ES
-        ElasticSearchController.removeUserElasticSearch(localUser.id);
-        ElasticSearchController.addUserElasticSearch(localUser.id, localUser.displayName, localUser.firstName, localUser.lastName);
+        ElasticSearchController.removeUserElasticSearch(localUser);
+        ElasticSearchController.addUserElasticSearch(localUser);
 
         return ok(Json.toJson(new UserVM(localUser)));
     }

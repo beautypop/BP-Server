@@ -15,7 +15,7 @@ public class UserIndex extends Index {
 	public String lastName;
 
     // Find method static for request
-    public static Finder<UserIndex> find = new Finder<UserIndex>(UserIndex.class);
+    public static Finder<UserIndex> find = new Finder<>(UserIndex.class);
 
     @Override
     public Map toIndex() {

@@ -13,9 +13,10 @@ public class PostIndex extends Index {
 	public String title;
 	public String body;
 	public String catId;
+	public String subCatId;
 	
     // Find method static for request
-    public static Finder<PostIndex> find = new Finder<PostIndex>(PostIndex.class);
+    public static Finder<PostIndex> find = new Finder<>(PostIndex.class);
 
     @Override
     public Map toIndex() {
@@ -24,6 +25,7 @@ public class PostIndex extends Index {
         map.put("title", title);
         map.put("body", body);
         map.put("catId", catId);
+        map.put("subCatId", subCatId);
         return map;
     }
 
@@ -33,6 +35,7 @@ public class PostIndex extends Index {
         this.title = (String) map.get("title");
         this.body = (String) map.get("body");
         this.catId = (String) map.get("catId");
+        this.subCatId = (String) map.get("subCatId");
         return this;
     }
 }

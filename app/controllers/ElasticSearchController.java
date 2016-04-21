@@ -1,11 +1,13 @@
 package controllers;
 
+import handler.FeedHandler;
 import indexing.PostIndex;
 import indexing.UserIndex;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import models.Category;
 import models.Post;
 import models.User;
 
@@ -21,44 +23,55 @@ import play.libs.Json;
 import play.mvc.Controller;
 import play.mvc.Result;
 import viewmodel.PostVM;
-import viewmodel.UserVM;
+import viewmodel.PostVMLite;
+import viewmodel.SellerVM;
 
 import com.github.cleverage.elasticsearch.IndexClient;
 import com.github.cleverage.elasticsearch.IndexQuery;
 import com.github.cleverage.elasticsearch.IndexQueryPath;
 import com.github.cleverage.elasticsearch.IndexResults;
 import com.github.cleverage.elasticsearch.IndexService;
+import com.google.inject.Inject;
 
+import common.cache.CategoryCache;
+import common.model.FeedFilter.FeedType;
 import common.utils.NanoSecondStopWatch;
 import domain.DefaultValues;
 
 public class ElasticSearchController extends Controller {
     private static final play.api.Logger logger = play.api.Logger.apply(UserController.class);
     
-	public static final int FEED_RETRIEVAL_COUNT = DefaultValues.FEED_INFINITE_SCROLL_COUNT;
-	
-    public static void addPostElasticSearch(Long id, String title, String body, Long catId){
+    @Inject
+    FeedHandler feedHandler;
+    
+    public static void addPostElasticSearch(Post post) {
 		PostIndex postIndex = new PostIndex();
-		postIndex.id = id+"";
-		postIndex.title = title;
-		postIndex.body = body;
-		postIndex.catId = catId+"";
+		postIndex.id = post.id+"";
+		postIndex.title = post.title;
+		postIndex.body = post.body;
+		if (post.category.parent != null) {
+		    postIndex.catId = post.category.parent.id+"";
+		    postIndex.subCatId = post.category.id+"";
+		} else {
+		    postIndex.catId = post.category.id+"";
+            postIndex.subCatId = "";
+		}
 		postIndex.index();
 	}
     
-    public static void addUserElasticSearch(Long id, String displayName, String firstName, String lastName){
+    public static void addUserElasticSearch(User user) {
 		UserIndex userIndex = new UserIndex();
-		userIndex.id = id+"";
-		userIndex.displayName = displayName;
-		userIndex.firstName = firstName;
-		userIndex.lastName = lastName;
+		userIndex.id = user.id+"";
+		userIndex.displayName = user.displayName;
+		userIndex.firstName = user.firstName;
+		userIndex.lastName = user.lastName;
 		userIndex.index();
 	}
     
-    public static void removePostElasticSearch(Long id){
+    public static void removePostElasticSearch(Post post){
     	IndexQuery<PostIndex> indexQuery = PostIndex.find.query();
     	BoolQueryBuilder booleanQueryBuilder = QueryBuilders.boolQuery();
-		QueryStringQueryBuilder queryBuilder = QueryBuilders.queryStringQuery(id+"").defaultField("id");
+		QueryStringQueryBuilder queryBuilder = QueryBuilders.queryStringQuery(post.id+"").defaultField("id");
 		booleanQueryBuilder.must(queryBuilder);
 		indexQuery.setBuilder(booleanQueryBuilder);
 		IndexResults<PostIndex> results = PostIndex.find.search(indexQuery);
@@ -66,10 +79,10 @@ public class ElasticSearchController extends Controller {
 		refresh();
     }
     
-    public static void removeUserElasticSearch(Long id){
+    public static void removeUserElasticSearch(User user){
     	IndexQuery<UserIndex> indexQuery = UserIndex.find.query();
     	BoolQueryBuilder booleanQueryBuilder = QueryBuilders.boolQuery();
-		QueryStringQueryBuilder queryBuilder = QueryBuilders.queryStringQuery(id+"").defaultField("id");
+		QueryStringQueryBuilder queryBuilder = QueryBuilders.queryStringQuery(user.id+"").defaultField("id");
 		booleanQueryBuilder.must(queryBuilder);
 		indexQuery.setBuilder(booleanQueryBuilder);
 		IndexResults<UserIndex> results = UserIndex.find.search(indexQuery);
@@ -78,7 +91,7 @@ public class ElasticSearchController extends Controller {
     }
 	
 	@Transactional
-	public static Result searchPosts(String searchKey, Long catId, Integer offset){
+	public Result searchPosts(String searchKey, Long catId, Integer offset){
 	    NanoSecondStopWatch sw = new NanoSecondStopWatch();
 	    
 	    final User localUser = Application.getLocalUser(session());
@@ -86,10 +99,19 @@ public class ElasticSearchController extends Controller {
             return notFound();
         }
         
-		int fromCount = offset * FEED_RETRIEVAL_COUNT;
+		int fromCount = offset * DefaultValues.FEED_INFINITE_SCROLL_COUNT;
 		IndexQuery<PostIndex> indexQuery = PostIndex.find.query();
 		
-		if (catId <= 0) {
+		if (catId > 0) {
+		    Category category = CategoryCache.getCategory(catId);
+		    Category subCategory = null;
+		    
+		    // it is a subcategory
+		    if (category.parent != null) {
+		        subCategory = category;
+		        category = category.parent;
+		    }
+		    
 			BoolQueryBuilder booleanQueryBuilder = QueryBuilders.boolQuery();
 			QueryStringQueryBuilder queryBuilderTitle = QueryBuilders.queryStringQuery(searchKey).defaultField("title");
 			booleanQueryBuilder.should(queryBuilderTitle);
@@ -97,21 +119,26 @@ public class ElasticSearchController extends Controller {
 			QueryStringQueryBuilder queryBuilderBody = QueryBuilders.queryStringQuery(searchKey).defaultField("body");
 			booleanQueryBuilder.should(queryBuilderBody);
 			
-			QueryStringQueryBuilder queryBuilderCat = QueryBuilders.queryStringQuery(catId.toString()).defaultField("catId");
-			booleanQueryBuilder.must(queryBuilderCat);
+			if (subCategory != null) {
+    			QueryStringQueryBuilder queryBuilderSubCat = QueryBuilders.queryStringQuery(catId.toString()).defaultField("subCatId");
+                booleanQueryBuilder.must(queryBuilderSubCat);
+			} else {
+			    QueryStringQueryBuilder queryBuilderCat = QueryBuilders.queryStringQuery(catId.toString()).defaultField("catId");
+	            booleanQueryBuilder.must(queryBuilderCat);
+			}
 			
 			booleanQueryBuilder.minimumShouldMatch("1");
 			
-			indexQuery.setBuilder(booleanQueryBuilder).from(fromCount).size(FEED_RETRIEVAL_COUNT);
+			indexQuery.setBuilder(booleanQueryBuilder).from(fromCount).size(DefaultValues.FEED_INFINITE_SCROLL_COUNT);
 		} else {
-			indexQuery.setBuilder(QueryBuilders.queryStringQuery(searchKey)).from(fromCount).size(FEED_RETRIEVAL_COUNT);
+			indexQuery.setBuilder(QueryBuilders.queryStringQuery(searchKey)).from(fromCount).size(DefaultValues.FEED_INFINITE_SCROLL_COUNT);
 		}
 		
 		IndexResults<PostIndex> results = PostIndex.find.search(indexQuery);
 		if (results.results.size() == 0) {
 		    sw.stop();
             if (logger.underlyingLogger().isDebugEnabled()) {
-                logger.underlyingLogger().debug("[u="+localUser.getId()+"][searchkey="+searchKey+"][posts.size=0] searchPosts(). Took "+sw.getElapsedMS()+"ms");
+                logger.underlyingLogger().debug("[u="+localUser.getId()+"][searchkey="+searchKey+"][catId="+catId+"][posts.size=0] searchPosts(). Took "+sw.getElapsedMS()+"ms");
             }
 			return ok(Json.toJson(new ArrayList<Long>()));
 		}
@@ -125,14 +152,14 @@ public class ElasticSearchController extends Controller {
 		
 		sw.stop();
         if (logger.underlyingLogger().isDebugEnabled()) {
-            logger.underlyingLogger().debug("[u="+localUser.getId()+"][searchkey="+searchKey+"][posts.size="+posts.size()+"] searchPosts(). Took "+sw.getElapsedMS()+"ms");
+            logger.underlyingLogger().debug("[u="+localUser.getId()+"][searchkey="+searchKey+"][catId="+catId+"][posts.size="+posts.size()+"] searchPosts(). Took "+sw.getElapsedMS()+"ms");
         }
 		return ok(Json.toJson(posts));
 	}
 	
-	public static List<PostVM> getPostInfos(List<Long> ids, User localUser) {
+	public List<PostVM> getPostInfos(List<Long> ids, User localUser) {
         final List<Post> posts = Post.getPosts(ids);
-        List<PostVM> vms = new ArrayList<PostVM>();
+        List<PostVM> vms = new ArrayList<>();
         for (Post post : posts) {
             PostVM vm = new PostVM(post, localUser);
             vms.add(vm);
@@ -141,7 +168,7 @@ public class ElasticSearchController extends Controller {
     }
 	
 	@Transactional
-	public static Result searchUsers(String searchKey, Integer offset){
+	public Result searchUsers(String searchKey, Integer offset){
 	    NanoSecondStopWatch sw = new NanoSecondStopWatch();
         
 	    final User localUser = Application.getLocalUser(session());
@@ -149,9 +176,9 @@ public class ElasticSearchController extends Controller {
             return notFound();
         }
 	    
-		int fromCount = offset * FEED_RETRIEVAL_COUNT;
+		int fromCount = offset * DefaultValues.DEFAULT_INFINITE_SCROLL_COUNT;
 		IndexQuery<UserIndex> indexQuery = UserIndex.find.query();
-		indexQuery.setBuilder(QueryBuilders.queryStringQuery(searchKey)).from(fromCount).size(FEED_RETRIEVAL_COUNT);
+		indexQuery.setBuilder(QueryBuilders.queryStringQuery(searchKey)).from(fromCount).size(DefaultValues.DEFAULT_INFINITE_SCROLL_COUNT);
 		IndexResults<UserIndex> results = UserIndex.find.search(indexQuery);
 		if (results.results.size() == 0) {
 		    sw.stop();
@@ -166,7 +193,7 @@ public class ElasticSearchController extends Controller {
             userIds.add(Long.parseLong(results.results.get(i).id));
         }
 		
-		List<UserVM> users = getUserInfos(userIds, localUser);
+		List<SellerVM> users = getUserInfos(userIds, localUser);
         
         sw.stop();
         if (logger.underlyingLogger().isDebugEnabled()) {
@@ -175,13 +202,25 @@ public class ElasticSearchController extends Controller {
         return ok(Json.toJson(users));
 	}
 	
-	public static List<UserVM> getUserInfos(List<Long> ids, User localUser) {
+	public List<SellerVM> getUserInfos(List<Long> ids, User localUser) {
         final List<User> users = User.getUsers(ids);
-        List<UserVM> vms = new ArrayList<UserVM>();
+        List<SellerVM> vms = new ArrayList<>();
         for (User user : users) {
-        	UserVM vm = new UserVM(user, localUser);
-        	vms.add(vm);
-		}
+            if (user.newUser || !user.active || user.deleted) {
+                continue;
+            }
+            
+            // get first batch of seller products
+            List<PostVMLite> posts = feedHandler.getFeedPosts(
+                    user.id, 0L, localUser, FeedType.USER_POSTED, 
+                    DefaultValues.MAX_SELLER_PRODUCTS_FOR_FEED);
+            if (posts.size() > DefaultValues.MAX_SELLER_PRODUCTS_FOR_FEED) {
+                posts = posts.subList(0, DefaultValues.MAX_SELLER_PRODUCTS_FOR_FEED);
+            }
+            
+            SellerVM vm = new SellerVM(user, localUser, posts);
+            vms.add(vm);
+        }
         return vms;
     }
 	
@@ -236,8 +275,6 @@ public class ElasticSearchController extends Controller {
     	DeleteResponse deleteResponse = getDeleteRequestBuilder(indexPath, id)
                 .execute()
                 .actionGet();
-
-        //System.out.println("ElasticSearch : Delete " + deleteResponse.toString());
     }
     
     /**

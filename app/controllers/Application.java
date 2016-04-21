@@ -504,7 +504,7 @@ public class Application extends Controller {
         calcServer.clearUserQueues(localUser);
         
         // ES
-        ElasticSearchController.addUserElasticSearch(localUser.id, localUser.displayName, localUser.firstName, localUser.lastName);
+        ElasticSearchController.addUserElasticSearch(localUser);
 
         // activity
         User beautypopUser = SystemInfo.getInfo().getBeautyPopCustomerCare();

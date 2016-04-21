@@ -695,13 +695,13 @@ public class DataBootstrap {
     
     private static void elasticPost() {
         for(Post post : Post.getEligiblePostsForFeeds()){
-			ElasticSearchController.addPostElasticSearch(post.id, post.title, post.body, post.category.id);
+			ElasticSearchController.addPostElasticSearch(post);
 		}
 	}
 	
 	private static void elasticUser() {
 	    for(User user : User.getEligibleUsersForFeed()){
-			ElasticSearchController.addUserElasticSearch(user.id, user.displayName, user.firstName, user.lastName);
+			ElasticSearchController.addUserElasticSearch(user);
 		}
 	}
 }

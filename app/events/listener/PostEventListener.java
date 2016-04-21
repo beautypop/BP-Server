@@ -39,7 +39,7 @@ public class PostEventListener extends EventListener {
             }
             
             // ES
-            ElasticSearchController.addPostElasticSearch(post.id, post.title, post.body, post.category.id);
+            ElasticSearchController.addPostElasticSearch(post);
             
             final Long postImageId = post.getImage();
     		executeAsync(
@@ -101,8 +101,8 @@ public class PostEventListener extends EventListener {
             CalcServer.instance().addToCategoryQueues(post);
             
             // ES
-            ElasticSearchController.removePostElasticSearch(post.id);
-            ElasticSearchController.addPostElasticSearch(post.id, post.title, post.body, post.category.id);
+            ElasticSearchController.removePostElasticSearch(post);
+            ElasticSearchController.addPostElasticSearch(post);
             
             executeAsync(
                     new TransactionalRunnableTask() {
@@ -129,7 +129,7 @@ public class PostEventListener extends EventListener {
     		CalcServer.instance().removeFromAllUsersLikedQueues(post);
     		
     		// ES
-    		ElasticSearchController.removePostElasticSearch(post.id);
+    		ElasticSearchController.removePostElasticSearch(post);
     		
     		if (!post.owner.isRecommendedSeller()) {
                 CalcServer.instance().removeFromRecommendedSellersQueue(post.owner);
