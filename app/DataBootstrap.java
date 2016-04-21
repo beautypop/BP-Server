@@ -1,5 +1,4 @@
 import java.util.Collections;
-import java.util.List;
 
 import javax.persistence.Query;
 
@@ -39,7 +38,7 @@ public class DataBootstrap {
         bootstrapUser();
         bootstrapCategory();
         //bootstrapGameBadge();
-        bootstarpElasticIndexes();
+        bootstrapElasticIndexes();
 	}
     
     private static void bootstrapTermsAndConditions() {
@@ -682,7 +681,7 @@ public class DataBootstrap {
         }
     }
     
-    private static void bootstarpElasticIndexes() {
+    private static void bootstrapElasticIndexes() {
     	ElasticSearchController.cleanIndex();
     	ElasticSearchController.refresh();
     	elasticPost();

@@ -549,6 +549,10 @@ public class CalcServer {
     }
     
     private void buildUserExploreFeedQueue(Long id) {
+        buildUserExploreFeedQueue(id, true);
+    }
+    
+    private void buildUserExploreFeedQueue(Long id, boolean randomizeScore) {
         NanoSecondStopWatch sw = new NanoSecondStopWatch();
         logger.underlyingLogger().debug("buildUserExploreFeedQueue starts - u="+id);
         
@@ -589,7 +593,10 @@ public class CalcServer {
                 if (post != null && post.deleted) {
                     continue;
                 }
-                Double randomizedScore = formula.randomizeScore(post);
+                Double randomizedScore = post.timeScore;
+                if (randomizeScore) {
+                    randomizedScore = formula.randomizeScore(post);
+                }
                 if (randomizedScore > 0) {
                     jedisCache.putToSortedSet(getKey(FeedType.HOME_EXPLORE, id), randomizedScore * FEED_SCORE_HIGH_BASE, postId.toString());
                 }

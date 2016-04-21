@@ -301,16 +301,6 @@ public class Post extends SocialObject implements Likeable, Commentable {
 		}
 	}
 	
-	public static List<Post> findByIdList(List<Long> ids) {
-		try {
-			Query q = JPA.em().createQuery("SELECT p FROM Post p where id IN :ids_list and deleted = false");
-			q.setParameter("ids_list", ids);
-			return (List<Post>) q.getResultList();
-		} catch (NoResultException nre) {
-			return null;
-		}
-	}
-	
 	public static List<Post> getEligiblePostsForFeeds() {
 		try {
 			Query q = JPA.em().createQuery("SELECT p FROM Post p where deleted = false");
@@ -409,11 +399,13 @@ public class Post extends SocialObject implements Likeable, Commentable {
 
 	public static List<Post> getPosts(List<Long> ids) {
 		try {
-			 Query query = JPA.em().createQuery(
-			            "select p from Post p where "+
-			            "p.id in ("+StringUtil.collectionToString(ids, ",")+") and "+
-			            "p.deleted = false ORDER BY FIELD(p.id,"+StringUtil.collectionToString(ids, ",")+")");
-			 return (List<Post>) query.getResultList();
+		    String idsStr = StringUtil.collectionToString(ids, ",");
+		    Query query = JPA.em().createQuery(
+		            "select p from Post p where "+
+		                    "p.id in :id_list and "+
+		                    "p.deleted = false ORDER BY FIELD(p.id,"+idsStr+")");
+		    query.setParameter("id_list", ids);
+		    return (List<Post>) query.getResultList();
 		} catch (NoResultException nre) {
 			return null;
 		}
@@ -421,13 +413,15 @@ public class Post extends SocialObject implements Likeable, Commentable {
 	
 	public static List<Post> getPosts(List<Long> ids, int offset) {
 		try {
-			 Query query = JPA.em().createQuery(
-					 "select p from Post p where "+
-							 "p.id in ("+StringUtil.collectionToString(ids, ",")+") and "+
-							 "p.deleted = false ORDER BY FIELD(p.id,"+StringUtil.collectionToString(ids, ",")+")");
-			 query.setFirstResult(offset * CalcServer.FEED_RETRIEVAL_COUNT);
-			 query.setMaxResults(CalcServer.FEED_RETRIEVAL_COUNT);
-			 return (List<Post>) query.getResultList();
+		    String idsStr = StringUtil.collectionToString(ids, ",");
+		    Query query = JPA.em().createQuery(
+		            "select p from Post p where "+
+		                    "p.id in :id_list and "+
+		                    "p.deleted = false ORDER BY FIELD(p.id,"+idsStr+")");
+		    query.setParameter("id_list", ids);
+		    query.setFirstResult(offset * CalcServer.FEED_RETRIEVAL_COUNT);
+		    query.setMaxResults(CalcServer.FEED_RETRIEVAL_COUNT);
+		    return (List<Post>) query.getResultList();
 		} catch (NoResultException nre) {
 			return null;
 		}

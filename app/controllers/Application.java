@@ -16,10 +16,10 @@ import javax.inject.Inject;
 
 import models.Country;
 import models.FeaturedItem;
+import models.Activity;
 import models.Activity.ActivityType;
 import models.FeaturedItem.ItemType;
 import models.GameBadge.BadgeType;
-import models.Activity;
 import models.GameBadgeAwarded;
 import models.Location;
 import models.Resource;
@@ -67,7 +67,6 @@ import common.cache.CountryCache;
 import common.cache.FeaturedItemCache;
 import common.cache.LocationCache;
 import common.utils.HtmlUtil;
-import common.utils.StringUtil;
 import common.utils.UserAgentUtil;
 import common.utils.ValidationUtil;
 

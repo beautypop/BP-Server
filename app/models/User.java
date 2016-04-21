@@ -940,16 +940,6 @@ public class User extends SocialObject implements Subject, Followable {
 		}
 	}
 	
-	public static List<User> findByIdList(Long[] ids) {
-		try { 
-			Query q = JPA.em().createQuery("SELECT u FROM User u where id IN :ids_list and deleted = false");
-			q.setParameter("ids_list", Arrays.asList(ids));
-			return (List<User>) q.getResultList();
-		} catch (NoResultException e) {
-			return null;
-		}
-	}
-	
 	public static File getDefaultUserPhoto() throws FileNotFoundException {
 		return new File(STORAGE_USER_NOIMAGE);
 	}
@@ -1270,11 +1260,13 @@ public class User extends SocialObject implements Subject, Followable {
 	
 	public static List<User> getUsers(List<Long> ids) {
         try {
-             Query query = JPA.em().createQuery(
-                        "select u from User u where "+
-                        "u.id in ("+StringUtil.collectionToString(ids, ",")+") and "+
-                        "u.deleted = false ORDER BY FIELD(u.id,"+StringUtil.collectionToString(ids, ",")+")");
-             return (List<User>) query.getResultList();
+            String idsStr = StringUtil.collectionToString(ids, ",");
+            Query query = JPA.em().createQuery(
+                    "select u from User u where "+
+                            "u.id in :id_list and "+
+                            "u.deleted = false ORDER BY FIELD(u.id,"+idsStr+")");
+            query.setParameter("id_list", ids);
+            return (List<User>) query.getResultList();
         } catch (NoResultException nre) {
             return null;
         }
@@ -1282,13 +1274,15 @@ public class User extends SocialObject implements Subject, Followable {
     
     public static List<User> getUsers(List<Long> ids, int offset) {
         try {
-             Query query = JPA.em().createQuery(
-                     "select u from User u where "+
-                             "u.id in ("+StringUtil.collectionToString(ids, ",")+") and "+
-                             "u.deleted = false ORDER BY FIELD(u.id,"+StringUtil.collectionToString(ids, ",")+")");
-             query.setFirstResult(offset * CalcServer.FEED_RETRIEVAL_COUNT);
-             query.setMaxResults(CalcServer.FEED_RETRIEVAL_COUNT);
-             return (List<User>) query.getResultList();
+            String idsStr = StringUtil.collectionToString(ids, ",");
+            Query query = JPA.em().createQuery(
+                    "select u from User u where "+
+                            "u.id in :id_list and "+
+                            "u.deleted = false ORDER BY FIELD(u.id,"+idsStr+")");
+            query.setParameter("id_list", ids);
+            query.setFirstResult(offset * CalcServer.FEED_RETRIEVAL_COUNT);
+            query.setMaxResults(CalcServer.FEED_RETRIEVAL_COUNT);
+            return (List<User>) query.getResultList();
         } catch (NoResultException nre) {
             return null;
         }
