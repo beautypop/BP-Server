@@ -399,11 +399,9 @@ public class Post extends SocialObject implements Likeable, Commentable {
 
 	public static List<Post> getPosts(List<Long> ids) {
 		try {
-		    String idsStr = StringUtil.collectionToString(ids, ",");
+		    //String idsStr = StringUtil.collectionToString(ids, ",");
 		    Query query = JPA.em().createQuery(
-		            "select p from Post p where "+
-		                    "p.id in :id_list and "+
-		                    "p.deleted = false ORDER BY FIELD(p.id,"+idsStr+")");
+		            "select p from Post p where p.id in :id_list and p.deleted = false ORDER BY FIELD(p.id,:id_list)");
 		    query.setParameter("id_list", ids);
 		    return (List<Post>) query.getResultList();
 		} catch (NoResultException nre) {
@@ -413,11 +411,9 @@ public class Post extends SocialObject implements Likeable, Commentable {
 	
 	public static List<Post> getPosts(List<Long> ids, int offset) {
 		try {
-		    String idsStr = StringUtil.collectionToString(ids, ",");
+		    //String idsStr = StringUtil.collectionToString(ids, ",");
 		    Query query = JPA.em().createQuery(
-		            "select p from Post p where "+
-		                    "p.id in :id_list and "+
-		                    "p.deleted = false ORDER BY FIELD(p.id,"+idsStr+")");
+		            "select p from Post p where p.id in :id_list and p.deleted = false ORDER BY FIELD(p.id,:id_list)");
 		    query.setParameter("id_list", ids);
 		    query.setFirstResult(offset * CalcServer.FEED_RETRIEVAL_COUNT);
 		    query.setMaxResults(CalcServer.FEED_RETRIEVAL_COUNT);

@@ -299,28 +299,28 @@ public class Story extends SocialObject implements Likeable, Commentable {
 		}
 		return viewed;
 	}
-
-	public static List<Story> getStories(List<Long> ids) {
-		try {
-			 Query query = JPA.em().createQuery(
-			            "select s from Story s where "+
-			            "s.id in ("+StringUtil.collectionToString(ids, ",")+") and "+
-			            "s.deleted = false ORDER BY FIELD(s.id,"+StringUtil.collectionToString(ids, ",")+")");
-			 return (List<Story>) query.getResultList();
+    
+    public static List<Story> getStories(List<Long> ids) {
+	    try {
+		    //String idsStr = StringUtil.collectionToString(ids, ",");
+		    Query query = JPA.em().createQuery(
+		            "select s from Story s where s.id in :id_list and s.deleted = false ORDER BY FIELD(s.id,:id_list)");
+		    query.setParameter("id_list", ids);
+		    return (List<Story>) query.getResultList();
 		} catch (NoResultException nre) {
 			return null;
 		}
 	}
 	
 	public static List<Story> getStories(List<Long> ids, int offset) {
-		try {
-			 Query query = JPA.em().createQuery(
-					 "select s from Story s where "+
-							 "s.id in ("+StringUtil.collectionToString(ids, ",")+") and "+
-							 "s.deleted = false ORDER BY FIELD(s.id,"+StringUtil.collectionToString(ids, ",")+")");
-			 query.setFirstResult(offset * CalcServer.FEED_RETRIEVAL_COUNT);
-			 query.setMaxResults(CalcServer.FEED_RETRIEVAL_COUNT);
-			 return (List<Story>) query.getResultList();
+	    try {
+		    //String idsStr = StringUtil.collectionToString(ids, ",");
+		    Query query = JPA.em().createQuery(
+		            "select s from Story s where s.id in :id_list and s.deleted = false ORDER BY FIELD(s.id,:id_list)");
+		    query.setParameter("id_list", ids);
+		    query.setFirstResult(offset * CalcServer.FEED_RETRIEVAL_COUNT);
+		    query.setMaxResults(CalcServer.FEED_RETRIEVAL_COUNT);
+		    return (List<Story>) query.getResultList();
 		} catch (NoResultException nre) {
 			return null;
 		}

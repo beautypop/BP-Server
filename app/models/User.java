@@ -1260,11 +1260,9 @@ public class User extends SocialObject implements Subject, Followable {
 	
 	public static List<User> getUsers(List<Long> ids) {
         try {
-            String idsStr = StringUtil.collectionToString(ids, ",");
+            //String idsStr = StringUtil.collectionToString(ids, ",");
             Query query = JPA.em().createQuery(
-                    "select u from User u where "+
-                            "u.id in :id_list and "+
-                            "u.deleted = false ORDER BY FIELD(u.id,"+idsStr+")");
+                    "select u from User u where u.id in :id_list and u.deleted = false ORDER BY FIELD(u.id,:id_list)");
             query.setParameter("id_list", ids);
             return (List<User>) query.getResultList();
         } catch (NoResultException nre) {
@@ -1274,11 +1272,9 @@ public class User extends SocialObject implements Subject, Followable {
     
     public static List<User> getUsers(List<Long> ids, int offset) {
         try {
-            String idsStr = StringUtil.collectionToString(ids, ",");
+            //String idsStr = StringUtil.collectionToString(ids, ",");
             Query query = JPA.em().createQuery(
-                    "select u from User u where "+
-                            "u.id in :id_list and "+
-                            "u.deleted = false ORDER BY FIELD(u.id,"+idsStr+")");
+                    "select u from User u where u.id in :id_list and u.deleted = false ORDER BY FIELD(u.id,:id_list)");
             query.setParameter("id_list", ids);
             query.setFirstResult(offset * CalcServer.FEED_RETRIEVAL_COUNT);
             query.setMaxResults(CalcServer.FEED_RETRIEVAL_COUNT);
