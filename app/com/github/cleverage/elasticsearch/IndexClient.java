@@ -120,27 +120,16 @@ public class IndexClient {
         if (config.localConfig != null && !config.localConfig.isEmpty()) {
             Logger.info("Elasticsearch : Load settings from " + config.localConfig);
             try {
+                // Code in github not working...
+                // https://github.com/cleverage/play2-elasticsearch/blob/master/module/app/com/github/cleverage/elasticsearch/IndexClient.java
                 //settings.loadFromPath(Paths.get(this.getClass().getClassLoader().getResource(config.localConfig).toURI()));
-                //****** to be deleted******************
-                System.out.println(config.localConfig); 
-                Path p = Paths.get(config.localConfig);
-                System.out.println(p.getFileName().toString()); 
-                try {
-			InputStream is = Files.newInputStream(p);
-			InputStreamReader inputStreamReader= (new InputStreamReader(is, StandardCharsets.UTF_8));
-			int data = inputStreamReader.read();
-			while(data != -1){
-			    char theChar = (char) data;
-			    System.out.print(theChar);
-			    data = inputStreamReader.read();
-			}
-			inputStreamReader.close();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-                //****** to be deleted *****************
+                
+                // Try resource stream but it won't work on full path...
+                //InputStream is = this.getClass().getClassLoader().getResourceAsStream(config.localConfig);
+                //settings.loadFromStream(config.localConfig, is);
+
+                // Load directly from full path
                 settings.loadFromPath(Paths.get(config.localConfig));
-                //settings.loadFromStream(config.localConfig, this.getClass().getResourceAsStream(config.localConfig));
             } catch (SettingsException settingsException) {
                 Logger.error("Elasticsearch : Error when loading settings from " + config.localConfig);
                 throw new Exception(settingsException);

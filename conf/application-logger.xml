@@ -32,9 +32,9 @@
   <logger name="providers" level="DEBUG" />
   <logger name="security" level="DEBUG" />
   <logger name="service" level="DEBUG" />
-  <logger name="tagword" level="DEBUG" />
-  <logger name="targeting" level="DEBUG" />
   <logger name="com.feth.play.module.pa" level="DEBUG" />
+  <logger name="com.github.cleverage.elasticsearch" level="DEBUG" />
+  <logger name="org.elasticsearch.node" level="DEBUG" />
 
   <root level="INFO">
     <appender-ref ref="STDOUT" />

@@ -1,4 +1,4 @@
-##################### ElasticSearch Configuration exemple on local mode #####################
+##################### ElasticSearch Configuration example on local mode #####################
 
 cluster.name: bp-elasticsearch
 
