@@ -2,7 +2,7 @@ package events.listener;
 
 import java.util.Date;
 
-import mobile.PushNotificationSender;
+import notification.PushNotificationSender;
 import models.Activity;
 import models.GameBadgeAwarded;
 import models.User;

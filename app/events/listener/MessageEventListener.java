@@ -1,6 +1,6 @@
 package events.listener;
 
-import mobile.PushNotificationSender;
+import notification.PushNotificationSender;
 import models.Message;
 import models.User;
 import events.map.MessageEvent;

@@ -1,4 +1,4 @@
-package mobile;
+package notification;
 
 import java.util.HashMap;
 import java.util.Map;

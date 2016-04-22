@@ -3,7 +3,7 @@ package events.listener;
 import java.util.HashSet;
 import java.util.Set;
 
-import mobile.PushNotificationSender;
+import notification.PushNotificationSender;
 import models.Activity;
 import models.Comment;
 import models.Post;
