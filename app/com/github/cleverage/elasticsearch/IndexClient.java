@@ -12,6 +12,12 @@ import play.api.Environment;
 
 import java.net.InetAddress;
 import java.net.URI;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 
 import static org.elasticsearch.node.NodeBuilder.nodeBuilder;
@@ -114,7 +120,26 @@ public class IndexClient {
         if (config.localConfig != null && !config.localConfig.isEmpty()) {
             Logger.info("Elasticsearch : Load settings from " + config.localConfig);
             try {
-                settings.loadFromPath(Paths.get(this.getClass().getClassLoader().getResource(config.localConfig).toURI()));
+                //settings.loadFromPath(Paths.get(this.getClass().getClassLoader().getResource(config.localConfig).toURI()));
+                //****** to be deleted******************
+                System.out.println(config.localConfig); 
+                Path p = Paths.get(config.localConfig);
+                System.out.println(p.getFileName().toString()); 
+                try {
+			InputStream is = Files.newInputStream(p);
+			InputStreamReader inputStreamReader= (new InputStreamReader(is, StandardCharsets.UTF_8));
+			int data = inputStreamReader.read();
+			while(data != -1){
+			    char theChar = (char) data;
+			    System.out.print(theChar);
+			    data = inputStreamReader.read();
+			}
+			inputStreamReader.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+                //****** to be deleted *****************
+                settings.loadFromPath(Paths.get(config.localConfig));
                 //settings.loadFromStream(config.localConfig, this.getClass().getResourceAsStream(config.localConfig));
             } catch (SettingsException settingsException) {
                 Logger.error("Elasticsearch : Error when loading settings from " + config.localConfig);
