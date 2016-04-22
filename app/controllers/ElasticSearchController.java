@@ -113,11 +113,11 @@ public class ElasticSearchController extends Controller {
 		    }
 		    
 			BoolQueryBuilder booleanQueryBuilder = QueryBuilders.boolQuery();
-			QueryStringQueryBuilder queryBuilderTitle = QueryBuilders.queryStringQuery(searchKey).defaultField("title");
-			booleanQueryBuilder.should(queryBuilderTitle);
-			
-			QueryStringQueryBuilder queryBuilderBody = QueryBuilders.queryStringQuery(searchKey).defaultField("body");
-			booleanQueryBuilder.should(queryBuilderBody);
+			String[] searches = searchKey.split(" ");
+			for (String searchWord : searches) {
+				QueryStringQueryBuilder queryBuilder = QueryBuilders.queryStringQuery(searchWord);
+				booleanQueryBuilder.must(queryBuilder);
+			}
 			
 			if (subCategory != null) {
     			QueryStringQueryBuilder queryBuilderSubCat = QueryBuilders.queryStringQuery(catId.toString()).defaultField("subCatId");
@@ -127,11 +127,17 @@ public class ElasticSearchController extends Controller {
 	            booleanQueryBuilder.must(queryBuilderCat);
 			}
 			
-			booleanQueryBuilder.minimumShouldMatch("1");
+			//booleanQueryBuilder.minimumShouldMatch("1");
 			
 			indexQuery.setBuilder(booleanQueryBuilder).from(fromCount).size(DefaultValues.FEED_INFINITE_SCROLL_COUNT);
 		} else {
-			indexQuery.setBuilder(QueryBuilders.queryStringQuery(searchKey)).from(fromCount).size(DefaultValues.FEED_INFINITE_SCROLL_COUNT);
+			BoolQueryBuilder booleanQueryBuilder = QueryBuilders.boolQuery();
+			String[] searches = searchKey.split(" ");
+			for (String searchWord : searches) {
+				QueryStringQueryBuilder queryBuilder = QueryBuilders.queryStringQuery(searchWord);
+				booleanQueryBuilder.must(queryBuilder);
+			}
+			indexQuery.setBuilder(booleanQueryBuilder).from(fromCount).size(DefaultValues.FEED_INFINITE_SCROLL_COUNT);
 		}
 		
 		IndexResults<PostIndex> results = PostIndex.find.search(indexQuery);
