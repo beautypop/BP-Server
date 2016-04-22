@@ -6,11 +6,14 @@ import indexing.UserIndex;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 import models.Category;
 import models.Post;
 import models.User;
 
+import org.elasticsearch.action.admin.indices.analyze.AnalyzeResponse;
+import org.elasticsearch.action.admin.indices.analyze.AnalyzeResponse.AnalyzeToken;
 import org.elasticsearch.action.admin.indices.refresh.RefreshRequest;
 import org.elasticsearch.action.delete.DeleteRequestBuilder;
 import org.elasticsearch.action.delete.DeleteResponse;
@@ -90,6 +93,29 @@ public class ElasticSearchController extends Controller {
 		refresh();
     }
 	
+    private List<String> analyzeSearchKey(String searchKey) {
+        List<String> terms = new ArrayList<>();
+        /*
+        AnalyzeResponse response = client().admin().indices()
+                .prepareAnalyze(searchKey).setTokenizer("smartcn_tokenizer")
+                .execute().get();
+        */
+        
+        try {
+            AnalyzeResponse response = IndexClient.client.admin().indices()
+                    .prepareAnalyze(searchKey).setAnalyzer("smartcn")
+                    .execute().get();
+            List<AnalyzeToken> tokens = response.getTokens();
+            for (AnalyzeToken token : tokens) {
+                terms.add(token.getTerm());
+            }
+        } catch (InterruptedException | ExecutionException e) {
+            logger.underlyingLogger().error("[searchKey="+searchKey+"] Failed to analyzeSearchKey", e);
+        }
+        
+        return terms;
+    }
+    
 	@Transactional
 	public Result searchPosts(String searchKey, Long catId, Integer offset){
 	    NanoSecondStopWatch sw = new NanoSecondStopWatch();
@@ -103,41 +129,41 @@ public class ElasticSearchController extends Controller {
 		IndexQuery<PostIndex> indexQuery = PostIndex.find.query();
 		
 		if (catId > 0) {
-		    Category category = CategoryCache.getCategory(catId);
-		    Category subCategory = null;
-		    
-		    // it is a subcategory
-		    if (category.parent != null) {
-		        subCategory = category;
-		        category = category.parent;
-		    }
-		    
-			BoolQueryBuilder booleanQueryBuilder = QueryBuilders.boolQuery();
-			String[] searches = searchKey.split(" ");
-			for (String searchWord : searches) {
-				QueryStringQueryBuilder queryBuilder = QueryBuilders.queryStringQuery(searchWord);
-				booleanQueryBuilder.must(queryBuilder);
-			}
-			
-			if (subCategory != null) {
-    			QueryStringQueryBuilder queryBuilderSubCat = QueryBuilders.queryStringQuery(catId.toString()).defaultField("subCatId");
+            Category category = CategoryCache.getCategory(catId);
+            Category subCategory = null;
+            
+            // it is a subcategory
+            if (category.parent != null) {
+                subCategory = category;
+                category = category.parent;
+            }
+            
+            BoolQueryBuilder booleanQueryBuilder = QueryBuilders.boolQuery();
+            String[] searches = searchKey.split(" ");
+            for (String searchWord : searches) {
+            	QueryStringQueryBuilder queryBuilder = QueryBuilders.queryStringQuery(searchWord);
+            	booleanQueryBuilder.must(queryBuilder);
+            }
+            
+            if (subCategory != null) {
+            	QueryStringQueryBuilder queryBuilderSubCat = QueryBuilders.queryStringQuery(catId.toString()).defaultField("subCatId");
                 booleanQueryBuilder.must(queryBuilderSubCat);
-			} else {
-			    QueryStringQueryBuilder queryBuilderCat = QueryBuilders.queryStringQuery(catId.toString()).defaultField("catId");
-	            booleanQueryBuilder.must(queryBuilderCat);
-			}
-			
-			//booleanQueryBuilder.minimumShouldMatch("1");
-			
-			indexQuery.setBuilder(booleanQueryBuilder).from(fromCount).size(DefaultValues.FEED_INFINITE_SCROLL_COUNT);
+            } else {
+                QueryStringQueryBuilder queryBuilderCat = QueryBuilders.queryStringQuery(catId.toString()).defaultField("catId");
+                booleanQueryBuilder.must(queryBuilderCat);
+            }
+            
+            //booleanQueryBuilder.minimumShouldMatch("1");
+            
+            indexQuery.setBuilder(booleanQueryBuilder).from(fromCount).size(DefaultValues.FEED_INFINITE_SCROLL_COUNT);
 		} else {
-			BoolQueryBuilder booleanQueryBuilder = QueryBuilders.boolQuery();
-			String[] searches = searchKey.split(" ");
-			for (String searchWord : searches) {
-				QueryStringQueryBuilder queryBuilder = QueryBuilders.queryStringQuery(searchWord);
-				booleanQueryBuilder.must(queryBuilder);
-			}
-			indexQuery.setBuilder(booleanQueryBuilder).from(fromCount).size(DefaultValues.FEED_INFINITE_SCROLL_COUNT);
+            BoolQueryBuilder booleanQueryBuilder = QueryBuilders.boolQuery();
+            String[] searches = searchKey.split(" ");
+            for (String searchWord : searches) {
+            	QueryStringQueryBuilder queryBuilder = QueryBuilders.queryStringQuery(searchWord);
+            	booleanQueryBuilder.must(queryBuilder);
+            }
+            indexQuery.setBuilder(booleanQueryBuilder).from(fromCount).size(DefaultValues.FEED_INFINITE_SCROLL_COUNT);
 		}
 		
 		IndexResults<PostIndex> results = PostIndex.find.search(indexQuery);
