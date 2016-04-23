@@ -62,9 +62,9 @@ public class SendgridEmailClient implements TransactionalEmailClient {
 	
 	@Override
 	public String sendMail(String to, String from, String fromName, String subject, String body) {
-	    //if (Application.isDev()) {
-	    //    return "";
-	    //}
+	    if (Application.isDev()) {
+	        return "";
+	    }
 	    
 	    SendGrid.Email email = new SendGrid.Email();
 	    email.addTo(to);
