@@ -41,24 +41,6 @@ public class StringUtil {
 	}
 	
     /**
-     * @param collection
-     * @param separator
-     * @return
-     */
-    public static String collectionToString(Collection collection, String separator) {
-        if (collection == null || collection.size() == 0) {
-            return "";
-        }
-        StringBuilder sb = new StringBuilder();
-        String delim = "";
-        for (Object obj : collection) {
-            sb.append(delim).append(obj);
-            delim = separator;
-        }
-        return sb.toString();
-    }
-
-    /**
      * @param text
      * @return
      */
@@ -177,13 +159,40 @@ public class StringUtil {
     }
     
     public static String idsToString(List<Long> ids) {
-        return idsToString(ids, DefaultValues.DELIMITER_COMMA);
+        return collectionToString(ids, DefaultValues.DELIMITER_COMMA);
     }
     
-    public static String idsToString(List<Long> ids, String delimiter) {
-        if (ids == null) {
+    /**
+     * 
+     * @param collection
+     * @return
+     */
+    public static String collectionToString(Collection collection) {
+        return collectionToString(collection, DefaultValues.DELIMITER_COMMA);
+    }
+    
+    /**
+     * @param collection
+     * @param delimiter
+     * @return
+     */
+    public static String collectionToString(Collection collection, String delimiter) {
+        /*
+        if (collection == null || collection.size() == 0) {
             return "";
         }
-        return StringUtils.join(ids, delimiter);
+        StringBuilder sb = new StringBuilder();
+        String delim = "";
+        for (Object obj : collection) {
+            sb.append(delim).append(obj);
+            delim = separator;
+        }
+        return sb.toString();
+        */
+        
+        if (collection == null) {
+            return "";
+        }
+        return StringUtils.join(collection, delimiter);
     }
 }

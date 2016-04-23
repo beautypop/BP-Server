@@ -21,8 +21,6 @@ import play.data.validation.Constraints.Email;
 import play.data.validation.Constraints.MaxLength;
 import play.data.validation.Constraints.MinLength;
 import play.data.validation.Constraints.Required;
-import play.db.jpa.JPA;
-import play.db.jpa.Transactional;
 import play.i18n.Lang;
 import play.i18n.Messages;
 import play.mvc.Call;
@@ -470,7 +468,6 @@ UsernamePasswordAuthProvider<String, MyLoginUsernamePasswordAuthUser, MyUsername
 	}
 
 	protected Cancellable sendMail(final Mail mail) {
-		if(mailer == null) return null;
-		return mailer.sendMail(mail);
+		return sendMail(mail);
 	}
 }

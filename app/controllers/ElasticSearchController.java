@@ -5,6 +5,7 @@ import indexing.PostIndex;
 import indexing.UserIndex;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
@@ -39,6 +40,7 @@ import com.google.inject.Inject;
 import common.cache.CategoryCache;
 import common.model.FeedFilter.FeedType;
 import common.utils.NanoSecondStopWatch;
+import common.utils.StringUtil;
 import domain.DefaultValues;
 
 public class ElasticSearchController extends Controller {
@@ -93,18 +95,20 @@ public class ElasticSearchController extends Controller {
 		refresh();
     }
 	
-    private List<String> analyzeSearchKey(String searchKey) {
-        List<String> terms = new ArrayList<>();
-        /*
-        AnalyzeResponse response = client().admin().indices()
-                .prepareAnalyze(searchKey).setTokenizer("smartcn_tokenizer")
-                .execute().get();
-        */
+    private List<String> tokenizeSearchKey(String searchKey) {
+        return Arrays.asList(searchKey.split(" "));
         
+        /*
+        List<String> terms = new ArrayList<>();
         try {
+            AnalyzeResponse response = IndexClient.client.admin().indices()
+                    .prepareAnalyze(searchKey).setTokenizer("smartcn_tokenizer")
+                    .execute().get();
+            
             AnalyzeResponse response = IndexClient.client.admin().indices()
                     .prepareAnalyze(searchKey).setAnalyzer("smartcn")
                     .execute().get();
+            
             List<AnalyzeToken> tokens = response.getTokens();
             for (AnalyzeToken token : tokens) {
                 terms.add(token.getTerm());
@@ -113,7 +117,9 @@ public class ElasticSearchController extends Controller {
             logger.underlyingLogger().error("[searchKey="+searchKey+"] Failed to analyzeSearchKey", e);
         }
         
+        logger.underlyingLogger().debug("[searchKey="+searchKey+"][tokens="+StringUtil.collectionToString(terms, ",")+"] analyzeSearchKey");
         return terms;
+        */
     }
     
 	@Transactional
@@ -139,7 +145,7 @@ public class ElasticSearchController extends Controller {
             }
             
             BoolQueryBuilder booleanQueryBuilder = QueryBuilders.boolQuery();
-            String[] searches = searchKey.split(" ");
+            List<String> searches = tokenizeSearchKey(searchKey);
             for (String searchWord : searches) {
             	QueryStringQueryBuilder queryBuilder = QueryBuilders.queryStringQuery(searchWord);
             	booleanQueryBuilder.must(queryBuilder);
@@ -158,7 +164,7 @@ public class ElasticSearchController extends Controller {
             indexQuery.setBuilder(booleanQueryBuilder).from(fromCount).size(DefaultValues.FEED_INFINITE_SCROLL_COUNT);
 		} else {
             BoolQueryBuilder booleanQueryBuilder = QueryBuilders.boolQuery();
-            String[] searches = searchKey.split(" ");
+            List<String> searches = tokenizeSearchKey(searchKey);
             for (String searchWord : searches) {
             	QueryStringQueryBuilder queryBuilder = QueryBuilders.queryStringQuery(searchWord);
             	booleanQueryBuilder.must(queryBuilder);

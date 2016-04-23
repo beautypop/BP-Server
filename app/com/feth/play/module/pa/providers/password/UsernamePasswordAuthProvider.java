@@ -5,7 +5,6 @@ import java.util.List;
 
 import play.Application;
 import play.data.Form;
-import play.db.jpa.JPA;
 import play.db.jpa.Transactional;
 import play.mvc.Call;
 import play.mvc.Http;
@@ -22,6 +21,9 @@ import com.feth.play.module.pa.providers.AuthProvider;
 import com.feth.play.module.pa.user.AuthUser;
 import com.feth.play.module.pa.user.NameIdentity;
 
+import common.utils.StringUtil;
+import email.SendgridEmailClient;
+
 public abstract class UsernamePasswordAuthProvider<R, UL extends UsernamePasswordAuthUser, US extends UsernamePasswordAuthUser, L extends UsernamePasswordAuthProvider.UsernamePassword, S extends UsernamePasswordAuthProvider.UsernamePassword>
 		extends AuthProvider {
 
@@ -29,21 +31,19 @@ public abstract class UsernamePasswordAuthProvider<R, UL extends UsernamePasswor
 
 	protected static final String SETTING_KEY_MAIL = "mail";
 
-	private static final String SETTING_KEY_MAIL_FROM_EMAIL = Mailer.SettingKeys.FROM_EMAIL;
+    private static final String SETTING_KEY_MAIL_FROM_EMAIL = Mailer.SettingKeys.FROM_EMAIL;
 
-	private static final String SETTING_KEY_MAIL_DELAY = Mailer.SettingKeys.DELAY;
+    private static final String SETTING_KEY_MAIL_DELAY = Mailer.SettingKeys.DELAY;
 
-	private static final String SETTING_KEY_MAIL_FROM = Mailer.SettingKeys.FROM;
+    private static final String SETTING_KEY_MAIL_FROM = Mailer.SettingKeys.FROM;
 
-	@Override
-	protected List<String> neededSettingKeys() {
-		return Arrays.asList(SETTING_KEY_MAIL + "." + SETTING_KEY_MAIL_DELAY,
-				SETTING_KEY_MAIL + "." + SETTING_KEY_MAIL_FROM + "."
-						+ SETTING_KEY_MAIL_FROM_EMAIL);
-	}
-
-	protected Mailer mailer;
-
+    @Override
+    protected List<String> neededSettingKeys() {
+        return Arrays.asList(SETTING_KEY_MAIL + "." + SETTING_KEY_MAIL_DELAY,
+                SETTING_KEY_MAIL + "." + SETTING_KEY_MAIL_FROM + "."
+                        + SETTING_KEY_MAIL_FROM_EMAIL);
+    }
+    
 	public enum Case {
 		SIGNUP, LOGIN
 	}
@@ -70,8 +70,6 @@ public abstract class UsernamePasswordAuthProvider<R, UL extends UsernamePasswor
 	@Override
 	public void onStart() {
 		super.onStart();
-		mailer = Mailer.getCustomMailer(getConfiguration().getConfig(
-				SETTING_KEY_MAIL));
 	}
 
 	@Override
@@ -193,7 +191,7 @@ public abstract class UsernamePasswordAuthProvider<R, UL extends UsernamePasswor
 	}
 
 	protected String getEmailName(final String email, final String name) {
-		return Mailer.getEmailName(email, name);
+		return SendgridEmailClient.getEmailName(email, name);
 	}
 
 	protected abstract R generateVerificationRecord(final US user);
@@ -219,9 +217,14 @@ public abstract class UsernamePasswordAuthProvider<R, UL extends UsernamePasswor
 	 * @return The {@link akka.actor.Cancellable} that can be used to cancel the
 	 *         action.
 	 */
-	protected Cancellable sendMail(final String subject, final Body body,
-			final String recipient) {
-		return sendMail(new Mail(subject, body, recipient));
+	protected Cancellable sendMail(final String subject, final Body body, final String recipient) {
+		//return sendMail(new Mail(subject, body, recipient));
+	    if (body.isHtml() || body.isBoth()) {
+	        SendgridEmailClient.getInstance().sendMail(recipient, subject, body.getHtml());
+	    } else {
+	        SendgridEmailClient.getInstance().sendMail(recipient, subject, body.getText());
+	    }
+	    return null;
 	}
 
 	/**
@@ -233,7 +236,7 @@ public abstract class UsernamePasswordAuthProvider<R, UL extends UsernamePasswor
 	 *         action.
 	 */
 	protected Cancellable sendMail(final Mail mail) {
-		return mailer.sendMail(mail);
+	    return sendMail(mail.getSubject(), mail.getBody(), StringUtil.collectionToString(mail.getTo()));
 	}
 
 	@Override

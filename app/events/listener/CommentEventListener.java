@@ -58,7 +58,7 @@ public class CommentEventListener extends EventListener {
                                         post.id);
                                 
                                 // Sendgrid
-                                SendgridEmailClient.getInstatnce().sendMailOnComment(comment.owner, post.owner, post.title, comment.body);
+                                SendgridEmailClient.getInstance().sendMailOnComment(comment.owner, post.owner, post.title, comment.body);
                             }
                         });
             }

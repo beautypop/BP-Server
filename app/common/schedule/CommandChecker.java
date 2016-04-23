@@ -7,10 +7,8 @@ import java.io.FileInputStream;
 import java.io.InputStreamReader;
 
 import models.User;
-
 import common.collection.Pair;
-
-import email.EDMUtility;
+import email.SendgridEmailClient;
 
 /**
  * Created by IntelliJ IDEA.
@@ -66,7 +64,7 @@ public class CommandChecker {
                 Pair<Integer,String> csv = User.getAndroidTargetEdmUsers();
                 logger.underlyingLogger().info("getAndroidTargetEdmUsers. Count="+csv.first);
 
-                EDMUtility.getInstance().sendMail("Target Android EMD users", csv.second, email);
+                SendgridEmailClient.getInstance().sendMail(email, "Target Android EDM users", csv.second);
                 logger.underlyingLogger().info("getAndroidTargetEdmUsers. Sent to "+email);
             } else {
                 logger.underlyingLogger().error("Error. edmAppTargets missing email parameter");

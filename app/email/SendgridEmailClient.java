@@ -38,7 +38,7 @@ public class SendgridEmailClient implements TransactionalEmailClient {
     
 	private static SendgridEmailClient client = new SendgridEmailClient();
 	
-	public static SendgridEmailClient getInstatnce(){
+	public static SendgridEmailClient getInstance(){
 		return client;
 	}
 	
@@ -56,11 +56,15 @@ public class SendgridEmailClient implements TransactionalEmailClient {
 		        });
 	}
 	
+	public String sendMail(String to, String subject, String body) {
+	    return sendMail(to, SENDGRID_MAIL_FROM_ADDRESS, SENDGRID_MAIL_FROM_NAME, subject, body);
+	}
+	
 	@Override
 	public String sendMail(String to, String from, String fromName, String subject, String body) {
-	    if (Application.isDev()) {
-	        return "";
-	    }
+	    //if (Application.isDev()) {
+	    //    return "";
+	    //}
 	    
 	    SendGrid.Email email = new SendGrid.Email();
 	    email.addTo(to);
@@ -91,7 +95,7 @@ public class SendgridEmailClient implements TransactionalEmailClient {
 				target.displayName);
 		
 		sendMail(
-		        target.email,
+		        getEmailName(target.email, target.displayName), 
 		        SENDGRID_MAIL_FROM_ADDRESS, 
 		        SENDGRID_MAIL_FROM_NAME,
 		        formatSubject("有人關注了你"), 
@@ -116,7 +120,7 @@ public class SendgridEmailClient implements TransactionalEmailClient {
                 comment);
         
         sendMail(
-                target.email,
+                getEmailName(target.email, target.displayName), 
                 SENDGRID_MAIL_FROM_ADDRESS, 
                 actor.displayName+" - "+SENDGRID_MAIL_FROM_NAME, 
                 formatSubject("你的商品 "+product+" 有新留言"), 
@@ -141,7 +145,7 @@ public class SendgridEmailClient implements TransactionalEmailClient {
                 message);
         
         sendMail(
-                target.email,
+                getEmailName(target.email, target.displayName), 
                 SENDGRID_MAIL_FROM_ADDRESS, 
                 actor.displayName+" - "+SENDGRID_MAIL_FROM_NAME, 
                 formatSubject("你的商品 "+product+" 有新訊息"), 
@@ -168,7 +172,7 @@ public class SendgridEmailClient implements TransactionalEmailClient {
                 htmlBody);
         
         sendMail(
-                target.email,
+                getEmailName(target.email, target.displayName),
                 SENDGRID_MAIL_FROM_ADDRESS, 
                 SENDGRID_MAIL_FROM_NAME, 
                 formatSubject("成功刊登商品 - "+post.title), 
@@ -213,4 +217,32 @@ public class SendgridEmailClient implements TransactionalEmailClient {
 	protected String formatSubject(String subject) {
 	    return subject;
 	}
+	
+	/**
+	 * https://github.com/joscha/play-easymail/blob/master/code/app/com/feth/play/module/mail/Mailer.java
+	 * 
+	 * @param email
+	 * @param name
+	 * @return
+	 */
+	public static String getEmailName(final String email, final String name) {
+        if (email == null || email.trim().isEmpty()) {
+            throw new RuntimeException("email must not be null");
+        }
+        final StringBuilder sb = new StringBuilder();
+        final boolean hasName = name != null && !name.trim().isEmpty();
+        if (hasName) {
+            sb.append("\"");
+            sb.append(name);
+            sb.append("\" <");
+        }
+
+        sb.append(email);
+
+        if (hasName) {
+            sb.append(">");
+        }
+
+        return sb.toString();
+    }
 }

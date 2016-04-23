@@ -27,7 +27,7 @@ public class MessageEventListener extends EventListener {
                         public void execute() {
                             if (notify) {
                                 // Sendgrid
-                                SendgridEmailClient.getInstatnce().sendMailOnConversation(
+                                SendgridEmailClient.getInstance().sendMailOnConversation(
                                         sender, recipient, message.conversation.post.title, message.body);
                             }
                             

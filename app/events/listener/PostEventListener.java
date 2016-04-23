@@ -76,7 +76,7 @@ public class PostEventListener extends EventListener {
                             }
                             
                             // Sendgrid
-                            SendgridEmailClient.getInstatnce().sendMailOnPost(post);
+                            SendgridEmailClient.getInstance().sendMailOnPost(post);
                         }
                     });
     	} catch(Exception e) {
