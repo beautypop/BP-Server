@@ -1,6 +1,7 @@
 package viewmodel;
 
 import models.Conversation;
+import models.ConversationOrder;
 import models.Post;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -21,6 +22,7 @@ public class AdminConversationVM {
 	@JsonProperty("lastMessage") public String lastMessage;
 	@JsonProperty("lastMessageHasImage") public boolean lastMessageHasImage;
 	@JsonProperty("lastMessageDate") public Long lastMessageDate;
+	@JsonProperty("order") public ConversationOrderVM order;
 	
 	public AdminConversationVM(Conversation conversation) {
 		Post post = conversation.post;
@@ -37,6 +39,12 @@ public class AdminConversationVM {
 		this.lastMessageHasImage = conversation.lastMessageHasImage;
 		this.lastMessageDate = conversation.lastMessageDate.getTime();
 		
+		// Last active order
+        ConversationOrder order = ConversationOrder.getActiveOrder(conversation);
+        if (order != null) {
+            this.order = new ConversationOrderVM(order, null);         
+        }
+        
 		Long[] images = post.getImages();
         if (images != null && images.length > 0) {
         	this.postImage = images[0];
