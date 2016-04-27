@@ -193,6 +193,7 @@ public class FeedHandler {
             }
             
             SellerVM vm = new SellerVM(user, localUser, posts);
+            vm.offset = calcServer.getScore(calcServer.getKey(feedType, id), user.id).longValue();
             vms.add(vm);
         }
         
