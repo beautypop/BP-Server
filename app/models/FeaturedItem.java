@@ -23,10 +23,8 @@ import play.data.validation.Constraints.Required;
 import play.db.jpa.JPA;
 
 /**
- * INSERT INTO FeaturedItem  
- * (CREATED_DATE,name,description,image,seq,itemType,destinationType,destinationObjId,destinationObjName,deleted)  
- * values 
- * (NOW(),'20160101 Zara Promotion','','http://www.beautypop.hk/image/static/promotion/20160101-zara.jpg',1,'HOME_SLIDER','POST',300,'',false);
+ * INSERT INTO FeaturedItem  (CREATED_DATE,name,description,image,seq,itemType,destinationType,destinationObjId,destinationObjName,deleted) 
+ * values (NOW(),'20160426 5x100 HnM Campaign','','http://www.beautypop.com.hk/image/static/promotion/20160426_hnm-banner.jpg',1,'HOME_SLIDER','POST',791,'',false);
  */
 @Entity
 @EntityListeners(AuditListener.class)

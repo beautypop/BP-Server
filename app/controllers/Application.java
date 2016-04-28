@@ -90,8 +90,11 @@ public class Application extends Controller {
     
     public static final int SIGNUP_DAILY_THRESHOLD = 
             Play.application().configuration().getInt("signup.daily.threshold", 1000);
+    
     public static final int SIGNUP_DAILY_LIMIT = 
             Play.application().configuration().getInt("signup.daily.limit", 1000);
+    
+    public static final String SECRET_KEY_TOKEN = "TheBestSecretkey";
     
     public static final String APP_USER_KEY = "key";
     public static final String SIGNUP_EMAIL = "signup_email";
@@ -252,7 +255,7 @@ public class Application extends Controller {
         // UserInfo
         DynamicForm form = DynamicForm.form().bindFromRequest();
         String parentDisplayName = form.get("parent_displayname").trim();
-        Location parentLocation = Location.getLocationById(Integer.valueOf(form.get("parent_location")));
+        //Location parentLocation = Location.getLocationById(Integer.valueOf(form.get("parent_location")));
 
         if (!ValidationUtil.isValidDisplayName(parentDisplayName)) {
             return handleSaveSignupInfoError("顯示名稱只可輸入 英文字母(a-z) 數字(0-9) 和 符號(_)(.) , 不可以 (.) 結尾, 不可有空格, 不可有2個或以上相連符號(.)", fb);
@@ -260,19 +263,19 @@ public class Application extends Controller {
         if (User.isDisplayNameExists(parentDisplayName)) {
             return handleSaveSignupInfoError("\""+parentDisplayName+"\" 已被選用。請選擇另一個顯示名稱重試", fb);
         }
-        if (parentLocation == null) {
-            return handleSaveSignupInfoError("請填寫您的地區", fb);
-        }
+        //if (parentLocation == null) {
+        //    return handleSaveSignupInfoError("請填寫您的地區", fb);
+        //}
         
         localUser.displayName = parentDisplayName.toLowerCase();
         localUser.name = new String(localUser.firstName+" "+localUser.lastName).trim();
         
         UserInfo userInfo = new UserInfo();
-        userInfo.location = parentLocation;
+        //userInfo.location = parentLocation;
         localUser.userInfo = userInfo;
         localUser.userInfo.save();
         
-        logger.underlyingLogger().info("[u="+localUser.id+"][name="+localUser.displayName+"] doSaveSignupInfo userInfo="+userInfo.toString());
+        logger.underlyingLogger().info("[u="+localUser.id+"][name="+localUser.displayName+"] doSaveSignupInfo");
         return redirect("/home");
     }
     
@@ -347,7 +350,7 @@ public class Application extends Controller {
     }
     
     public static Key generateKey() throws Exception {
-        Key key = new SecretKeySpec("TheBestSecretkey".getBytes(), "AES");
+        Key key = new SecretKeySpec(SECRET_KEY_TOKEN.getBytes(), "AES");
         return key;
     }
     

@@ -313,19 +313,27 @@ public class UserController extends Controller {
         }
         
         // UserInfo
-        Location location = Location.getLocationById(Integer.valueOf(form.get("location")));
-        if (location == null) {
-            logger.underlyingLogger().error(String.format(
-                    "[u=%d][birthYear=%s][location=%s] location missing", localUser.id, location.displayName));
-            return badRequest("請填寫地區");
+        /*
+        try {
+            int locationId = Integer.valueOf(form.get("location"));
+            Location location = Location.getLocationById(locationId);
+            if (location == null) {
+                logger.underlyingLogger().error(String.format(
+                        "[u=%d][locationId=%d] location missing", localUser.id, locationId));
+                return badRequest("請填寫地區");
+            }
+            
+            // set location
+            localUser.userInfo.location = location;
+        } catch (NumberFormatException e) {
+            ;
         }
+        */
         
         localUser.displayName = displayName.toLowerCase();
         localUser.firstName = firstName;
         localUser.lastName = lastName;
         localUser.name = new String(firstName+" "+lastName).trim();
-        
-        localUser.userInfo.location = location;
         localUser.userInfo.aboutMe = aboutMe;
         localUser.userInfo.save();
         localUser.save();

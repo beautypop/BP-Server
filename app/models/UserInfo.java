@@ -45,10 +45,4 @@ public class UserInfo {
 		JPA.em().persist(this);
 		JPA.em().flush();
 	}
-	
-	@Override
-    public String toString() {
-        return "id=" + id + "\n" +
-                "location=" + location.displayName;
-    }
 }

@@ -24,7 +24,9 @@ public class UserVM extends UserVMLite {
     	
         if (user.userInfo != null) {
             this.aboutMe = user.userInfo.aboutMe;
-            this.location = new LocationVM(user.userInfo.location);
+            if (user.userInfo.location != null) {
+                this.location = new LocationVM(user.userInfo.location);
+            }
             if (localUser == null || user.id == localUser.id) {
                 this.settings = new SettingsVM(Settings.findByUserId(user.id));
             }
