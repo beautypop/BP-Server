@@ -1,6 +1,7 @@
 package models;
 
 import java.io.Serializable;
+import java.util.List;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -16,6 +17,7 @@ import controllers.Application.DeviceType;
 import play.data.validation.Constraints.Required;
 import play.db.jpa.JPA;
 import domain.Creatable;
+import domain.DefaultValues;
 import domain.Likeable;
 import domain.SocialObjectType;
 
@@ -60,6 +62,19 @@ public class Comment extends SocialObject implements Comparable<Comment>, Likeab
             Query q = JPA.em().createQuery("SELECT c FROM Comment c where id = ?1 and deleted = false");
             q.setParameter(1, id);
             return (Comment) q.getSingleResult();
+        } catch (NoResultException e) {
+            return null;
+        }
+    }
+    
+    public static List<Comment> getLatestComments(Long offset) {
+        Query q = JPA.em().createQuery(
+                "SELECT c from Comment c, Post p where c.socialObject = p.id and p.deleted = 0 and c.deleted = 0 order by CREATED_DATE desc");
+
+        try {
+            q.setFirstResult((int) (offset * DefaultValues.DEFAULT_INFINITE_SCROLL_COUNT));
+            q.setMaxResults(DefaultValues.DEFAULT_INFINITE_SCROLL_COUNT);
+            return (List<Comment>) q.getResultList();
         } catch (NoResultException e) {
             return null;
         }

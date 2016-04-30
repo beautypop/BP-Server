@@ -37,6 +37,7 @@ import play.mvc.Http;
 import play.mvc.Http.MultipartFormData.FilePart;
 import play.mvc.Result;
 import service.SocialRelationHandler;
+import viewmodel.AdminCommentVM;
 import viewmodel.CommentVM;
 import viewmodel.ConversationVM;
 import viewmodel.PostVM;
@@ -801,7 +802,6 @@ public class ProductController extends Controller{
 		return comments;
 	}
 	
-	
 	@Transactional
 	public static Result getPostComments(Long id, Long offset) {
 		final User localUser = Application.getLocalUser(session());
@@ -817,6 +817,24 @@ public class ProductController extends Controller{
 		
 		return ok(Json.toJson(getComments(localUser, post, offset)));
 	}
+	
+	@Transactional
+    public static Result getLatestComments(Long offset) {
+        final User localUser = Application.getLocalUser(session());
+        if (!localUser.isSuperAdmin()) {
+            logger.underlyingLogger().error(String.format("[u=%d] User is not super admin. Failed to get latest comments !!", localUser.id));
+            return badRequest();
+        }
+        
+        List<Comment> comments = Comment.getLatestComments(offset);
+        List<AdminCommentVM> vms = new ArrayList<>();
+        for (Comment comment : comments) {
+            AdminCommentVM vm = new AdminCommentVM(comment);
+            vms.add(vm);
+        }
+        
+        return ok(Json.toJson(vms));
+    }
 
 	@Transactional
     public Result viewComments(Long postId) {
