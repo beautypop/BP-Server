@@ -78,6 +78,7 @@ public class FeedHandler {
         
         case PRODUCT_SUGGEST:
         	postIds = calcServer.getSuggestedProducts(id);
+        	filterSold = true;
         	break;
         
         default:
