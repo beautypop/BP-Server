@@ -69,7 +69,7 @@ public class Comment extends SocialObject implements Comparable<Comment>, Likeab
     
     public static List<Comment> getLatestComments(Long offset) {
         Query q = JPA.em().createQuery(
-                "SELECT c from Comment c, Post p where c.socialObject = p.id and p.deleted = 0 and c.deleted = 0 order by CREATED_DATE desc");
+                "SELECT c from Comment c where c.deleted = 0 order by CREATED_DATE desc");
 
         try {
             q.setFirstResult((int) (offset * DefaultValues.DEFAULT_INFINITE_SCROLL_COUNT));

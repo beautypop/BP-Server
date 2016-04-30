@@ -829,8 +829,11 @@ public class ProductController extends Controller{
         List<Comment> comments = Comment.getLatestComments(offset);
         List<AdminCommentVM> vms = new ArrayList<>();
         for (Comment comment : comments) {
-            AdminCommentVM vm = new AdminCommentVM(comment);
-            vms.add(vm);
+            Post post = comment.getPost();
+            if (post != null) {
+                AdminCommentVM vm = new AdminCommentVM(comment, post);
+                vms.add(vm);
+            }
         }
         
         return ok(Json.toJson(vms));

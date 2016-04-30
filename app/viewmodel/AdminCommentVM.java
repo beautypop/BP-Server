@@ -20,14 +20,13 @@ public class AdminCommentVM {
 
     @JsonProperty("deviceType") public String deviceType;
     
-    public AdminCommentVM(Comment comment) {
+    public AdminCommentVM(Comment comment, Post post) {
         this.id = comment.id;
         this.ownerId = comment.owner.id;
         this.ownerName = comment.owner.displayName;
         this.createdDate = comment.getCreatedDate().getTime();
         this.body = comment.body;
         
-        Post post = comment.getPost();
         this.postId = post.id;
         this.postTitle = post.title;
         this.postPrice = post.price.longValue();
