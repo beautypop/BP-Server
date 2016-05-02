@@ -4,6 +4,7 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.ArrayList;
@@ -37,6 +38,8 @@ import models.Post.ConditionType;
 import models.TokenAction.Type;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
 
 import play.Play;
 import play.data.format.Formats;
@@ -69,7 +72,9 @@ import domain.Followable;
 import domain.SocialObjectType;
 
 @Entity
-public class User extends SocialObject implements Subject, Followable {
+@Cache(usage=CacheConcurrencyStrategy.TRANSACTIONAL ,region="user")
+public class User extends SocialObject implements Subject, Followable, Serializable {
+	
 	private static final play.api.Logger logger = play.api.Logger.apply(User.class);
 
 	private static final String STORAGE_USER_NOIMAGE = 
@@ -933,6 +938,8 @@ public class User extends SocialObject implements Subject, Followable {
 	public static User findById(Long id) {
 		try { 
 			Query q = JPA.em().createQuery("SELECT u FROM User u where id = ?1 and deleted = false");
+			q.setHint("org.hibernate.cacheable", true);
+			q.setHint("org.hibernate.cacheRegion", "query.user.id");
 			q.setParameter(1, id);
 			return (User) q.getSingleResult();
 		} catch (NoResultException e) {
