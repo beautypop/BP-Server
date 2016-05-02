@@ -8,10 +8,9 @@ scalaVersion := "2.11.6"
 version := "%s-%s".format("git rev-parse --abbrev-ref HEAD".!!.trim, "git rev-parse --short HEAD".!!.trim)
 
 val appDependencies = Seq(
-  cache,
+  //cache,
   javaWs,
   javaJpa exclude("net.sf.ehcache","ehcache-core"),
-  jdbc,
   "org.webjars" % "bootstrap" % "3.2.0",
   "org.easytesting" % "fest-assert" % "1.4" % "test",
   "mysql" % "mysql-connector-java" % "5.1.36",
