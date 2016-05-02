@@ -256,21 +256,22 @@ public class Application extends Controller {
         
         // UserInfo
         DynamicForm form = DynamicForm.form().bindFromRequest();
-        String parentDisplayName = form.get("parent_displayname").trim();
+        String displayName = form.get("parent_displayname").trim();
         //Location parentLocation = Location.getLocationById(Integer.valueOf(form.get("parent_location")));
 
-        if (!ValidationUtil.isValidDisplayName(parentDisplayName)) {
+        if (!ValidationUtil.isValidDisplayName(displayName)) {
             return handleSaveSignupInfoError("顯示名稱只可輸入 英文字母(a-z) 數字(0-9) 和 符號(_)(.) , 不可以 (.) 結尾, 不可有空格, 不可有2個或以上相連符號(.)", fb);
         }
-        if (User.isDisplayNameExists(parentDisplayName)) {
-            return handleSaveSignupInfoError("\""+parentDisplayName+"\" 已被選用。請選擇另一個顯示名稱重試", fb);
+        if (User.isDisplayNameExists(displayName)) {
+            return handleSaveSignupInfoError("\""+displayName+"\" 已被選用。請選擇另一個顯示名稱重試", fb);
         }
         //if (parentLocation == null) {
         //    return handleSaveSignupInfoError("請填寫您的地區", fb);
         //}
         
-        localUser.displayName = parentDisplayName.toLowerCase();
+        localUser.displayName = displayName.toLowerCase();
         localUser.name = new String(localUser.firstName+" "+localUser.lastName).trim();
+        localUser.promoCode = localUser.generatePromoCode();
         
         UserInfo userInfo = new UserInfo();
         //userInfo.location = parentLocation;

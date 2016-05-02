@@ -37,6 +37,7 @@ import models.Post.ConditionType;
 import models.TokenAction.Type;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
@@ -64,6 +65,7 @@ import common.image.FaceFinder;
 import common.utils.DateTimeUtil;
 import common.utils.ImageFileUtil;
 import common.utils.NanoSecondStopWatch;
+import common.utils.ShortCodeGenerator;
 import controllers.Application.DeviceType;
 import domain.DefaultValues;
 import domain.Followable;
@@ -93,8 +95,9 @@ public class User extends SocialObject implements Subject, Followable, Serializa
 	public String displayName;
 	public String email;
 
-	// Targeting info
-
+	@Column(length=100)
+	public String promoCode;
+	
 	@OneToOne
 	public UserInfo userInfo;
 
@@ -209,6 +212,25 @@ public class User extends SocialObject implements Subject, Followable, Serializa
 		this.objectType = SocialObjectType.USER;
 	}
 
+	public String generatePromoCode() {
+        boolean uniquePromoCodeFound = false;
+        String tmpPromoCode = null;
+
+        while (!uniquePromoCodeFound) {
+            tmpPromoCode = ShortCodeGenerator.genPromoCode();
+            try {
+                Query q = JPA.em().createQuery("SELECT u FROM User u where promoCode = ?1");
+                q.setParameter(1, tmpPromoCode);
+                q.getSingleResult();
+            } catch (NoResultException e) {
+                uniquePromoCodeFound = true;
+            }
+        }
+
+        logger.underlyingLogger().info("[u="+id+"][promoCode="+tmpPromoCode+"] generatePromoCode()");
+        return tmpPromoCode;
+    }
+	
 	public void likesOn(SocialObject target)
 			throws SocialObjectNotLikableException {
 		target.onLikedBy(this);
@@ -544,7 +566,6 @@ public class User extends SocialObject implements Subject, Followable, Serializa
 	@Transactional
 	@JsonIgnore
 	private static Query getUsernamePasswordAuthUserFind(final UsernamePasswordAuthUser identity) {
-
 	    Query q = JPA.em().createQuery(
 				"SELECT u FROM User u, IN (u.linkedAccounts) l where active = ?1 and email = ?2 and l.providerKey = ?3 and u.deleted = false");
 	    q.setHint("org.hibernate.cacheable", true);

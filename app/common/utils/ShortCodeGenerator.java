@@ -3,10 +3,9 @@ package common.utils;
 import java.util.Random;
 
 /**
- * Created by IntelliJ IDEA.
- * Date: 16/11/14
- * Time: 12:02 PM
- * To change this template use File | Settings | File Templates.
+ * 
+ * @author keithlei
+ *
  */
 public class ShortCodeGenerator {
 
