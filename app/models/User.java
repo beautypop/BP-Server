@@ -135,6 +135,10 @@ public class User extends SocialObject implements Subject, Followable, Serializa
 	
 	public Long numCollections = 0L;
 
+	public Long numReviews = 0L;
+    
+    public Double totalReviewScore = 0.0;
+
 	// system
 
 	@JsonIgnore
@@ -187,10 +191,6 @@ public class User extends SocialObject implements Subject, Followable, Serializa
 	@JsonIgnore
 	public String lastLoginUserAgent;
 	
-	public Long numReviews;
-	
-	public Double totalReviewScore;
-
 	@Override
 	@JsonIgnore
 	public String getIdentifier() {

@@ -19,6 +19,8 @@ public class UserVMLite {
     @JsonProperty("numConversationsAsSender") public Long numConversationsAsSender = 0L;
     @JsonProperty("numConversationsAsRecipient") public Long numConversationsAsRecipient = 0L;
     @JsonProperty("numCollections") public Long numCollections = 0L;
+    @JsonProperty("numReviews") public Long numReviews;
+    @JsonProperty("averageReviewScore") public Double averageReviewScore;
     @JsonProperty("isFollowing") public boolean isFollowing = false;
 
     // for feed
@@ -62,6 +64,12 @@ public class UserVMLite {
         this.numConversationsAsSender = user.numConversationsAsSender;
         this.numConversationsAsRecipient = user.numConversationsAsRecipient;
         this.numCollections = user.numCollections;
+        this.numReviews = user.numReviews;
+
+        this.averageReviewScore = 0.0;
+        if (user.numReviews != 0) {
+            this.averageReviewScore = user.totalReviewScore / user.numReviews;
+        }
         
         if (localUser != null && !user.equals(localUser)) {
         	this.isFollowing = user.isFollowedBy(localUser);
