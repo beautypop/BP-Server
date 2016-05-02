@@ -30,7 +30,6 @@ import common.social.exception.SocialObjectNotCommentableException;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import common.cache.CalcServer;
-import common.utils.StringUtil;
 import controllers.Application.DeviceType;
 import domain.Commentable;
 import domain.DefaultValues;
@@ -47,7 +46,7 @@ import domain.SocialObjectType;
  * @author keithlei
  */
 @Entity
-@Cache(usage=CacheConcurrencyStrategy.TRANSACTIONAL ,region="post")
+@Cache(usage=CacheConcurrencyStrategy.TRANSACTIONAL,region="post")
 public class Post extends SocialObject implements Likeable, Commentable {
 	private static final play.api.Logger logger = play.api.Logger.apply(Post.class);
 	

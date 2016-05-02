@@ -63,7 +63,7 @@ import domain.Updatable;
  */
 @Entity
 @EntityListeners(AuditListener.class)
-@Cache(usage=CacheConcurrencyStrategy.TRANSACTIONAL)
+@Cache(usage=CacheConcurrencyStrategy.TRANSACTIONAL ,region="conversation")
 public class Conversation extends domain.Entity implements Serializable, Creatable, Updatable {
     private static final play.api.Logger logger = play.api.Logger.apply(Conversation.class);
     
@@ -406,15 +406,15 @@ public class Conversation extends domain.Entity implements Serializable, Creatab
 	}
 
 	public static Conversation findById(Long id) {
-		Query q = JPA.em().createQuery("SELECT c FROM Conversation c where id = ?1 and deleted = 0");
-		q.setHint("org.hibernate.cacheable", true);
+	    Query q = JPA.em().createQuery("SELECT c FROM Conversation c where id = ?1 and deleted = 0");
+	    q.setHint("org.hibernate.cacheable", true);
 		q.setHint("org.hibernate.cacheRegion", "query.conversation.id");
-        q.setParameter(1, id);
-        try {
-            return (Conversation) q.getSingleResult();
-        } catch (NoResultException e) {
-            return null;
-        }
+		q.setParameter(1, id);
+		try {
+		    return (Conversation) q.getSingleResult();
+		} catch (NoResultException e) {
+		    return null;
+		}
 	}
 
 	public boolean isReadBy(User user) {

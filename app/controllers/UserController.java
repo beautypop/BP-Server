@@ -6,8 +6,6 @@ import handler.FeedHandler;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -74,18 +72,6 @@ public class UserController extends Controller {
 
     @Inject
     CalcServer calcServer;
-    
-    public static String getMobileUserKey(final play.mvc.Http.Request r, final Object key) {
-        final String[] m = r.queryString().get(key);
-        if(m != null && m.length > 0) {
-            try {
-                return URLDecoder.decode(m[0], "UTF-8");
-            } catch (UnsupportedEncodingException e) {
-                logger.underlyingLogger().error("Error in getMobileUserKey", e);
-            }
-        }
-        return null;
-    }
     
     @Transactional
     public Result getUserInfo() {
@@ -847,12 +833,12 @@ public class UserController extends Controller {
         response().setHeader("Cache-Control", "max-age=604800");
         final User localUser = Application.getLocalUser(session());
         if (localUser == null) {
-            String userKey = UserController.getMobileUserKey(request(), Application.APP_USER_KEY);
-            logger.underlyingLogger().error(String.format("[key=%s] getOriginalMessageImageById() User is null", userKey));
+            String userKey = Application.getMobileUserKey(request());
+            logger.underlyingLogger().error(String.format("[key=%s] getMessageImageById() User is null", userKey));
             return notFound();
         }
         if (!localUser.isLoggedIn()) {
-            logger.underlyingLogger().error(String.format("[u=%d] getOriginalMessageImageById() User not logged in", localUser.id));
+            logger.underlyingLogger().error(String.format("[u=%d] getMessageImageById() User not logged in", localUser.id));
             return notFound();
         }
         
@@ -871,7 +857,7 @@ public class UserController extends Controller {
         response().setHeader("Cache-Control", "max-age=604800");
         final User localUser = Application.getLocalUser(session());
         if (localUser == null) {
-            String userKey = UserController.getMobileUserKey(request(), Application.APP_USER_KEY);
+            String userKey = Application.getMobileUserKey(request());
             logger.underlyingLogger().error(String.format("[key=%s] getOriginalMessageImageById() User is null", userKey));
             return notFound();
         }
@@ -894,12 +880,12 @@ public class UserController extends Controller {
     public static Result getMiniMessageImageById(Long id) {
         final User localUser = Application.getLocalUser(session());
         if (localUser == null) {
-            String userKey = UserController.getMobileUserKey(request(), Application.APP_USER_KEY);
-            logger.underlyingLogger().error(String.format("[key=%s] getOriginalMessageImageById() User is null", userKey));
+            String userKey = Application.getMobileUserKey(request());
+            logger.underlyingLogger().error(String.format("[key=%s] getMiniMessageImageById() User is null", userKey));
             return notFound();
         }
         if (!localUser.isLoggedIn()) {
-            logger.underlyingLogger().error(String.format("[u=%d] getOriginalMessageImageById() User not logged in", localUser.id));
+            logger.underlyingLogger().error(String.format("[u=%d] getMiniMessageImageById() User not logged in", localUser.id));
             return notFound();
         }
         

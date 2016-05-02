@@ -8,7 +8,6 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
@@ -65,14 +64,13 @@ import common.image.FaceFinder;
 import common.utils.DateTimeUtil;
 import common.utils.ImageFileUtil;
 import common.utils.NanoSecondStopWatch;
-import common.utils.StringUtil;
 import controllers.Application.DeviceType;
 import domain.DefaultValues;
 import domain.Followable;
 import domain.SocialObjectType;
 
 @Entity
-@Cache(usage=CacheConcurrencyStrategy.TRANSACTIONAL ,region="user")
+@Cache(usage=CacheConcurrencyStrategy.TRANSACTIONAL,region="user")
 public class User extends SocialObject implements Subject, Followable, Serializable {
 	
 	private static final play.api.Logger logger = play.api.Logger.apply(User.class);
@@ -534,8 +532,7 @@ public class User extends SocialObject implements Subject, Followable, Serializa
 	public static User findByUsernamePasswordIdentity(
 			final UsernamePasswordAuthUser identity) {
 		try {
-			return (User) getUsernamePasswordAuthUserFind(identity)
-					.getSingleResult();
+			return (User) getUsernamePasswordAuthUserFind(identity).getSingleResult();
 		} catch (NoResultException e) {
 			return null;
 		} catch (Exception e) {
@@ -546,13 +543,14 @@ public class User extends SocialObject implements Subject, Followable, Serializa
 
 	@Transactional
 	@JsonIgnore
-	private static Query getUsernamePasswordAuthUserFind(
-			final UsernamePasswordAuthUser identity) {
+	private static Query getUsernamePasswordAuthUserFind(final UsernamePasswordAuthUser identity) {
 
-		Query q = JPA.em().createQuery(
-				"SELECT u FROM User u, IN (u.linkedAccounts) l where active = ?1 and email = ?2 and  l.providerKey = ?3 and u.deleted = false");
-		q.setParameter(1, true);
-		q.setParameter(2, identity.getEmail());
+	    Query q = JPA.em().createQuery(
+				"SELECT u FROM User u, IN (u.linkedAccounts) l where active = ?1 and email = ?2 and l.providerKey = ?3 and u.deleted = false");
+	    q.setHint("org.hibernate.cacheable", true);
+        q.setHint("org.hibernate.cacheRegion", "query.user.auth");
+        q.setParameter(1, true);
+        q.setParameter(2, identity.getEmail());
 		q.setParameter(3, identity.getProvider());
 		return q;
 	}

@@ -23,6 +23,8 @@ import net.coobird.thumbnailator.name.Rename;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
 
 import com.google.common.base.Objects;
 
@@ -35,7 +37,7 @@ import domain.Updatable;
  * 
  */
 @Entity
-
+@Cache(usage=CacheConcurrencyStrategy.TRANSACTIONAL,region="folder")
 public class Folder extends SocialObject implements Serializable, Creatable, Updatable{
     private static play.api.Logger logger = play.api.Logger.apply(Folder.class);
 
@@ -81,8 +83,7 @@ public class Folder extends SocialObject implements Serializable, Creatable, Upd
         return folder;
     }
 
-    public static Folder createFolder(User owner, String name, String description,
-                                      SocialObjectType type, boolean system) {
+    public static Folder createFolder(User owner, String name, String description, SocialObjectType type, boolean system) {
         Folder folder = new Folder(name);
         folder.owner = owner;
         folder.name = name;

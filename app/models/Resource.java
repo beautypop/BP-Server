@@ -10,6 +10,9 @@ import javax.persistence.ManyToOne;
 import javax.persistence.NoResultException;
 import javax.persistence.Query;
 
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
+
 import common.utils.FileUtil;
 import common.utils.StringUtil;
 
@@ -26,6 +29,7 @@ import domain.SocialObjectType;
  */
 
 @Entity
+@Cache(usage=CacheConcurrencyStrategy.TRANSACTIONAL,region="resource")
 public class Resource extends SocialObject {
 
     public static final String STORAGE_PATH = 
@@ -177,20 +181,28 @@ public class Resource extends SocialObject {
     }
     
     ///////////////////////// SQL Query /////////////////////////
-	public static Resource findById(Long id) {
-	    try {
-    		Query q = JPA.em().createQuery("SELECT r FROM Resource r where id = ?1");
-    		q.setParameter(1, id);
-    		return (Resource) q.getSingleResult();
-	    } catch (NoResultException e) {
+    public static Resource findById(Long id) {
+        try {
+            Query q = JPA.em().createQuery("SELECT r FROM Resource r where id = ?1");
+            q.setHint("org.hibernate.cacheable", true);
+            q.setHint("org.hibernate.cacheRegion", "query.resource.id");
+            q.setParameter(1, id);
+            return (Resource) q.getSingleResult();
+        } catch (NoResultException e) {
             return null;
         }
 	}
 	
 	public static List<Resource> findAllResourceOfFolder(Long id) {
-		Query q = JPA.em().createQuery("SELECT r FROM Resource r where folder.id = ?1");
-		q.setParameter(1, id);
-		return (List<Resource>) q.getResultList();
+	    try {
+    	    Query q = JPA.em().createQuery("SELECT r FROM Resource r where folder.id = ?1");
+    		q.setHint("org.hibernate.cacheable", true);
+            q.setHint("org.hibernate.cacheRegion", "query.resource.folder.id");
+    		q.setParameter(1, id);
+    		return (List<Resource>) q.getResultList();
+	    } catch (NoResultException e) {
+            return null;
+        }
 	}
 
 	public Folder getFolder() {

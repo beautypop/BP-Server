@@ -9,6 +9,7 @@ version := "%s-%s".format("git rev-parse --abbrev-ref HEAD".!!.trim, "git rev-pa
 
 val appDependencies = Seq(
   //cache,
+  //jdbc,
   javaWs,
   javaJpa exclude("net.sf.ehcache","ehcache-core"),
   "org.webjars" % "bootstrap" % "3.2.0",

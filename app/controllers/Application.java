@@ -3,6 +3,8 @@ package controllers;
 import handler.FeedHandler;
 
 import java.io.File;
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 import java.security.Key;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -288,7 +290,7 @@ public class Application extends Controller {
 
     public static User getLocalUser(final Session session) {
         // request from mobile 
-        String userKey = UserController.getMobileUserKey(request(), APP_USER_KEY);
+        String userKey = getMobileUserKey(request());
         if(userKey != null){
             User localUser = null;
             String decryptedValue = null;
@@ -347,6 +349,22 @@ public class Application extends Controller {
             return User.noLoginUser();
         }
         return localUser;
+    }
+    
+    public static String getMobileUserKey(final play.mvc.Http.Request r) {
+        return getMobileUserKey(r, APP_USER_KEY);
+    }
+    
+    public static String getMobileUserKey(final play.mvc.Http.Request r, final Object key) {
+        final String[] m = r.queryString().get(key);
+        if(m != null && m.length > 0) {
+            try {
+                return URLDecoder.decode(m[0], "UTF-8");
+            } catch (UnsupportedEncodingException e) {
+                logger.underlyingLogger().error("Error in getMobileUserKey", e);
+            }
+        }
+        return null;
     }
     
     public static Key generateKey() throws Exception {
