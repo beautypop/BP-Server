@@ -105,9 +105,9 @@ public class ElasticSearchController extends Controller {
                     .prepareAnalyze(searchKey).setTokenizer("smartcn_tokenizer")
                     .execute().get();
             
-            AnalyzeResponse response = IndexClient.client.admin().indices()
-                    .prepareAnalyze(searchKey).setAnalyzer("smartcn")
-                    .execute().get();
+            //AnalyzeResponse response = IndexClient.client.admin().indices()
+            //        .prepareAnalyze(searchKey).setAnalyzer("smartcn")
+            //        .execute().get();
             
             List<AnalyzeToken> tokens = response.getTokens();
             for (AnalyzeToken token : tokens) {
