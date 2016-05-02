@@ -26,6 +26,7 @@ import models.Message;
 import models.NotificationCounter;
 import models.Post;
 import models.Resource;
+import models.Review;
 import models.Settings;
 import models.User;
 import models.Conversation.OrderTransactionState;
@@ -50,6 +51,7 @@ import viewmodel.GameBadgeVM;
 import viewmodel.MessageVM;
 import viewmodel.NotificationCounterVM;
 import viewmodel.PostVMLite;
+import viewmodel.ReviewVM;
 import viewmodel.SellerVM;
 import viewmodel.UserVM;
 import viewmodel.UserVMLite;
@@ -1345,6 +1347,118 @@ public class UserController extends Controller {
     }
     
     @Transactional
+	public static Result addReview() {
+		try {
+			NanoSecondStopWatch sw = new NanoSecondStopWatch();
+			DynamicForm form = form().bindFromRequest();
+			Long conversationOrderId = Long.parseLong(form.get("conversationId"));
+			Boolean forSeller = Boolean.parseBoolean(form.get("forSeller"));
+			Double score = Double.parseDouble(form.get("score"));
+			String reviewBody = form.get("review");
+
+			User localUser = Application.getLocalUser(session());
+			if (!localUser.isLoggedIn()) {
+				logger.underlyingLogger().error(String.format("[u=%d] User not logged in", localUser.id));
+				return notFound();
+			}
+
+			ConversationOrder order = ConversationOrder.findById(conversationOrderId);
+			if (!order.accepted) {
+				return badRequest();
+			}
+			Review review = Review.getByConvesationId(conversationOrderId);
+			User otherUser = order.conversation.otherUser(localUser);
+			if(review == null){
+				review = new Review(ConversationOrder.findById(conversationOrderId));
+			}
+			if(forSeller){
+				if(review.sellerReview.isEmpty())
+					otherUser.numReviews++;
+				addSellersReview(review, score, reviewBody, otherUser);
+			} else {
+				if(review.buyerReview.isEmpty())
+					otherUser.numReviews++;
+				addBuyersReview(review, score, reviewBody, otherUser);
+			}
+			otherUser.totalReviewScore = otherUser.totalReviewScore + score;
+			otherUser.save();
+			
+			sw.stop();
+			if (logger.underlyingLogger().isDebugEnabled()) {
+				logger.underlyingLogger().debug("[u="+localUser.getId()+"][order="+review.conversationOrder.id+"][review="+review.id+"] addReview(). Took "+sw.getElapsedMS()+"ms");
+			}
+			return ok();
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			return badRequest();
+		}
+	}
+	
+	private static Result addBuyersReview(Review review, Double score,
+			String reviewbody, User otherUser) {
+		otherUser.totalReviewScore = otherUser.totalReviewScore - review.buyerScore;
+		review.buyerReview = reviewbody;
+		review.buyerScore = score;
+		review.buyerReviwTime = new Date();
+		review.save();
+		return ok();
+	}
+
+	private static Result addSellersReview(Review review, Double score,
+			String reviewbody, User otherUser) {
+		otherUser.totalReviewScore = otherUser.totalReviewScore - review.sellerScore;
+		review.sellerReview = reviewbody;
+		review.sellerScore = score;
+		review.sellerReviwTime = new Date();
+		review.save();
+		return ok();
+	}
+	
+	@Transactional
+	public static Result getReview(Long conversationId) {
+		try {
+			User localUser = Application.getLocalUser(session());
+			Review review = Review.getByConvesationId(conversationId);
+			ReviewVM reviewVM = new ReviewVM(review, localUser);
+			return ok(Json.toJson(reviewVM));
+		} catch (Exception e) {
+			return badRequest();
+		}
+	}
+	
+	@Transactional
+	public static Result getUsersSoldReview() {
+		try {
+			User localUser = Application.getLocalUser(session());
+			List<Review> reviews = Review.getUserSoldReviews(localUser.id);
+			List<ReviewVM> reviewVMs = new ArrayList<>();
+			for(Review review : reviews){
+				reviewVMs.add(new ReviewVM(review, localUser, false));
+			}
+			return ok(Json.toJson(reviewVMs));
+		} catch (Exception e) {
+			e.printStackTrace();
+			return badRequest();
+		}
+	}
+	
+	@Transactional
+	public static Result getUsersPerchasedReview() {
+		try {
+			User localUser = Application.getLocalUser(session());
+			List<Review> reviews = Review.getUserPurchasedReviews(localUser.id);
+			List<ReviewVM> reviewVMs = new ArrayList<>();
+			for(Review review : reviews){
+				reviewVMs.add(new ReviewVM(review, localUser, true));
+			}
+			return ok(Json.toJson(reviewVMs));
+		} catch (Exception e) {
+			return badRequest();
+		}
+	}
+
+	@Transactional
     public static Result saveApnToken(String token, String appVersion) {
         return savePushNotificationToken(token, appVersion, DeviceType.IOS);
     }

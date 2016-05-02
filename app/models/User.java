@@ -186,6 +186,10 @@ public class User extends SocialObject implements Subject, Followable, Serializa
 
 	@JsonIgnore
 	public String lastLoginUserAgent;
+	
+	public Long numReviews;
+	
+	public Double totalReviewScore;
 
 	@Override
 	@JsonIgnore
@@ -1309,4 +1313,20 @@ public class User extends SocialObject implements Subject, Followable, Serializa
             return null;
         }
     }
+
+	public Long getNumReviews() {
+		return numReviews;
+	}
+
+	public void setNumReviews(Long numReviews) {
+		this.numReviews = numReviews;
+	}
+
+	public Double getTotalReviewScore() {
+		return totalReviewScore;
+	}
+
+	public void setTotalReviewScore(Double totalReviewScore) {
+		this.totalReviewScore = totalReviewScore;
+	}
 }
