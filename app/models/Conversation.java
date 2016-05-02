@@ -24,6 +24,9 @@ import javax.persistence.Query;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
+
 import common.utils.DateTimeUtil;
 import common.utils.StringUtil;
 import play.Play;
@@ -60,6 +63,7 @@ import domain.Updatable;
  */
 @Entity
 @EntityListeners(AuditListener.class)
+@Cache(usage=CacheConcurrencyStrategy.TRANSACTIONAL)
 public class Conversation extends domain.Entity implements Serializable, Creatable, Updatable {
     private static final play.api.Logger logger = play.api.Logger.apply(Conversation.class);
     
@@ -403,6 +407,8 @@ public class Conversation extends domain.Entity implements Serializable, Creatab
 
 	public static Conversation findById(Long id) {
 		Query q = JPA.em().createQuery("SELECT c FROM Conversation c where id = ?1 and deleted = 0");
+		q.setHint("org.hibernate.cacheable", true);
+		q.setHint("org.hibernate.cacheRegion", "query.conversation.id");
         q.setParameter(1, id);
         try {
             return (Conversation) q.getSingleResult();

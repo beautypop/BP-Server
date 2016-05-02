@@ -22,6 +22,12 @@
 		<persistence strategy="localTempSwap" />
 	</cache>
 	
+	
+	<cache name="query.conversation.id" maxEntriesLocalHeap="10000" eternal="false"
+		overflowToDisk="true"
+		timeToIdleSeconds="12000" timeToLiveSeconds="12000">
+		<persistence strategy="localTempSwap" />
+	</cache>
 
 	<defaultCache maxElementsInMemory="50000" eternal="false"
 		timeToIdleSeconds="120" timeToLiveSeconds="120" overflowToDisk="true"
