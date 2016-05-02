@@ -1,7 +1,7 @@
 <div class="shop-part-container" style="margin:7px;">
     <div class="shop-part">
         <div class="top-holder">
-            <a data-ng-href="/seller/{{seller.id}}">
+            <a data-ng-href="/seller/{{seller.id}}" target="_blank">
 				<div class="avatar-box">
 				   <img ng-src="/image/get-mini-profile-image-by-id/{{seller.id}}">
 				</div>
@@ -30,7 +30,7 @@
                 <a class="" data-ng-href="/product/{{product.id}}" target="_blank" ng-if="!((seller.numMoreProducts > 0) && $last)">
                     <img data-ng-src="/image/get-post-image-by-id/{{product.images[0]}}">
                 </a>
-                <a class="" data-ng-href="/seller/{{seller.id}}" ng-if="((seller.numMoreProducts > 0) && $last)">
+                <a class="" data-ng-href="/seller/{{seller.id}}" target="_blank" ng-if="((seller.numMoreProducts > 0) && $last)">
                     <div class="product-gradient">
 	                   <img data-ng-src="/image/get-post-image-by-id/{{product.images[0]}}">
 	                </div>
