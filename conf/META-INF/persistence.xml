@@ -11,7 +11,7 @@
             <property name="hibernate.dialect" value="org.hibernate.dialect.MySQL5Dialect"/>
             <property name="hibernate.hbm2ddl.auto" value="update"/>
             <property name="hibernate.show_sql" value="true"/>
-            <property name="org.hibernate.cache.ehcache.configurationResourceName" value="/myehcache.xml"/>
+            <property name="org.hibernate.cache.ehcache.configurationResourceName" value="/bp-ehcache.xml"/>
         </properties>
     </persistence-unit>
     
