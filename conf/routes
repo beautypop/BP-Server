@@ -226,16 +226,10 @@ POST    /api/collection/new                         controllers.ProductControlle
 POST    /api/collection/add-product                 controllers.ProductController.addToCollection
 
 # Review
-POST     /api/review/add              				controllers.UserController.addReview
-POST     /add-review               					controllers.UserController.addReview
-
-GET      /api/review/:id              				controllers.UserController.getReview(id:Long)
-GET      /get-review/:id                  			controllers.UserController.getReview(id:Long)
-
-GET    	/api/reviews/sold/user						controllers.UserController.getUsersSoldReview
-GET    	/get-user-sold-reviews						controllers.UserController.getUsersSoldReview
-GET    	/api/reviews/purchased/user					controllers.UserController.getUsersPerchasedReview
-GET    	/get-user-purchased-reviews					controllers.UserController.getUsersPerchasedReview
+POST    /api/review/add              				controllers.UserController.addReview
+GET     /api/review/:id              				controllers.UserController.getReview(id:Long)
+GET    	/api/get-reviews/seller						controllers.UserController.getReviewsAsSeller
+GET    	/api/get-reviews/buyer  					controllers.UserController.getReviewsAsBuyer
 
 # Category
 GET     /api/get-categories                         controllers.CategoryController.getCategories()

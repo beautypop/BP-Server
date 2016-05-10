@@ -1347,70 +1347,72 @@ public class UserController extends Controller {
     }
     
     @Transactional
-	public static Result addReview() {
-		try {
-			NanoSecondStopWatch sw = new NanoSecondStopWatch();
-			DynamicForm form = form().bindFromRequest();
-			Long conversationOrderId = Long.parseLong(form.get("conversationId"));
-			Boolean forSeller = Boolean.parseBoolean(form.get("forSeller"));
-			Double score = Double.parseDouble(form.get("score"));
-			String reviewBody = form.get("review");
+    public static Result addReview() {
+        try {
+            NanoSecondStopWatch sw = new NanoSecondStopWatch();
+            DynamicForm form = form().bindFromRequest();
+            Long conversationOrderId = Long.parseLong(form.get("conversationId"));
+            Boolean forSeller = Boolean.parseBoolean(form.get("forSeller"));
+            Double score = Double.parseDouble(form.get("score"));
+            String reviewBody = form.get("review");
+            
+            User localUser = Application.getLocalUser(session());
+            if (!localUser.isLoggedIn()) {
+            	logger.underlyingLogger().error(String.format("[u=%d] User not logged in", localUser.id));
+            	return notFound();
+            }
+            
+            ConversationOrder order = ConversationOrder.findById(conversationOrderId);
+            if (!order.accepted) {
+            	return badRequest();
+            }
+            
+            Review review = Review.getByConvesationId(conversationOrderId);
+            User otherUser = order.conversation.otherUser(localUser);
+            if (review == null) {
+            	review = new Review(ConversationOrder.findById(conversationOrderId));
+            }
+            
+            if (forSeller) {
+            	if (review.sellerReview.isEmpty()) {
+            		otherUser.numReviews++;
+            	}
+            	addReviewForSeller(review, score, reviewBody, otherUser);
+            } else {
+            	if (review.buyerReview.isEmpty()) {
+            		otherUser.numReviews++;
+            	}
+            	addReviewForBuyer(review, score, reviewBody, otherUser);
+            }
+            otherUser.totalReviewScore = otherUser.totalReviewScore + score;
+            otherUser.save();
+            
+            sw.stop();
+            if (logger.underlyingLogger().isDebugEnabled()) {
+            	logger.underlyingLogger().debug("[u="+localUser.getId()+"][order="+review.conversationOrder.id+"][review="+review.id+"] addReview(). Took "+sw.getElapsedMS()+"ms");
+            }
 
-			User localUser = Application.getLocalUser(session());
-			if (!localUser.isLoggedIn()) {
-				logger.underlyingLogger().error(String.format("[u=%d] User not logged in", localUser.id));
-				return notFound();
-			}
-
-			ConversationOrder order = ConversationOrder.findById(conversationOrderId);
-			if (!order.accepted) {
-				return badRequest();
-			}
-			Review review = Review.getByConvesationId(conversationOrderId);
-			User otherUser = order.conversation.otherUser(localUser);
-			if(review == null){
-				review = new Review(ConversationOrder.findById(conversationOrderId));
-			}
-			if(forSeller){
-				if(review.sellerReview.isEmpty())
-					otherUser.numReviews++;
-				addSellersReview(review, score, reviewBody, otherUser);
-			} else {
-				if(review.buyerReview.isEmpty())
-					otherUser.numReviews++;
-				addBuyersReview(review, score, reviewBody, otherUser);
-			}
-			otherUser.totalReviewScore = otherUser.totalReviewScore + score;
-			otherUser.save();
-			
-			sw.stop();
-			if (logger.underlyingLogger().isDebugEnabled()) {
-				logger.underlyingLogger().debug("[u="+localUser.getId()+"][order="+review.conversationOrder.id+"][review="+review.id+"] addReview(). Took "+sw.getElapsedMS()+"ms");
-			}
-			return ok();
-
-		} catch (Exception e) {
-			e.printStackTrace();
-			return badRequest();
-		}
-	}
+            return ok();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return badRequest();
+        }
+    }
 	
-	private static Result addBuyersReview(Review review, Double score,
-			String reviewbody, User otherUser) {
+	private static Result addReviewForBuyer(Review review, Double score, String body, User otherUser) {
 		otherUser.totalReviewScore = otherUser.totalReviewScore - review.buyerScore;
-		review.buyerReview = reviewbody;
+		review.buyerReview = body;
 		review.buyerScore = score;
-		review.buyerReviwTime = new Date();
+		review.buyerReviewDate = new Date();
 		review.save();
 		return ok();
 	}
 
-	private static Result addSellersReview(Review review, Double score,
-			String reviewbody, User otherUser) {
+	private static Result addReviewForSeller(Review review, Double score, String body, User otherUser) {
 		otherUser.totalReviewScore = otherUser.totalReviewScore - review.sellerScore;
-		review.sellerReview = reviewbody;
+		review.sellerReview = body;
 		review.sellerScore = score;
-		review.sellerReviwTime = new Date();
+		review.sellerReviewDate = new Date();
 		review.save();
 		return ok();
 	}
@@ -1428,26 +1430,10 @@ public class UserController extends Controller {
 	}
 	
 	@Transactional
-	public static Result getUsersSoldReview() {
+	public static Result getReviewsAsBuyer() {
 		try {
 			User localUser = Application.getLocalUser(session());
-			List<Review> reviews = Review.getUserSoldReviews(localUser.id);
-			List<ReviewVM> reviewVMs = new ArrayList<>();
-			for(Review review : reviews){
-				reviewVMs.add(new ReviewVM(review, localUser, false));
-			}
-			return ok(Json.toJson(reviewVMs));
-		} catch (Exception e) {
-			e.printStackTrace();
-			return badRequest();
-		}
-	}
-	
-	@Transactional
-	public static Result getUsersPerchasedReview() {
-		try {
-			User localUser = Application.getLocalUser(session());
-			List<Review> reviews = Review.getUserPurchasedReviews(localUser.id);
+			List<Review> reviews = Review.getReviewsAsBuyer(localUser.id);
 			List<ReviewVM> reviewVMs = new ArrayList<>();
 			for(Review review : reviews){
 				reviewVMs.add(new ReviewVM(review, localUser, true));
@@ -1458,6 +1444,22 @@ public class UserController extends Controller {
 		}
 	}
 
+	@Transactional
+    public static Result getReviewsAsSeller() {
+        try {
+            User localUser = Application.getLocalUser(session());
+            List<Review> reviews = Review.getReviewsAsSeller(localUser.id);
+            List<ReviewVM> reviewVMs = new ArrayList<>();
+            for(Review review : reviews){
+                reviewVMs.add(new ReviewVM(review, localUser, false));
+            }
+            return ok(Json.toJson(reviewVMs));
+        } catch (Exception e) {
+            e.printStackTrace();
+            return badRequest();
+        }
+    }
+    
 	@Transactional
     public static Result saveApnToken(String token, String appVersion) {
         return savePushNotificationToken(token, appVersion, DeviceType.IOS);

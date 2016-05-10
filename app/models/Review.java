@@ -12,6 +12,8 @@ import javax.persistence.Id;
 import javax.persistence.NoResultException;
 import javax.persistence.OneToOne;
 import javax.persistence.Query;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 
 import play.data.validation.Constraints.Required;
 import play.db.jpa.JPA;
@@ -29,28 +31,31 @@ public class Review extends domain.Entity implements Serializable, Creatable, Up
 	@OneToOne
 	public ConversationOrder conversationOrder;
 
+	@Temporal(TemporalType.TIMESTAMP)
+	public Date sellerReviewDate;
+
+	public Double sellerScore = 0.0;
+	   
 	@Column(length=2000)
 	public String sellerReview;
+
+	@Temporal(TemporalType.TIMESTAMP)
+	public Date buyerReviewDate;
 	
-	public Double sellerScore = 0.0;
-	
-	public Date sellerReviwTime;
+	public Double buyerScore = 0.0;
 	
 	@Column(length=2000)
 	public String buyerReview;
 	
-	public Double buyerScore = 0.0;
-	
-	public Date buyerReviwTime;
-	
-	public Review() { }
+	public Review() {
+	}
 	
 	public Review(ConversationOrder conversationOrder) {
 		this.conversationOrder = conversationOrder;
 	}
 
 	@SuppressWarnings("unchecked")
-	public static List<Review> getUserPurchasedReviews(Long id) {
+	public static List<Review> getReviewsAsBuyer(Long id) {
 		try {
             Query q = JPA.em().createQuery("SELECT r FROM Review r, ConversationOrder co where co.user1 = ?1 and co.id = r.conversationOrder.id ");
             q.setParameter(1, User.findById(id));
@@ -61,7 +66,7 @@ public class Review extends domain.Entity implements Serializable, Creatable, Up
 	}
 	
 	@SuppressWarnings("unchecked")
-	public static List<Review> getUserSoldReviews(Long id) {
+	public static List<Review> getReviewsAsSeller(Long id) {
 		try {
             Query q = JPA.em().createQuery("SELECT r FROM Review r, ConversationOrder co where co.user2 = ?1 and co.id = r.conversationOrder.id ");
             q.setParameter(1, User.findById(id));
