@@ -71,6 +71,7 @@ import common.cache.LocationCache;
 import common.utils.HtmlUtil;
 import common.utils.UserAgentUtil;
 import common.utils.ValidationUtil;
+import email.SendgridEmailClient;
 
 public class Application extends Controller {
     private static final play.api.Logger logger = play.api.Logger.apply(Application.class);
@@ -537,6 +538,9 @@ public class Application extends Controller {
                 beautypopUser.id,
                 "");
         activity.save();
+        
+        // Sendgrid
+        SendgridEmailClient.getInstance().sendMailOnSignup(localUser);
         
         return ok(Json.toJson(new UserVM(localUser)));
     }

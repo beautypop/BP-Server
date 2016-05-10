@@ -32,6 +32,8 @@ public class SendgridEmailClient implements TransactionalEmailClient {
     public static final String SENDGRID_AUTHEN_PASSWORD = 
             Play.application().configuration().getString("sendgrid.authen.password");
     
+    public static final String WELCOME_IMAGE_URL = Application.APPLICATION_BASE_URL + "/image/static/welcome_1.jpg";
+    
     public static final String POST_IMAGE_BY_ID_URL = Application.APPLICATION_BASE_URL + "/image/get-post-image-by-id/";
     
     private SendGrid sendgrid;
@@ -82,6 +84,29 @@ public class SendgridEmailClient implements TransactionalEmailClient {
 	        return e.getMessage();
 	    }
 	}
+	
+	public void sendMailOnSignup(User target) {
+        if (StringUtils.isEmpty(target.email)) {
+            logger.underlyingLogger().warn("[recipient="+target.displayName+"] sendMailOnSignup recipient email is null");
+            return;
+        }
+        
+        String htmlBody = HtmlUtil.appendImage(WELCOME_IMAGE_URL, 500, 320);
+        
+        String template = getEmailTemplate(
+                "views.html.account.email.sendgrid.welcome_mail",
+                "",
+                target.displayName,
+                "",
+                htmlBody);
+        
+        sendMail(
+                getEmailName(target.email, target.displayName), 
+                SENDGRID_MAIL_FROM_ADDRESS, 
+                SENDGRID_MAIL_FROM_NAME,
+                formatSubject(target.displayName+" 歡迎你加入 BeautyPop! Welcome!!"), 
+                template);
+    }
 	
 	public void sendMailOnFollow(User actor, User target) {
 	    if (StringUtils.isEmpty(target.email)) {
