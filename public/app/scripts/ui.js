@@ -17,10 +17,8 @@ var dismissAppDownloadTips = function() {
 var showAppDownloadTips = function() {
 	// use sessionStorage for current session only
 	//var dismiss = localStorage.getItem('dismissAppDownloadTips');
-	
 	var dismiss = sessionStorage.getItem('dismissAppDownloadTips');
-	//if ((isAndroid() || isIOS()) && dismiss != 'true') {
-	if (isAndroid() && dismiss != 'true') {
+	if ((isAndroid() || isIOS()) && dismiss != 'true') {
 		return true;
 	}
 	return false;
@@ -30,7 +28,7 @@ var getAppDownloadUrl = function() {
 	if (isAndroid()) {
 		return "https://play.google.com/store/apps/details?id=com.beautypop.app";
 	} else if (isIOS()) {
-		return ""
+		return "https://itunes.apple.com/hk/app/beautypop-sell-your-style/id1105390610"
 	}
 	return "";
 }

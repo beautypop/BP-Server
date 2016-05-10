@@ -88,6 +88,12 @@ public class Application extends Controller {
     public static final String APPLICATION_BASE_URL = 
             Play.application().configuration().getString("application.baseUrl");
     
+    public static final String APPLICATION_ANDROID_URL = 
+            Play.application().configuration().getString("application.androidUrl");
+    
+    public static final String APPLICATION_IOS_URL = 
+            Play.application().configuration().getString("application.iosUrl");
+    
     public static final long FACEBOOK_APP_ID = 
             Play.application().configuration().getLong("facebook.app.id", 0L);
     
@@ -650,17 +656,17 @@ public class Application extends Controller {
     @Transactional
     public static Result apps() {
         return ok(views.html.apps.render(
-                "https://itunes.apple.com/app/idxxx",
-                "https://play.google.com/store/apps/details?id=com.beautypop.app",
-                "http://www.beautypop.hk"));
+                APPLICATION_IOS_URL,
+                APPLICATION_ANDROID_URL,
+                APPLICATION_BASE_URL));
     }
     
     @Transactional
     public static Result getStarted() {
         return ok(views.html.getstarted.render(
-                "https://itunes.apple.com/app/idxxx",
-                "https://play.google.com/store/apps/details?id=com.beautypop.app",
-                "http://www.beautypop.hk"));
+                APPLICATION_IOS_URL,
+                APPLICATION_ANDROID_URL,
+                APPLICATION_BASE_URL));
     }
     
     @Transactional
