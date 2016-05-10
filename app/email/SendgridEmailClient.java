@@ -32,7 +32,7 @@ public class SendgridEmailClient implements TransactionalEmailClient {
     public static final String SENDGRID_AUTHEN_PASSWORD = 
             Play.application().configuration().getString("sendgrid.authen.password");
     
-    public static final String WELCOME_IMAGE_URL = Application.APPLICATION_BASE_URL + "/image/static/welcome_1.jpg";
+    public static final String WELCOME_IMAGE_URL = Application.APPLICATION_BASE_URL + "/image/static/welcome.jpg";
     
     public static final String POST_IMAGE_BY_ID_URL = Application.APPLICATION_BASE_URL + "/image/get-post-image-by-id/";
     
