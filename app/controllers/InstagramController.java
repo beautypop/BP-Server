@@ -1,17 +1,20 @@
 package controllers;
 
+import insta.importer.dto.MediaDto;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import models.Category;
+import models.Country.CountryCode;
 import models.InstagramImportedImage;
 import models.Post;
+import models.Post.ConditionType;
 import models.PostToMark;
 import models.User;
-import models.Country.CountryCode;
-import models.Post.ConditionType;
 
 import org.apache.commons.lang.StringUtils;
 import org.jinstagram.Instagram;
@@ -24,12 +27,9 @@ import org.jinstagram.entity.common.Images;
 import org.jinstagram.entity.users.feed.MediaFeed;
 import org.jinstagram.entity.users.feed.MediaFeedData;
 import org.jinstagram.exceptions.InstagramException;
+import org.json.JSONArray;
+import org.json.JSONObject;
 
-import common.utils.ImageFileUtil;
-import common.utils.NanoSecondStopWatch;
-import controllers.Application.DeviceType;
-import domain.SocialObjectType;
-import insta.importer.dto.MediaDto;
 import play.Play;
 import play.data.DynamicForm;
 import play.db.jpa.Transactional;
@@ -38,6 +38,14 @@ import play.mvc.Controller;
 import play.mvc.Result;
 import service.SocialRelationHandler;
 import viewmodel.ResponseStatusVM;
+
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import common.utils.ImageFileUtil;
+import common.utils.NanoSecondStopWatch;
+import controllers.Application.DeviceType;
+import domain.SocialObjectType;
 
 public class InstagramController extends Controller {
     private static final play.api.Logger logger = play.api.Logger.apply(InstagramController.class);
@@ -112,6 +120,20 @@ public class InstagramController extends Controller {
 		}
 		return ok(Json.toJson(mediaList));
 	}
+    
+    
+    @Transactional
+    public static Result getMediaIdsByUser() {
+        final User localUser = Application.getLocalUser(session());
+        if (!localUser.isLoggedIn()) {
+            logger.underlyingLogger().error(String.format("[u=%d] User not logged in", localUser.id));
+            return notFound();
+        }
+        
+		return ok(Json.toJson(InstagramImportedImage.findByUser(localUser)));
+	}
+    
+    
     
     @Transactional
 	public static Result newProductWithForm() {
@@ -207,4 +229,59 @@ public class InstagramController extends Controller {
 		insta.mediaId = mediaId;
 		insta.save();
 	}
+	
+	@Transactional
+	public static Result newProductsWithForm() {
+		JsonNode jsonNode = request().body().asJson();
+		for (final JsonNode objNode : jsonNode) {
+			try {
+				System.out.println(objNode);
+				ObjectMapper mapper = new ObjectMapper();
+				Map<String, Object> result = mapper.convertValue(objNode, Map.class);
+				createNewProduct(result);
+			} catch (Exception e){
+				logger.underlyingLogger().error(String.format("Product not created"));
+				e.printStackTrace();
+			}
+		}
+		
+		return ok();
+	}
+
+	private static Result createNewProduct(Map<String, Object> dynamicForm) {
+		String catId = dynamicForm.get("catId").toString();
+	    String title = dynamicForm.get("title").toString();
+	    String body = dynamicForm.get("body").toString();
+	    String price = dynamicForm.get("price").toString();
+	    String conditionType = dynamicForm.get("conditionType").toString();
+	    String originalPrice = dynamicForm.get("originalPrice").toString();
+	    Boolean freeDelivery = Boolean.valueOf(dynamicForm.get("freeDelivery").toString());
+	    String countryCode = dynamicForm.get("countryCode").toString();
+	    //String hashtags = dynamicForm.get("hashtags").toString();
+	    String deviceType = dynamicForm.get("deviceType").toString();
+	    String images = dynamicForm.get("image").toString();
+	    String mediaId = dynamicForm.get("mediaId").toString();
+	    
+	    if (StringUtils.isEmpty(originalPrice)) {
+	        originalPrice = "-1";
+        }
+	    
+	    if (StringUtils.isEmpty(countryCode)) {
+            countryCode = CountryCode.NA.name();
+        }
+	    
+	    if (StringUtils.isEmpty(deviceType)) {
+	        deviceType = DeviceType.WEB.name();
+        }
+	    
+	    try {
+	        return newProduct(
+	                title, body, Long.parseLong(catId), Double.parseDouble(price), Post.parseConditionType(conditionType), images, 
+	                Double.parseDouble(originalPrice), freeDelivery, Post.parseCountryCode(countryCode), null, Application.parseDeviceType(deviceType), mediaId);    
+	    } catch (Exception e) {
+	        return badRequest();
+	    }
+	}
+	
+	
 }

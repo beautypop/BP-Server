@@ -48,6 +48,8 @@ GET     /loginInstagram                             controllers.InstagramControl
 GET     /connect/:code                              controllers.InstagramController.generateAccessToken(code:String)
 GET     /import                                     controllers.InstagramController.getMedia
 POST    /instagram/product/new                      controllers.InstagramController.newProductWithForm()
+POST    /api/instagram/products/new                 controllers.InstagramController.newProductsWithForm()
+GET		/api/instagram/images						controllers.InstagramController.getMediaIdsByUser
 
 # Elastic
 GET     /search-posts/:searchKey/:catId/:offset     @controllers.ElasticSearchController.searchPosts(searchKey: String, catId: Long, offset: Integer)

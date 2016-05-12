@@ -65,4 +65,14 @@ public class InstagramImportedImage extends domain.Entity {
             return false;
         }
     }
+	
+	public static List<String> findByUser(User user) {
+        Query q = JPA.em().createQuery("SELECT i.mediaId FROM InstagramImportedImage i where user = ?1 and deleted = false");
+        q.setParameter(1, user);
+        try {
+            return q.getResultList();
+        } catch (NoResultException nre) {
+            return null;
+        }
+    }
 }
