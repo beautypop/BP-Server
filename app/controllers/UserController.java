@@ -1351,7 +1351,7 @@ public class UserController extends Controller {
         try {
             NanoSecondStopWatch sw = new NanoSecondStopWatch();
             DynamicForm form = form().bindFromRequest();
-            Long conversationOrderId = Long.parseLong(form.get("conversationId"));
+            Long conversationOrderId = Long.parseLong(form.get("conversationOrderId"));
             Boolean forSeller = Boolean.parseBoolean(form.get("forSeller"));
             Double score = Double.parseDouble(form.get("score"));
             String reviewBody = form.get("review");
@@ -1374,12 +1374,12 @@ public class UserController extends Controller {
             }
             
             if (forSeller) {
-            	if (review.sellerReview.isEmpty()) {
+            	if (StringUtils.isEmpty(review.sellerReview)) {
             		otherUser.numReviews++;
             	}
             	addReviewForSeller(review, score, reviewBody, otherUser);
             } else {
-            	if (review.buyerReview.isEmpty()) {
+            	if (StringUtils.isEmpty(review.buyerReview)) {
             		otherUser.numReviews++;
             	}
             	addReviewForBuyer(review, score, reviewBody, otherUser);
@@ -1430,10 +1430,10 @@ public class UserController extends Controller {
 	}
 	
 	@Transactional
-	public static Result getReviewsAsBuyer(Long userId) {
+	public static Result getBuyerReviewsFor(Long userId) {
 		try {
 			User localUser = Application.getLocalUser(session());
-			List<Review> reviews = Review.getReviewsAsBuyer(userId);
+			List<Review> reviews = Review.getBuyerReviewsFor(userId);
 			List<ReviewVM> reviewVMs = new ArrayList<>();
 			for(Review review : reviews){
 				reviewVMs.add(new ReviewVM(review, localUser, true));
@@ -1445,10 +1445,10 @@ public class UserController extends Controller {
 	}
 
 	@Transactional
-    public static Result getReviewsAsSeller(Long userId) {
+    public static Result getSellerReviewsFor(Long userId) {
         try {
             User localUser = Application.getLocalUser(session());
-            List<Review> reviews = Review.getReviewsAsSeller(userId);
+            List<Review> reviews = Review.getSellerReviewsFor(userId);
             List<ReviewVM> reviewVMs = new ArrayList<>();
             for(Review review : reviews){
                 reviewVMs.add(new ReviewVM(review, localUser, false));

@@ -14,22 +14,22 @@ public class ReviewVM {
 	@JsonProperty("review") private String review;
 	@JsonProperty("score") private Double score;
 
-	public ReviewVM(Review review, User localUser, boolean buyer) {
+	public ReviewVM(Review review, User localUser, boolean isBuyer) {
 		User otherUser = review.conversationOrder.conversation.otherUser(localUser);
 		this.id = review.id;
 		this.userId = otherUser.id;
 		this.userName = otherUser.displayName;
 		this.postId = review.conversationOrder.conversation.post.id;
 		
-		if (buyer) {
+		if (isBuyer) {
 		    this.reviewDate = review.buyerReviewDate.getTime();
             this.review = review.buyerReview;
             this.score = review.buyerScore;
-		} else {
-		    this.reviewDate = review.sellerReviewDate.getTime();
-            this.review = review.sellerReview;
+        } else {
+            this.reviewDate = review.sellerReviewDate.getTime();
             this.score = review.sellerScore;
-		}
+            this.review = review.sellerReview;
+        }
 	}
 
 	public ReviewVM(Review review, User localUser) {
@@ -38,14 +38,14 @@ public class ReviewVM {
 		this.userName = localUser.displayName;
 		this.postId = review.conversationOrder.conversation.post.id;
 		
-		if (localUser.getId() == review.conversationOrder.user1.getId()) {
+		if (localUser.getId() == review.buyer.getId()) {
 		    this.reviewDate = review.buyerReviewDate.getTime();
-			this.review = review.buyerReview;
-			this.score = review.buyerScore;
+            this.review = review.buyerReview;
+            this.score = review.buyerScore;
 		} else {
 		    this.reviewDate = review.sellerReviewDate.getTime();
-			this.score = review.sellerScore;
-			this.review = review.sellerReview;
+            this.score = review.sellerScore;
+            this.review = review.sellerReview;
 		}
 	}
 }

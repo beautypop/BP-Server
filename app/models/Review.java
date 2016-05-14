@@ -9,6 +9,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.ManyToOne;
 import javax.persistence.NoResultException;
 import javax.persistence.OneToOne;
 import javax.persistence.Query;
@@ -31,34 +32,44 @@ public class Review extends domain.Entity implements Serializable, Creatable, Up
 	@OneToOne
 	public ConversationOrder conversationOrder;
 
-	@Temporal(TemporalType.TIMESTAMP)
-	public Date sellerReviewDate;
-
+	@Required
+    @ManyToOne
+    public User seller;
+	
 	public Double sellerScore = 0.0;
 	   
 	@Column(length=2000)
 	public String sellerReview;
 
 	@Temporal(TemporalType.TIMESTAMP)
-	public Date buyerReviewDate;
+    public Date sellerReviewDate;
+
+	@Required
+	@ManyToOne
+    public User buyer;
 	
 	public Double buyerScore = 0.0;
 	
 	@Column(length=2000)
 	public String buyerReview;
 	
+	@Temporal(TemporalType.TIMESTAMP)
+    public Date buyerReviewDate;
+    
 	public Review() {
 	}
 	
 	public Review(ConversationOrder conversationOrder) {
 		this.conversationOrder = conversationOrder;
+		this.buyer = conversationOrder.user1;
+		this.seller = conversationOrder.user2;
 	}
 
 	@SuppressWarnings("unchecked")
-	public static List<Review> getReviewsAsBuyer(Long userId) {
+	public static List<Review> getBuyerReviewsFor(Long userId) {
 		try {
-            Query q = JPA.em().createQuery("SELECT r FROM Review r, ConversationOrder co where co.user1 = ?1 and co.id = r.conversationOrder.id ");
-            q.setParameter(1, User.findById(userId));
+            Query q = JPA.em().createQuery("SELECT r FROM Review r where seller.id = ?1 and buyerReviewDate is not null");
+            q.setParameter(1, userId);
             return q.getResultList();
         } catch (NoResultException nre) {
             return null;
@@ -66,10 +77,10 @@ public class Review extends domain.Entity implements Serializable, Creatable, Up
 	}
 	
 	@SuppressWarnings("unchecked")
-	public static List<Review> getReviewsAsSeller(Long userId) {
+	public static List<Review> getSellerReviewsFor(Long userId) {
 		try {
-            Query q = JPA.em().createQuery("SELECT r FROM Review r, ConversationOrder co where co.user2 = ?1 and co.id = r.conversationOrder.id ");
-            q.setParameter(1, User.findById(userId));
+            Query q = JPA.em().createQuery("SELECT r FROM Review r where buyer.id = ?1 and sellerReviewDate is not null");
+            q.setParameter(1, userId);
             return q.getResultList();
         } catch (NoResultException nre) {
             return null;

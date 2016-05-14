@@ -228,8 +228,8 @@ POST    /api/collection/add-product                 controllers.ProductControlle
 # Review
 POST    /api/review/add              				controllers.UserController.addReview
 GET     /api/review/:conversationOrderId           	controllers.UserController.getReview(conversationOrderId:Long)
-GET    	/api/get-reviews/seller/:userId				controllers.UserController.getReviewsAsSeller(userId:Long)
-GET    	/api/get-reviews/buyer/:userId  			controllers.UserController.getReviewsAsBuyer(userId:Long)
+GET    	/api/get-buyer-reviews-for/:userId		    controllers.UserController.getBuyerReviewsFor(userId:Long)
+GET    	/api/get-seller-reviews-for/:userId  		controllers.UserController.getSellerReviewsFor(userId:Long)
 
 # Category
 GET     /api/get-categories                         controllers.CategoryController.getCategories()
