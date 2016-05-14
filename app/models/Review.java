@@ -55,10 +55,10 @@ public class Review extends domain.Entity implements Serializable, Creatable, Up
 	}
 
 	@SuppressWarnings("unchecked")
-	public static List<Review> getReviewsAsBuyer(Long id) {
+	public static List<Review> getReviewsAsBuyer(Long userId) {
 		try {
             Query q = JPA.em().createQuery("SELECT r FROM Review r, ConversationOrder co where co.user1 = ?1 and co.id = r.conversationOrder.id ");
-            q.setParameter(1, User.findById(id));
+            q.setParameter(1, User.findById(userId));
             return q.getResultList();
         } catch (NoResultException nre) {
             return null;
@@ -66,10 +66,10 @@ public class Review extends domain.Entity implements Serializable, Creatable, Up
 	}
 	
 	@SuppressWarnings("unchecked")
-	public static List<Review> getReviewsAsSeller(Long id) {
+	public static List<Review> getReviewsAsSeller(Long userId) {
 		try {
             Query q = JPA.em().createQuery("SELECT r FROM Review r, ConversationOrder co where co.user2 = ?1 and co.id = r.conversationOrder.id ");
-            q.setParameter(1, User.findById(id));
+            q.setParameter(1, User.findById(userId));
             return q.getResultList();
         } catch (NoResultException nre) {
             return null;
@@ -86,7 +86,7 @@ public class Review extends domain.Entity implements Serializable, Creatable, Up
         }
     }
 
-	public static Review getByConvesationId(Long conversationOrderId) {
+	public static Review getByConversationOrderId(Long conversationOrderId) {
 		try { 
             Query q = JPA.em().createQuery("SELECT r FROM Review r where conversationOrder.id = ?1");
             q.setParameter(1, conversationOrderId);
@@ -95,5 +95,4 @@ public class Review extends domain.Entity implements Serializable, Creatable, Up
         	return null;
         }
 	}
-
 }

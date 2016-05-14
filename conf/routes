@@ -227,9 +227,9 @@ POST    /api/collection/add-product                 controllers.ProductControlle
 
 # Review
 POST    /api/review/add              				controllers.UserController.addReview
-GET     /api/review/:id              				controllers.UserController.getReview(id:Long)
-GET    	/api/get-reviews/seller						controllers.UserController.getReviewsAsSeller
-GET    	/api/get-reviews/buyer  					controllers.UserController.getReviewsAsBuyer
+GET     /api/review/:conversationOrderId           	controllers.UserController.getReview(conversationOrderId:Long)
+GET    	/api/get-reviews/seller/:userId				controllers.UserController.getReviewsAsSeller(userId:Long)
+GET    	/api/get-reviews/buyer/:userId  			controllers.UserController.getReviewsAsBuyer(userId:Long)
 
 # Category
 GET     /api/get-categories                         controllers.CategoryController.getCategories()

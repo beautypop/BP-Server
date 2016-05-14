@@ -1367,7 +1367,7 @@ public class UserController extends Controller {
             	return badRequest();
             }
             
-            Review review = Review.getByConvesationId(conversationOrderId);
+            Review review = Review.getByConversationOrderId(conversationOrderId);
             User otherUser = order.conversation.otherUser(localUser);
             if (review == null) {
             	review = new Review(ConversationOrder.findById(conversationOrderId));
@@ -1418,10 +1418,10 @@ public class UserController extends Controller {
 	}
 	
 	@Transactional
-	public static Result getReview(Long conversationId) {
+	public static Result getReview(Long conversationOrderId) {
 		try {
 			User localUser = Application.getLocalUser(session());
-			Review review = Review.getByConvesationId(conversationId);
+			Review review = Review.getByConversationOrderId(conversationOrderId);
 			ReviewVM reviewVM = new ReviewVM(review, localUser);
 			return ok(Json.toJson(reviewVM));
 		} catch (Exception e) {
@@ -1430,10 +1430,10 @@ public class UserController extends Controller {
 	}
 	
 	@Transactional
-	public static Result getReviewsAsBuyer() {
+	public static Result getReviewsAsBuyer(Long userId) {
 		try {
 			User localUser = Application.getLocalUser(session());
-			List<Review> reviews = Review.getReviewsAsBuyer(localUser.id);
+			List<Review> reviews = Review.getReviewsAsBuyer(userId);
 			List<ReviewVM> reviewVMs = new ArrayList<>();
 			for(Review review : reviews){
 				reviewVMs.add(new ReviewVM(review, localUser, true));
@@ -1445,10 +1445,10 @@ public class UserController extends Controller {
 	}
 
 	@Transactional
-    public static Result getReviewsAsSeller() {
+    public static Result getReviewsAsSeller(Long userId) {
         try {
             User localUser = Application.getLocalUser(session());
-            List<Review> reviews = Review.getReviewsAsSeller(localUser.id);
+            List<Review> reviews = Review.getReviewsAsSeller(userId);
             List<ReviewVM> reviewVMs = new ArrayList<>();
             for(Review review : reviews){
                 reviewVMs.add(new ReviewVM(review, localUser, false));

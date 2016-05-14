@@ -38,8 +38,8 @@ import domain.Updatable;
  * 
  * [If offer by Buyer]
  * 4. Seller accepted offer:
- *      Buyer action:   Offer Again (Message: Seller accepted your offer)       TODO: Leave feedback
- *      Seller action:  NA (Message: You accepted offer from buyer)             TODO: Leave feedback
+ *      Buyer action:   Offer Again (Message: Seller accepted your offer)       TODO: Leave review
+ *      Seller action:  NA (Message: You accepted offer from buyer)             TODO: Leave review
  *      
  * [If offer by Buyer]
  * 5. Seller declined offer:
