@@ -307,6 +307,9 @@ beautypop.controller('ProductPageController',
 	$scope.userInfo = userInfo;
 	$scope.suggestedPost = suggestedPost;
 
+	$scope.iosAppDownloadUrl = getIOSAppDownloadUrl();
+	$scope.androidAppDownloadUrl = getAndroidAppDownloadUrl();
+	
 	$scope.like_Unlike = function(id) {
 		if ($scope.userInfo.isLoggedIn) {
 			if ($scope.userInfo.newUser) {

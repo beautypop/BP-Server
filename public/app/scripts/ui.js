@@ -24,11 +24,19 @@ var showAppDownloadTips = function() {
 	return false;
 }
 
+var getAndroidAppDownloadUrl = function() {
+	return "https://play.google.com/store/apps/details?id=com.beautypop.app";
+}
+
+var getIOSAppDownloadUrl = function() {
+	return "https://itunes.apple.com/hk/app/beautypop-sell-your-style/id1105390610"
+}
+
 var getAppDownloadUrl = function() {
 	if (isAndroid()) {
-		return "https://play.google.com/store/apps/details?id=com.beautypop.app";
+		return getAndroidAppDownloadUrl();
 	} else if (isIOS()) {
-		return "https://itunes.apple.com/hk/app/beautypop-sell-your-style/id1105390610"
+		return getIOSAppDownloadUrl();
 	}
 	return "";
 }

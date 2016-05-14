@@ -198,13 +198,14 @@
                 <a id="get_app_link" target="_blank" href="" data-i18n="label_get" class="btn">{{'APP_DOWNLOAD_NOW'|translate}}</a>
             </div>
             <div class="half">
-                <a id="get_ios_app_link" target="_blank" href="" onclick="document.getElementById('iphone_coming_soon_text').style.display=''" class="btn">
+                <!--a id="get_ios_app_link" target="_blank" href="" onclick="document.getElementById('iphone_coming_soon_text').style.display=''" class="btn"-->
+                <a id="get_ios_app_link" target="_blank" ng-href="{{iosAppDownloadUrl}}" class="btn">
                     <div class="ic_IPhone icon"></div>
                     <div data-i18n="label_iphone">iPhone</div>
                 </a>
             </div>
             <div class="half">
-                <a id="get_android_app_link" target="_blank" href="https://play.google.com/store/apps/details?id=com.beautypop.app" class="btn">
+                <a id="get_android_app_link" target="_blank" ng-href="{{androidAppDownloadUrl}}" class="btn">
                     <div class="ic_Android icon"></div>
                     <div data-i18n="label_android">Android</div>
                 </a>
