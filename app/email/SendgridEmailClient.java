@@ -64,7 +64,8 @@ public class SendgridEmailClient implements TransactionalEmailClient {
 	
 	@Override
 	public String sendMail(String to, String from, String fromName, String subject, String body) {
-	    if (Application.isDev()) {
+	    if (!Application.isProd()) {
+	        logger.underlyingLogger().info("[email="+to+"][isProd=false] sendMail skipped... body="+body);
 	        return "";
 	    }
 	    

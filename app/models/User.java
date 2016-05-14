@@ -536,9 +536,9 @@ public class User extends SocialObject implements Subject, Followable, Serializa
 		}
 
 		if (identity instanceof UsernamePasswordAuthUser) {
-			// Bypass login
-			if (controllers.Application.isDev() && 
-					controllers.Application.LOGIN_BYPASS_ALL == true) {
+			// Bypass login for non-prod debugging...
+			if (controllers.Application.LOGIN_BYPASS_ALL && 
+			        !controllers.Application.isProd()) {
 				return User.findByEmail(identity.getId());
 			}
 			return findByUsernamePasswordIdentity((UsernamePasswordAuthUser) identity);

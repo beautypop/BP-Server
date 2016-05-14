@@ -83,7 +83,8 @@ public class PushNotificationSender {
     }
     
     private static void sendNotification(Long userId,  Map<String, String> map) {
-        if (Application.isDev()) {
+        if (!Application.isProd()) {
+            logger.underlyingLogger().info("[u="+userId+"][isProd=false] sendNotification skipped...");
             return;
         }
         

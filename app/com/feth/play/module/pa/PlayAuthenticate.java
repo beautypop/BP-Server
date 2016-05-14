@@ -563,9 +563,9 @@ public abstract class PlayAuthenticate {
 					}
 				}
 
-				// Bypass login
-				if (controllers.Application.isDev() && 
-						controllers.Application.LOGIN_BYPASS_ALL == true && 
+				// Bypass login for non-prod debugging...
+				if (controllers.Application.LOGIN_BYPASS_ALL && 
+				        !controllers.Application.isProd() && 
 						!isLoggedIn) {
 					return loginAndRedirect(context, newUser);
 				}

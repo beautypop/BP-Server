@@ -201,9 +201,9 @@ UsernamePasswordAuthProvider<String, MyLoginUsernamePasswordAuthUser, MyUsername
 	protected com.feth.play.module.pa.providers.password.UsernamePasswordAuthProvider.LoginResult loginUser(
 			final MyLoginUsernamePasswordAuthUser authUser) {
 
-		// Bypass login
-		if (controllers.Application.isDev() && 
-				controllers.Application.LOGIN_BYPASS_ALL == true) {
+		// Bypass login for non-prod debugging...
+		if (controllers.Application.LOGIN_BYPASS_ALL && 
+		        !controllers.Application.isProd()) {
 			final User user = User.findByEmail(authUser.getEmail());
 			if (user != null) {
 				return LoginResult.USER_LOGGED_IN;
