@@ -96,6 +96,7 @@ public class ElasticSearchController extends Controller {
     }
 	
     private List<String> tokenizeSearchKey(String searchKey) {
+        searchKey = searchKey.trim();
         return Arrays.asList(searchKey.split(" "));
         
         /*
@@ -147,7 +148,7 @@ public class ElasticSearchController extends Controller {
             BoolQueryBuilder booleanQueryBuilder = QueryBuilders.boolQuery();
             List<String> searches = tokenizeSearchKey(searchKey);
             for (String searchWord : searches) {
-            	QueryStringQueryBuilder queryBuilder = QueryBuilders.queryStringQuery(searchWord);
+            	QueryStringQueryBuilder queryBuilder = QueryBuilders.queryStringQuery(searchWord.trim());
             	booleanQueryBuilder.must(queryBuilder);
             }
             
@@ -166,7 +167,7 @@ public class ElasticSearchController extends Controller {
             BoolQueryBuilder booleanQueryBuilder = QueryBuilders.boolQuery();
             List<String> searches = tokenizeSearchKey(searchKey);
             for (String searchWord : searches) {
-            	QueryStringQueryBuilder queryBuilder = QueryBuilders.queryStringQuery(searchWord);
+            	QueryStringQueryBuilder queryBuilder = QueryBuilders.queryStringQuery(searchWord.trim());
             	booleanQueryBuilder.must(queryBuilder);
             }
             indexQuery.setBuilder(booleanQueryBuilder).from(fromCount).size(DefaultValues.FEED_INFINITE_SCROLL_COUNT);

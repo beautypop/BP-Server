@@ -7,8 +7,10 @@ import models.Activity.ActivityType;
 import events.map.SoldEvent;
 
 import com.google.common.eventbus.Subscribe;
+
 import common.thread.TransactionalRunnableTask;
 import common.utils.StringUtil;
+import controllers.ElasticSearchController;
 
 public class SoldEventListener extends EventListener {
     private static final play.api.Logger logger = play.api.Logger.apply(SoldEventListener.class);
@@ -22,6 +24,9 @@ public class SoldEventListener extends EventListener {
     		if (post.onSold(user)) {
     		    // NOTE: sold posts purged by daily scheduler at 5am HKT !!
                 //CalcServer.instance().removeFromCategoryQueues(post);
+                
+    		    // ES
+                ElasticSearchController.removePostElasticSearch(post);
                 
     		    /*
     		    final Long postImageId = post.getImage();

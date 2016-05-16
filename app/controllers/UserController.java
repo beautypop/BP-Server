@@ -1517,12 +1517,15 @@ public class UserController extends Controller {
         User user = User.findById(id);
         if (user != null) {
             user.deleted = true;
-            user.save();    
+            user.save();
+            
+            // ES
+            ElasticSearchController.removeUserElasticSearch(user);
         }
         
         sw.stop();
         if (logger.underlyingLogger().isDebugEnabled()) {
-            logger.underlyingLogger().debug("[u="+localUser.getId()+"] deleteAccount(). Took "+sw.getElapsedMS()+"ms");
+            logger.underlyingLogger().debug("[u="+user.getId()+"] deleteAccount(). Took "+sw.getElapsedMS()+"ms");
         }
         return ok();
     }
