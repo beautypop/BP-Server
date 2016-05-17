@@ -15,19 +15,20 @@ public class ReviewVM {
 	@JsonProperty("review") private String review;
 	@JsonProperty("score") private Double score;
 
-	public ReviewVM(Review review, User localUser, boolean isBuyer) {
-		User otherUser = review.conversationOrder.conversation.otherUser(localUser);
+	public ReviewVM(Review review, boolean isBuyer) {
 		this.id = review.id;
-		this.userId = otherUser.id;
-		this.userName = otherUser.displayName;
 		this.postId = review.conversationOrder.conversation.post.id;
 		this.postImageId = review.conversationOrder.conversation.post.getImage();
 		
 		if (isBuyer) {
+		    this.userId = review.buyer.id;
+	        this.userName = review.buyer.displayName;
 		    this.reviewDate = review.buyerReviewDate.getTime();
             this.review = review.buyerReview;
             this.score = review.buyerScore;
         } else {
+            this.userId = review.seller.id;
+            this.userName = review.seller.displayName;
             this.reviewDate = review.sellerReviewDate.getTime();
             this.score = review.sellerScore;
             this.review = review.sellerReview;
