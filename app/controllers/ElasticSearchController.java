@@ -80,8 +80,10 @@ public class ElasticSearchController extends Controller {
 		booleanQueryBuilder.must(queryBuilder);
 		indexQuery.setBuilder(booleanQueryBuilder);
 		IndexResults<PostIndex> results = PostIndex.find.search(indexQuery);
-		delete(results.results.get(0).getIndexPath(),results.results.get(0).searchHit.id());
-		refresh();
+		if (results != null && results.results != null && results.results.size() > 0) {
+		    delete(results.results.get(0).getIndexPath(),results.results.get(0).searchHit.id());
+		    refresh();
+		}
     }
     
     public static void removeUserElasticSearch(User user){
@@ -91,8 +93,10 @@ public class ElasticSearchController extends Controller {
 		booleanQueryBuilder.must(queryBuilder);
 		indexQuery.setBuilder(booleanQueryBuilder);
 		IndexResults<UserIndex> results = UserIndex.find.search(indexQuery);
-		delete(results.results.get(0).getIndexPath(),results.results.get(0).searchHit.id());
-		refresh();
+		if (results != null && results.results != null && results.results.size() > 0) {
+		    delete(results.results.get(0).getIndexPath(),results.results.get(0).searchHit.id());
+		    refresh();
+		}
     }
 	
     private List<String> tokenizeSearchKey(String searchKey) {
