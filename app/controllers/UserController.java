@@ -1352,7 +1352,7 @@ public class UserController extends Controller {
             NanoSecondStopWatch sw = new NanoSecondStopWatch();
             DynamicForm form = form().bindFromRequest();
             Long conversationOrderId = Long.parseLong(form.get("conversationOrderId"));
-            Boolean forSeller = Boolean.parseBoolean(form.get("forSeller"));
+            Boolean isBuyer = Boolean.parseBoolean(form.get("isBuyer"));
             Double score = Double.parseDouble(form.get("score"));
             String reviewBody = form.get("review");
             
@@ -1373,16 +1373,16 @@ public class UserController extends Controller {
             	review = new Review(ConversationOrder.findById(conversationOrderId));
             }
             
-            if (forSeller) {
-            	if (StringUtils.isEmpty(review.sellerReview)) {
-            		otherUser.numReviews++;
-            	}
-            	addReviewForSeller(review, score, reviewBody, otherUser);
+            if (isBuyer) {
+                if (review.buyerReviewDate == null) {
+                    otherUser.numReviews++;
+                }
+                addBuyerReview(review, score, reviewBody, otherUser);
             } else {
-            	if (StringUtils.isEmpty(review.buyerReview)) {
-            		otherUser.numReviews++;
-            	}
-            	addReviewForBuyer(review, score, reviewBody, otherUser);
+                if (review.sellerReviewDate == null) {
+                    otherUser.numReviews++;
+                }
+                addSellerReview(review, score, reviewBody, otherUser);            	
             }
             otherUser.totalReviewScore = otherUser.totalReviewScore + score;
             otherUser.save();
@@ -1399,7 +1399,7 @@ public class UserController extends Controller {
         }
     }
 	
-	private static Result addReviewForBuyer(Review review, Double score, String body, User otherUser) {
+	private static Result addBuyerReview(Review review, Double score, String body, User otherUser) {
 		otherUser.totalReviewScore = otherUser.totalReviewScore - review.buyerScore;
 		review.buyerReview = body;
 		review.buyerScore = score;
@@ -1408,7 +1408,7 @@ public class UserController extends Controller {
 		return ok();
 	}
 
-	private static Result addReviewForSeller(Review review, Double score, String body, User otherUser) {
+	private static Result addSellerReview(Review review, Double score, String body, User otherUser) {
 		otherUser.totalReviewScore = otherUser.totalReviewScore - review.sellerScore;
 		review.sellerReview = body;
 		review.sellerScore = score;
