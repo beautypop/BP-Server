@@ -1438,7 +1438,7 @@ public class UserController extends Controller {
 			List<Review> reviews = Review.getBuyerReviewsFor(userId);
 			List<ReviewVM> reviewVMs = new ArrayList<>();
 			for(Review review : reviews){
-				reviewVMs.add(new ReviewVM(review, localUser, true));
+				reviewVMs.add(new ReviewVM(review, true));
 			}
 			return ok(Json.toJson(reviewVMs));
 		} catch (Exception e) {
@@ -1453,7 +1453,7 @@ public class UserController extends Controller {
             List<Review> reviews = Review.getSellerReviewsFor(userId);
             List<ReviewVM> reviewVMs = new ArrayList<>();
             for(Review review : reviews){
-                reviewVMs.add(new ReviewVM(review, localUser, false));
+                reviewVMs.add(new ReviewVM(review, false));
             }
             return ok(Json.toJson(reviewVMs));
         } catch (Exception e) {
