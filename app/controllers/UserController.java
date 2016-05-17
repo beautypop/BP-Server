@@ -1352,7 +1352,6 @@ public class UserController extends Controller {
             NanoSecondStopWatch sw = new NanoSecondStopWatch();
             DynamicForm form = form().bindFromRequest();
             Long conversationOrderId = Long.parseLong(form.get("conversationOrderId"));
-            Boolean isBuyer = Boolean.parseBoolean(form.get("isBuyer"));
             Double score = Double.parseDouble(form.get("score"));
             String reviewBody = form.get("review");
             
@@ -1373,7 +1372,7 @@ public class UserController extends Controller {
             	review = new Review(ConversationOrder.findById(conversationOrderId));
             }
             
-            if (isBuyer) {
+            if (localUser.id == review.buyer.id) {
                 if (review.buyerReviewDate == null) {
                     otherUser.numReviews++;
                 }
