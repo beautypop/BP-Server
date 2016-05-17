@@ -10,6 +10,7 @@ public class ReviewVM {
 	@JsonProperty("userId") private Long userId;
 	@JsonProperty("userName") private String userName;
 	@JsonProperty("postId") private Long postId;
+	@JsonProperty("postImageId") private Long postImageId;
 	@JsonProperty("reviewDate") public Long reviewDate;
 	@JsonProperty("review") private String review;
 	@JsonProperty("score") private Double score;
@@ -20,6 +21,7 @@ public class ReviewVM {
 		this.userId = otherUser.id;
 		this.userName = otherUser.displayName;
 		this.postId = review.conversationOrder.conversation.post.id;
+		this.postImageId = review.conversationOrder.conversation.post.getImage();
 		
 		if (isBuyer) {
 		    this.reviewDate = review.buyerReviewDate.getTime();
@@ -37,6 +39,7 @@ public class ReviewVM {
 		this.userId = localUser.id;
 		this.userName = localUser.displayName;
 		this.postId = review.conversationOrder.conversation.post.id;
+		this.postImageId = review.conversationOrder.conversation.post.getImage();
 		
 		if (localUser.getId() == review.buyer.getId()) {
 		    this.reviewDate = review.buyerReviewDate.getTime();
