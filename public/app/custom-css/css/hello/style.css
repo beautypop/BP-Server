@@ -509,52 +509,6 @@ p {
     padding-left: 12px;
 }
 
-#lookingfor {
-	background: url(../images/IMG_3317.4.jpg);
-	background-size: cover;
-	padding: 100px 0;
-}
-
-#lookingfor h3 {
-    font-family: 'Grand Hotel', cursive "Open Sans", "Helvetica", "Arial", "sans-serif";
-    color: #fff;
-    font-weight: 300;
-    font-size: 55px;
-    text-transform: lowercase;
-    letter-spacing: 0px;
-    text-align: center;
-    margin-bottom: 80px;
-}
-
-#lookingfor h4 {
-	color: #76D0AB;
-	font-weight: 300;
-	text-align: center;
-    font-size:28px;
-    margin-bottom: 20px;
-}
-
-#lookingfor .cat {
-	background: #ffffff;
-	padding: 20px;
-	border-radius: 4px;
-	box-shadow: 0 3px 0 #FF2742;
-    height:280px;
-    margin: 20px 0;
-}
-
-@media all and (max-width: 767px) {
-    #lookingfor .cat {
-        height:auto;
-    }
-}
-
-#lookingfor p {
-	color: #808080;
-	font-size: 14px;
-    margin-bottom: 10px;
-}
-
 #terms {
     padding: 30px 0 20px 0;
 }
@@ -568,25 +522,6 @@ p {
         color:#76D0AB;
         font-size: 11px;
         line-height: 1.2;
-}
-
-#review {
-    padding: 100px 0;
-    background: #181818 url(../images/vid-bg.png) repeat fixed
-}
-
-#review h3 {
-    color: #fff;
-    font-weight: 300;
-    font-size: 28px;
-    margin: 0 0 50px;
-    text-align: center
-}
-
-#review h3 i {
-    margin-right: 15px;
-    position: relative;
-    top: 4px
 }
 
 .line {
@@ -621,10 +556,6 @@ p {
 #search i {
     color: #ababab;
 }
-
-/*
-.team-img span{background:url(../images/team-bg.png) no-repeat;width:215px;height:239px;position:absolute;top:0}
-*/
 
 .team-content h4 {
     font-weight: 400;
@@ -698,7 +629,7 @@ p {
 
 #quote {
     padding: 100px 0;
-    background: #2980b9 url(../../images/hello/quote/quote-bg.jpg) repeat fixed
+    background: #2980b9 url(../../../images/hello/quote/quote-bg.jpg) repeat fixed
 }
 
 #quote h3 {
