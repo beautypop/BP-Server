@@ -456,9 +456,10 @@ public class CalcServer {
         if (post.soldMarked) {
             return;
         }
-        jedisCache.putToSortedSet(getKey(FeedType.CATEGORY_NEWEST,category.id), post.getCreatedDate().getTime(), post.id.toString());
+        double score = post.getCreatedDate().getTime();
+        jedisCache.putToSortedSet(getKey(FeedType.CATEGORY_NEWEST,category.id), score, post.id.toString());
         if (category.parent != null) {
-            jedisCache.putToSortedSet(getKey(FeedType.CATEGORY_NEWEST,category.parent.id), post.getCreatedDate().getTime(), post.id.toString());    
+            jedisCache.putToSortedSet(getKey(FeedType.CATEGORY_NEWEST,category.parent.id), score, post.id.toString());    
         }
     }
     
@@ -466,9 +467,10 @@ public class CalcServer {
         if (post.soldMarked) {
             return;
         }
-        jedisCache.putToSortedSet(getKey(FeedType.CATEGORY_PRICE_LOW_HIGH,category.id), post.price * FEED_SCORE_HIGH_BASE + post.id , post.id.toString());
+        double score = post.price * FEED_SCORE_HIGH_BASE + post.id;
+        jedisCache.putToSortedSet(getKey(FeedType.CATEGORY_PRICE_LOW_HIGH,category.id), score, post.id.toString());
         if (category.parent != null) {
-            jedisCache.putToSortedSet(getKey(FeedType.CATEGORY_PRICE_LOW_HIGH,category.parent.id), post.getCreatedDate().getTime(), post.id.toString());    
+            jedisCache.putToSortedSet(getKey(FeedType.CATEGORY_PRICE_LOW_HIGH,category.parent.id), score, post.id.toString());    
         }
     }
     
