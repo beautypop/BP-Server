@@ -29,7 +29,7 @@ var getAndroidAppDownloadUrl = function() {
 }
 
 var getIOSAppDownloadUrl = function() {
-	return "https://itunes.apple.com/hk/app/beautypop-sell-your-style/id1105390610"
+	return "https://itunes.apple.com/hk/app/beautypop-sell-your-style/id1105390610";
 }
 
 var getAppDownloadUrl = function() {

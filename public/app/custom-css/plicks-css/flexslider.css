@@ -46,7 +46,7 @@ html[xmlns] .slides {display: block;}
 .flexslider .slides {zoom: 1;}
 
 .flexslider a {color: #fff;}
-.flexslider a:hover{color:#76d1ac;}
+.flexslider a:hover{color:#FF2742;}
 
 .carousel li {margin-right: 5px}
 
@@ -92,9 +92,9 @@ text-transform:none;
 /* Control Nav */
 .flex-control-nav {position: absolute; bottom: -40px; left:0px;right:0px;text-align: center;}
 .flex-control-nav li {margin: 0 6px; display: inline-block; zoom: 1; *display: inline;}
-.flex-control-paging li a {width: 11px; height: 11px; display: block; background: #0f947a;cursor: pointer; text-indent: -9999px; -webkit-border-radius: 20px; -moz-border-radius: 20px; -o-border-radius: 20px; border-radius: 20px;}
-.flex-control-paging li a:hover { background: #83ebc1;}
-.flex-control-paging li a.flex-active { background: #83ebc1; cursor: default; }
+.flex-control-paging li a {width: 11px; height: 11px; display: block; background: #F74D62;cursor: pointer; text-indent: -9999px; -webkit-border-radius: 20px; -moz-border-radius: 20px; -o-border-radius: 20px; border-radius: 20px;}
+.flex-control-paging li a:hover { background: #FF2742;}
+.flex-control-paging li a.flex-active { background: #FF2742; cursor: default; }
 
 .flex-control-thumbs {margin: 0px auto; position: static; overflow: hidden;display:table;width:100%;}
 .flex-control-thumbs li {width: 17%;margin: 0px;overflow:hidden;position:relative;z-index:900;}

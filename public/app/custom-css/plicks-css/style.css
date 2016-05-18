@@ -9,7 +9,7 @@ body {
 }
 .search-box .search-input {
     text-align: center;
-    border: solid 1px #76d1ac;
+    border: solid 1px #FF2742;
     padding: 0;
     border-radius: 3px;
     transition: all 200ms ease-in-out;
@@ -17,7 +17,7 @@ body {
 }
 
 .search-box .search-input:focus {
-    border: solid 1px #0f947a;
+    border: solid 1px #FF2742;
 }
 .feed-template .team-content{
     padding-bottom: 10px;           
@@ -54,7 +54,7 @@ body {
     }
 }
 a {
-    color: #76d1ac
+    color: #FF2742
 }
 
 a:hover {
@@ -149,13 +149,13 @@ p {
     right: 0;
     top: 0;
     z-index: 9999;
-    background: #76d1ac;
-    border-top: 4px solid #0f947a;
+    background: #FF7089;
+    border-top: 4px solid #FF2742;
     -webkit-transition: all .4s ease-in-out;
     -moz-transition: all .4s ease-in-out;
     -o-transition: all .4s ease-in-out;
     transition: all .4s ease-in-out;
-    box-shadow: 0px 0px 0px #0f947a;
+    box-shadow: 0px 0px 0px #FF2742;
 }
 
 .logo h1 {
@@ -186,7 +186,7 @@ p {
 .top-nav li {
     float: left;
     padding: 30px 15px 10px;
-    border-top: 4px solid #0f947a;
+    border-top: 4px solid #FF2742;
     position: relative;
     top: -4px;
     -webkit-transition: all .4s ease-in-out;
@@ -247,14 +247,14 @@ p {
     font-size: 36px;
     text-transform: lowercase;
     letter-spacing: 0px;
-    color: #0f947a;
+    color: #FF2742;
     text-shadow: none;
     font-family: 'Grand Hotel', cursive "Open Sans", "Helvetica", "Arial", "sans-serif";
 }
 
 #top {
     padding: 40px 0 55px;
-    background: #76d1ac
+    background: #FF7089
 }
 
 #main-slider img {
@@ -281,7 +281,7 @@ p {
     text-transform: lowercase;
     letter-spacing: 0px;
     margin-top: 5px;
-    color: #0f947a;
+    color: #FF2742;
     text-shadow: none;
 }
 
@@ -295,13 +295,13 @@ p {
 .btn {
     background: #fff;
     padding: 15px 20px;
-    color: #76d1ac;
+    color: #FF2742;
     display: table;
     -moz-border-radius: 7px;
     -webkit-border-radius: 7px;
     border-radius: 7px;
     font-size: 16px;
-    border-bottom: 3px solid #0f947a;
+    border-bottom: 3px solid #FF2742;
     font-weight: 400;
     width: 220px;
     -webkit-transition: all .4s ease-in-out;
@@ -311,12 +311,12 @@ p {
 }
 
 .btn:hover {
-    border-bottom: 3px solid #0f947a;
+    border-bottom: 3px solid #FF2742;
     -webkit-transition: all .4s ease-in-out;
     -moz-transition: all .4s ease-in-out;
     -o-transition: all .4s ease-in-out;
     transition: all .4s ease-in-out;
-    color: #0f947a;
+    color: #FF2742;
 }
 
 .btn span {
@@ -451,7 +451,7 @@ p {
     text-transform: lowercase;
     letter-spacing: 0px;
     margin-top: 50px;
-    color: #0f947a;
+    color: #FF2742;
     text-shadow: none;
     margin-bottom: 50px;
 }
@@ -538,7 +538,7 @@ p {
 	background: #ffffff;
 	padding: 20px;
 	border-radius: 4px;
-	box-shadow: 0 3px 0 #0f947a;
+	box-shadow: 0 3px 0 #FF2742;
     height:280px;
     margin: 20px 0;
 }
@@ -790,8 +790,8 @@ p {
     -moz-border-radius: 3px;
     -webkit-border-radius: 3px;
     border-radius: 3px;
-    opacity: .7;
-    filter: alpha(opacity=70)
+    opacity: .9;
+    filter: alpha(opacity=90)
 }
 
 .social-info li a {
@@ -802,9 +802,9 @@ p {
     -moz-border-radius: 3px;
     -webkit-border-radius: 3px;
     border-radius: 3px;
-    opacity: .7;
+    opacity: .9;
     padding: 10px 12px 8px;
-    filter: alpha(opacity=70)
+    filter: alpha(opacity=90)
 }
 
 .social-info li a:hover {
@@ -812,6 +812,11 @@ p {
     filter: alpha(opacity=100)
 }
 
+.social-info li a img {
+    width: 16px;
+    height: 16px	
+}
+	
 .inner {
     position: relative
 }
@@ -904,7 +909,7 @@ input[type="button"] {
     width: 100%;
     padding: 9px 0;
     color: #fff;
-    background: #76d1ac;
+    background: #FF7089;
     font-size: 14px;
     line-height: 1em;
     -webkit-appearance: none;
@@ -928,7 +933,7 @@ input[type="submit"]:active,
 input[type="button"]:hover,
 input[type="button"]:active {
     cursor: pointer;
-    background: #0f947a;
+    background: #FF7089;
     color: #fff;
     border: 0
 }
@@ -963,8 +968,8 @@ input[type="button"] {
 }
 
 .f-fb a {
-    border: 2px solid #1d2a63;
-    color: #1d2a63
+    border: 2px solid #405096;
+    color: #405096
 }
 
 .f-dribble a {
@@ -994,7 +999,7 @@ input[type="button"] {
 
 #press a {
     font-weight: 600;
-    color: #76d1ac;
+    color: #FF2742;
 }
 
 @media all and (min-width: 768px) and (max-width: 959px) {
@@ -1187,7 +1192,7 @@ input[type="button"] {
 }
 
 .zopim iframe {
-    border: #0f947a 1px solid;
+    border: #FF2742 1px solid;
     border-bottom: none;
     border-radius: 5px 5px 0 0px;
 }
