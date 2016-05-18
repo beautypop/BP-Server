@@ -2,8 +2,8 @@
 <html lang="zh-hk">
     <title>BeautyPop App</title>
         <meta name="description" content="Sell your style">
-        <meta name="theme-color" content="#FF2742">
-        <meta name="apple-mobile-web-app-status-bar-style" content="#FF2742">
+        <!--meta name="theme-color" content="#FF2742">
+        <meta name="apple-mobile-web-app-status-bar-style" content="#FF2742"-->
         <meta property="og:title" content="BeautyPop App" />
         <meta property="og:description" content="Sell your style" />
         <meta property="og:image" content="http://www.beautypop.hk/assets/app/images/login/cover.jpg" />
@@ -336,18 +336,24 @@
 				<!-- Contact info -->
 				<div class="six columns">
 					<ul class="contact-info">
-						<li>
+                        <li>
+                            <em><img src="../../../assets/app/images/hello/email-gray.png" class="google-play"></em>
+                            <span>
+                                <a style="color:#333;" href="mailto:info&#64;beautypop&#46;com&#46;hk">info&#64;beautypop&#46;com&#46;hk</a>
+                            </span>
+                        </li>
+                        <li>
                             <em><img src="../../../assets/app/images/hello/ios-appstore-gray.png" class="google-play"></em>
                             <span>
                                 <a href="https://itunes.apple.com/hk/app/beautypop-sell-your-style/id1105390610"
-								   target="_blank">Download beautyPop for iPhone</a>
+								   target="_blank">Download BeautyPop for iPhone</a>
                             </span>
                         </li>
-						<li>
+                        <li>
                             <em><img src="../../../assets/app/images/hello/google-play-gray.png" class="google-play"></em>
                             <span>
                                 <a href="https://play.google.com/store/apps/details?id=com.beautypop.app"
-                                   target="_blank">Download beautyPop for Android</a>
+                                   target="_blank">Download BeautyPop for Android</a>
                             </span>
                         </li>
 					</ul>
@@ -408,7 +414,6 @@
 	<script src="@routes.Assets.versioned("app/scripts/beautypop/hello/jquery.scrollTo.js")"></script>
 	<script src="@routes.Assets.versioned("app/scripts/beautypop/hello/jquery.nav.js")"></script>
 	<script src="@routes.Assets.versioned("app/scripts/beautypop/hello/main.js")"></script>
-    <script src="@routes.Assets.versioned("app/scripts/ui.js")"></script>
 
     <link rel="stylesheet" href=@routes.Assets.versioned("app/custom-css/css/common.css")>
 	<link rel="stylesheet" href=@routes.Assets.versioned("app/custom-css/css/hello/reset.css")>

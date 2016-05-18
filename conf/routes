@@ -41,7 +41,7 @@ GET     /                                           @controllers.Application.ind
 GET     /home                                       @controllers.Application.home
 GET     /login                                      controllers.Application.login
 GET     /signup                                     controllers.Application.signup
-GET     /hello                                     controllers.Application.hello
+GET     /hello                                      controllers.Application.hello
 
 # Instagram
 GET     /instagram                                  @controllers.InstagramController.index
