@@ -766,4 +766,10 @@ public class Application extends Controller {
         }
         return pathNotFound();
     }
+    
+    public static Result hello() {
+        return ok(views.html.beautypop.web.hello.render());
+    }
+    
+    
 }
