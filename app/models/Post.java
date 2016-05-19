@@ -388,6 +388,7 @@ public class Post extends SocialObject implements Likeable, Commentable {
 		boolean viewed = recordView(user);
 		if (viewed) {
 			this.numViews++;
+			user.numViews++;
 		}
 		return viewed;
 	}

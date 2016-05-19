@@ -117,6 +117,8 @@ public class User extends SocialObject implements Subject, Followable, Serializa
 
 	// stats
 
+	public Long numViews = 0L;
+	
 	public Long numLikes = 0L;
 	
 	public Long numFollowings = 0L;

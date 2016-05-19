@@ -11,6 +11,7 @@ public class UserVMLite {
     @JsonProperty("firstName") public String firstName;
     @JsonProperty("lastName") public String lastName;
     @JsonProperty("email") public String email;
+    @JsonProperty("numViews") public Long numViews = 0L;
     @JsonProperty("numLikes") public Long numLikes = 0L;
     @JsonProperty("numFollowings") public Long numFollowings = 0L;
     @JsonProperty("numFollowers") public Long numFollowers = 0L;
@@ -56,6 +57,7 @@ public class UserVMLite {
         this.email = user.email;
         this.firstName = user.firstName;
         this.lastName = user.lastName;
+        this.numViews = user.numViews;
         this.numLikes = user.numLikes;
         this.numFollowers = user.numFollowers;
         this.numFollowings = user.numFollowings;
@@ -166,7 +168,15 @@ public class UserVMLite {
 		this.isFollowing = isFollowing;
 	}
 
-	public Long getNumLikes() {
+	public Long getNumViews() {
+        return numViews;
+    }
+
+    public void setNumViews(Long numViews) {
+        this.numViews = numViews;
+    }
+    
+    public Long getNumLikes() {
         return numLikes;
     }
 
@@ -314,6 +324,7 @@ public class UserVMLite {
                 "signupDate=" + createdDate + "\n" +
                 "lastLogin=" + lastLogin + "\n" +
                 "totalLogin=" + totalLogin + "\n" +
+                "numViews=" + numViews + "\n" +
                 "numLikes=" + numLikes + "\n" +
                 "numFollowers=" + numFollowers + "\n" +
                 "numFollowings=" + numFollowings + "\n" +
