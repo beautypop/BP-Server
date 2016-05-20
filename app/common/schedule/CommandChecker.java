@@ -6,8 +6,12 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStreamReader;
 
+import models.Post;
 import models.User;
+import models.ViewSocialRelation;
 import common.collection.Pair;
+import common.utils.NanoSecondStopWatch;
+import controllers.ElasticSearchController;
 import email.SendgridEmailClient;
 
 /**
@@ -41,103 +45,65 @@ public class CommandChecker {
     }
 
     /**
-     * 1) indexTagWords
-     * 2) gamificationEOD [daysBefore]
-     * 3) communityStatistics [daysBefore]
-     * 4) bootstrapPNCommunity
+     * 
+     * 1) rebuildElasticIndexes
+     * 2) exportUserEmails [email]
+     * 3) exportDailyStats [daysBefore]
      */
     private static void performCommand(String commandLine) {
         if (commandLine.endsWith("DONE")) {
             return;
         }
 
-        String[] tokens = commandLine.split("\\s");
+        String[] params = commandLine.split("\\s");
 
-        // TagWords
-        if (commandLine.startsWith("indexTagWords")) {
-            //TaggingEngine.indexTagWords();
+        NanoSecondStopWatch sw = new NanoSecondStopWatch();
+        
+        logger.underlyingLogger().info("[command="+commandLine+"] performCommand() starts..");
+        
+        // rebuildElasticIndexes
+        if (commandLine.startsWith("rebuildElasticIndexes")) {
+            rebuildElasticIndexes(params);
         }
-        // EDM Emails
-        else if (commandLine.startsWith("edmAppTargets")) {
-            if (tokens.length > 1) {
-                String email = tokens[1];
-                Pair<Integer,String> csv = User.getAndroidTargetEdmUsers();
-                logger.underlyingLogger().info("getAndroidTargetEdmUsers. Count="+csv.first);
-
-                SendgridEmailClient.getInstance().sendMail(email, "Target Android EDM users", csv.second);
-                logger.underlyingLogger().info("getAndroidTargetEdmUsers. Sent to "+email);
-            } else {
-                logger.underlyingLogger().error("Error. edmAppTargets missing email parameter");
+        // exportUserEmails
+        else if (commandLine.startsWith("exportUserEmails")) {
+            exportUserEmails(params);
+        }
+        // exportDailyStats
+        else if (commandLine.startsWith("exportDailyStats")) {
+            exportDailyStats(params);
+        }
+        
+        
+        //
+        // TEMP TEMP TEMP !!!
+        //
+        
+        
+        // populateUserNumViews
+        else if (commandLine.startsWith("populateUserNumViews")) {
+            logger.underlyingLogger().info("populateUserNumViews()");
+            for(User user : User.getEligibleUsersForFeed()){
+                user.numViews = ViewSocialRelation.getUserViewsCount(user.id);
             }
         }
+        
+        
 
-        // GamificationEOD  (Not used)
-//        else if (commandLine.startsWith("gamificationEOD")) {
-//            if (tokens.length > 1) {
-//                Integer daysBefore = Integer.valueOf(tokens[1]);
-//                GameAccountTransaction.performEndOfDayTasks(daysBefore);
-//            } else {
-//                logger.underlyingLogger().error("gamificationEOD missing daysBefore parameter");
-//            }
-//        }
-
-        // Community Stats
-        else if (commandLine.startsWith("communityStatistics")) {
-            if (tokens.length > 1) {
-                Integer daysBefore = Integer.valueOf(tokens[1]);
-                //CommunityStatistics.populatePastStats(daysBefore);
-            } else {
-                logger.underlyingLogger().error("communityStatistics missing daysBefore parameter");
-            }
-        }
-
-        // PN communities (DONE)
-       /* else if (commandLine.startsWith("bootstrapPNCommunity")) {
-            DataBootstrap.bootstrapPNCommunity();
-        }
-        // KG communities (DONE)
-        else if (commandLine.startsWith("bootstrapKGCommunity")) {
-            DataBootstrap.bootstrapKGCommunity();
-        }
-
-        // PlayGroup
-        else if (commandLine.startsWith("bootstrapPG")) {
-            if (tokens.length > 1) {
-                String filePath = tokens[1];
-                logger.underlyingLogger().info("Running bootstrapPG with: "+filePath);
-                DataBootstrap.bootstrapPlayGroups(filePath);
-            } else {
-                logger.underlyingLogger().error("bootstrapPG missing file path");
-            }
-        }
-        else if (commandLine.startsWith("bootstrapPGCommunity")) {
-            DataBootstrap.bootstrapPGCommunity();
-        }*/
-
-        // PN reviews
-/*        else if (commandLine.startsWith("bootstrapPNReviews")) {
-            if (tokens.length > 1) {
-                String filePath = tokens[1];
-                logger.underlyingLogger().info("Running bootstrapPNReviews with: "+filePath);
-                ThreadLocalOverride.disableNotification(true);
-                DataBootstrap.bootstrapPNReviews(filePath);
-                ThreadLocalOverride.disableNotification(false);
-            } else {
-                logger.underlyingLogger().error("bootstrapPNReviews missing file path");
-            }
-        }
-        // Community Posts
-        else if (commandLine.startsWith("bootstrapCommunityPosts")) {
+        /* 
+        // importProducts
+        else if (commandLine.startsWith("importProducts")) {
             if (tokens.length > 1) {
                 String filePath = tokens[1];
                 logger.underlyingLogger().info("Running bootstrapCommunityPosts with: "+filePath);
                 ThreadLocalOverride.disableNotification(true);
-                DataBootstrap.bootstrapCommunityPosts(filePath);
+                DataBootstrap.importProducts(filePath);
                 ThreadLocalOverride.disableNotification(false);
             } else {
                 logger.underlyingLogger().error("bootstrapCommunityPosts missing file path");
             }
         }
+        
         // Check and assign comms for all users
         else if (commandLine.startsWith("assignCommunitiesToUsers")) {
         	if (tokens.length > 1) {
@@ -158,5 +124,47 @@ public class CommandChecker {
                 logger.underlyingLogger().error("assignCommunitiesToUsers missing fromUserId, toUserId");
             }
         }
-*/    }
+        */
+        
+        sw.stop();
+        logger.underlyingLogger().info("[command="+commandLine+"] performCommand() completed. Took "+sw.getElapsedMS()+"ms");
+    }
+    
+    private static void rebuildElasticIndexes(String[] params) {
+        logger.underlyingLogger().info("rebuildElasticIndexes() clean indexes");
+        ElasticSearchController.cleanIndex();
+        ElasticSearchController.refresh();
+        
+        logger.underlyingLogger().info("rebuildElasticIndexes() index posts");
+        for(Post post : Post.getEligiblePostsForFeeds()){
+            ElasticSearchController.addPostElasticSearch(post);
+        }
+        
+        logger.underlyingLogger().info("rebuildElasticIndexes() index users");
+        for(User user : User.getEligibleUsersForFeed()){
+            ElasticSearchController.addUserElasticSearch(user);
+        }
+    }
+    
+    private static void exportUserEmails(String[] params) {
+        if (params.length > 1) {
+            String email = params[1];
+            Pair<Integer,String> csv = User.exportUserEmails();
+            logger.underlyingLogger().info("exportUserEmail() Count="+csv.first);
+
+            SendgridEmailClient.getInstance().sendMail(email, "Target Android EDM users", csv.second);
+            logger.underlyingLogger().info("exportUserEmails() Sent to "+email);
+        } else {
+            logger.underlyingLogger().error("exportUserEmails() missing email parameter");
+        }
+    }
+    
+    private static void exportDailyStats(String[] params) {
+        if (params.length > 1) {
+            Integer daysBefore = Integer.valueOf(params[1]);
+            //CommunityStatistics.populatePastStats(daysBefore);
+        } else {
+            logger.underlyingLogger().error("exportDailyStats missing daysBefore parameter");
+        }
+    }
 }

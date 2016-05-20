@@ -201,7 +201,6 @@ public class Global extends GlobalSettings {
         // Interval scheduled jobs
         //
         
-        /*
         JobScheduler.getInstance().schedule(
                 "commandCheck", 
                 2 * DateTimeUtil.MINUTE_MILLIS,     // interval
@@ -218,7 +217,6 @@ public class Global extends GlobalSettings {
                         }
                     }
                 });
-        */
         
         JobScheduler.getInstance().schedule(
                 "systemInfoVersionCheck",

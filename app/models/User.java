@@ -888,7 +888,7 @@ public class User extends SocialObject implements Subject, Followable, Serializa
 	}
 
 	@Transactional
-	public static Pair<Integer,String> getAndroidTargetEdmUsers() {
+	public static Pair<Integer,String> exportUserEmails() {
 	    try {
     		StringBuilder sb = new StringBuilder();
     

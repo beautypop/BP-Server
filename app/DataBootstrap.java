@@ -5,7 +5,6 @@ import javax.persistence.Query;
 import org.apache.commons.lang.exception.ExceptionUtils;
 
 import common.cache.LocationCache;
-import controllers.ElasticSearchController;
 import models.Category;
 import models.Country;
 import models.Country.CountryCode;
@@ -15,12 +14,10 @@ import models.SystemInfo;
 import models.GameBadge.BadgeType;
 import models.Location;
 import models.Location.LocationCode;
-import models.Post;
 import models.SecurityRole;
 import models.TermsAndConditions;
 import models.User;
 import models.UserInfo;
-import play.Play;
 import play.db.jpa.JPA;
 import providers.MyUsernamePasswordAuthUser;
 import providers.MyUsernamePasswordAuthProvider.MySignup;
@@ -31,8 +28,6 @@ import providers.MyUsernamePasswordAuthProvider.MySignup;
 public class DataBootstrap {
     private static final play.api.Logger logger = play.api.Logger.apply(DataBootstrap.class);
     
-    public static final Boolean ELASTICSEARCH_DATA_BOOTSTRAP = Play.application().configuration().getBoolean("elasticsearch.data.bootstrap", false);
-    
     public static void bootstrap() {
         bootstrapTermsAndConditions();
         bootstrapCountry();
@@ -41,7 +36,6 @@ public class DataBootstrap {
         bootstrapUser();
         bootstrapCategory();
         //bootstrapGameBadge();
-        bootstrapElasticIndexes();
 	}
     
     private static void bootstrapTermsAndConditions() {
@@ -683,25 +677,4 @@ public class DataBootstrap {
             }
         }
     }
-    
-    private static void bootstrapElasticIndexes() {
-        if (ELASTICSEARCH_DATA_BOOTSTRAP) {
-        	ElasticSearchController.cleanIndex();
-        	ElasticSearchController.refresh();
-        	elasticPost();
-        	elasticUser();
-        }
-    }
-    
-    private static void elasticPost() {
-        for(Post post : Post.getEligiblePostsForFeeds()){
-			ElasticSearchController.addPostElasticSearch(post);
-		}
-	}
-	
-	private static void elasticUser() {
-	    for(User user : User.getEligibleUsersForFeed()){
-			ElasticSearchController.addUserElasticSearch(user);
-		}
-	}
 }
