@@ -360,7 +360,6 @@ public class User extends SocialObject implements Subject, Followable, Serializa
 	 * ensure the existence of the system folder: albumPhotoProfile
 	 */
 	private void ensureCoverPhotoProfileExist() {
-
 		if (this.albumCoverProfile == null) {
 			this.albumCoverProfile = createFolder("cover", "", true);
 			this.merge();
@@ -480,14 +479,14 @@ public class User extends SocialObject implements Subject, Followable, Serializa
 	 * @return
 	 */
 	public Folder createFolder(String name, String description, boolean system) {
-		if (ensureAlbumExistWithGivenName(name)) {
+		if (!albumExistsWithGivenName(name)) {
 			Folder folder = createFolder(name, description,
 					SocialObjectType.FOLDER, system);
 			folders.add(folder);
 			this.merge(); // Add folder to existing User as new albumn
 			return folder;
 		}
-		return null;
+		return getFolder(name);
 	}
 
 	private Folder createFolder(String name, String description,
@@ -503,13 +502,23 @@ public class User extends SocialObject implements Subject, Followable, Serializa
 		return folder;
 	}
 
-	private boolean ensureAlbumExistWithGivenName(String name) {
+	private Folder getFolder(String name) {
+	    if (folders != null) {
+	        int i = folders.indexOf(new Folder(name));
+	        if (i != -1) {
+	            return folders.get(i);
+	        }
+	    }
+	    return null;
+	}
+	
+	private boolean albumExistsWithGivenName(String name) {
 		if (folders != null && folders.contains(new Folder(name))) {
-			return false;
+			return true;
 		}
 
 		folders = new ArrayList<>();
-		return true;
+		return false;
 	}
 	
 	public static boolean existsByAuthUserIdentity(

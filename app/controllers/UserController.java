@@ -152,7 +152,7 @@ public class UserController extends Controller {
             logger.underlyingLogger().error(String.format("[u=%d] User not logged in", localUser.id));
             return notFound();
         }
-        logger.underlyingLogger().info("STS [u="+localUser.id+"] uploadProfilePhoto");
+        logger.underlyingLogger().info("[u="+localUser.id+"] uploadProfilePhoto");
 
         FilePart image = HttpUtil.getMultipartFormDataFile(request().body().asMultipartFormData(), "profile-photo");
         String fileName = image.getFilename();
