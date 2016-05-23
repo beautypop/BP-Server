@@ -50,6 +50,7 @@ public class CalcServer {
     public static final int FEED_RANDOMIZE_MULTIPLIER = Play.application().configuration().getInt("feed.randomize.multiplier");
     public static final int FEED_SOLD_CLEANUP_DAYS = Play.application().configuration().getInt("feed.sold.cleanup.days");
     public static final int FEED_RETRIEVAL_COUNT = DefaultValues.FEED_INFINITE_SCROLL_COUNT;
+    public static final int FEED_CATEGORY_RATIO_FROM_DAYS_BEFORE = Play.application().configuration().getInt("feed.category.ratio.from.days.before");
     
     public static final String CACHED_USERS = "CACHED_USERS";
     public static final String CACHED_PRODUCTS = "CACHED_PRODUCTS";
@@ -561,7 +562,7 @@ public class CalcServer {
         User user = User.findById(id);
         Map<Long, Integer> map = new HashMap<>();
         if (user != null) {
-            map = user.getUserCategoriesRatioForFeed();
+            map = user.getUserCategoriesRatioForFeed(FEED_CATEGORY_RATIO_FROM_DAYS_BEFORE);
         }
         
         for (Category category : Category.getCategories()) {

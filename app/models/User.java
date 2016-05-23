@@ -40,6 +40,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.joda.time.DateTime;
 
 import play.Play;
 import play.data.format.Formats;
@@ -1214,17 +1215,19 @@ public class User extends SocialObject implements Subject, Followable, Serializa
 	 * where vsr.actor = ?1 and vsr.target = p.id and p.category_id = c.id group by c.id
 	 * @return
 	 */
-	public Map<Long, Integer> getUserCategoriesRatioForFeed() {
+	public Map<Long, Integer> getUserCategoriesRatioForFeed(int daysBefore) {
 	    NanoSecondStopWatch sw = new NanoSecondStopWatch();
 	    logger.underlyingLogger().debug(String.format("[u=%d] getUserCategoriesForFeed()", this.id));
 	    
 	    Map<Long, Integer> result = new HashMap<>();
 	    try {
+	        DateTime daysBeforeDate = (new DateTime()).minusDays(daysBefore);
     		Query q = JPA.em().createNativeQuery("Select c.id, (count(p.id)/(Select count(*) from ViewSocialRelation vr where vr.actor = ?1))*100 "
     				+ "from ViewSocialRelation vsr, post p, category c "
-    				+ "where vsr.actor = ?1 and vsr.target = p.id and p.category_id = c.id  "
+    				+ "where vsr.actor = ?1 and vsr.target = p.id and p.category_id = c.id and CREATED_DATE < ?2 "
     				+ "group by c.id");
     		q.setParameter(1, this);
+    		q.setParameter(2, daysBeforeDate.toDate());
     		List<Object[]> feeds = q.getResultList();
     		for (Object[] feed : feeds) {
     		    BigInteger catId = (BigInteger)feed[0];
