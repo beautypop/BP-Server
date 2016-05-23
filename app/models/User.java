@@ -479,14 +479,15 @@ public class User extends SocialObject implements Subject, Followable, Serializa
 	 * @return
 	 */
 	public Folder createFolder(String name, String description, boolean system) {
-		if (!albumExistsWithGivenName(name)) {
-			Folder folder = createFolder(name, description,
-					SocialObjectType.FOLDER, system);
-			folders.add(folder);
-			this.merge(); // Add folder to existing User as new albumn
-			return folder;
+		if (albumExistsWithGivenName(name)) {
+		    return getFolder(name);
 		}
-		return getFolder(name);
+		
+		Folder folder = createFolder(name, description,
+				SocialObjectType.FOLDER, system);
+		folders.add(folder);
+		this.merge(); // Add folder to existing User as new album
+		return folder;
 	}
 
 	private Folder createFolder(String name, String description,
