@@ -7,7 +7,6 @@ import indexing.UserIndex;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.concurrent.ExecutionException;
 
 import models.Category;
 import models.Post;
@@ -18,6 +17,8 @@ import org.elasticsearch.action.admin.indices.analyze.AnalyzeResponse.AnalyzeTok
 import org.elasticsearch.action.admin.indices.refresh.RefreshRequest;
 import org.elasticsearch.action.delete.DeleteRequestBuilder;
 import org.elasticsearch.action.delete.DeleteResponse;
+import org.elasticsearch.index.query.PrefixQueryBuilder;
+import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.QueryStringQueryBuilder;
@@ -152,7 +153,8 @@ public class ElasticSearchController extends Controller {
             BoolQueryBuilder booleanQueryBuilder = QueryBuilders.boolQuery();
             List<String> searches = tokenizeSearchKey(searchKey);
             for (String searchWord : searches) {
-            	QueryStringQueryBuilder queryBuilder = QueryBuilders.queryStringQuery(searchWord.trim());
+                searchWord = searchWord.trim();
+            	QueryStringQueryBuilder queryBuilder = QueryBuilders.queryStringQuery(searchWord);
             	booleanQueryBuilder.must(queryBuilder);
             }
             
@@ -171,7 +173,8 @@ public class ElasticSearchController extends Controller {
             BoolQueryBuilder booleanQueryBuilder = QueryBuilders.boolQuery();
             List<String> searches = tokenizeSearchKey(searchKey);
             for (String searchWord : searches) {
-            	QueryStringQueryBuilder queryBuilder = QueryBuilders.queryStringQuery(searchWord.trim());
+                searchWord = searchWord.trim();
+            	QueryStringQueryBuilder queryBuilder = QueryBuilders.queryStringQuery(searchWord);
             	booleanQueryBuilder.must(queryBuilder);
             }
             indexQuery.setBuilder(booleanQueryBuilder).from(fromCount).size(DefaultValues.FEED_INFINITE_SCROLL_COUNT);
@@ -219,9 +222,17 @@ public class ElasticSearchController extends Controller {
             return notFound();
         }
 	    
+	    searchKey = searchKey.trim();
+	    
 		int fromCount = offset * DefaultValues.DEFAULT_INFINITE_SCROLL_COUNT;
 		IndexQuery<UserIndex> indexQuery = UserIndex.find.query();
-		indexQuery.setBuilder(QueryBuilders.queryStringQuery(searchKey)).from(fromCount).size(DefaultValues.DEFAULT_INFINITE_SCROLL_COUNT);
+		
+		BoolQueryBuilder booleanQueryBuilder = QueryBuilders.boolQuery();
+        booleanQueryBuilder.should(QueryBuilders.prefixQuery("displayName", searchKey));
+        booleanQueryBuilder.should(QueryBuilders.prefixQuery("firstName", searchKey));
+        booleanQueryBuilder.should(QueryBuilders.prefixQuery("lastName", searchKey));
+        
+		indexQuery.setBuilder(booleanQueryBuilder).from(fromCount).size(DefaultValues.DEFAULT_INFINITE_SCROLL_COUNT);
 		IndexResults<UserIndex> results = UserIndex.find.search(indexQuery);
 		if (results.results.size() == 0) {
 		    sw.stop();
