@@ -44,10 +44,11 @@ public class CalcServer {
     public static final Long FEED_SCORE_COMPUTE_SCHEDULE = Play.application().configuration().getLong("feed.score.compute.schedule");
     public static final Long FEED_SCORE_HIGH_BASE = Play.application().configuration().getLong("feed.score.high.base");
     public static final int FEED_HOME_COUNT = Play.application().configuration().getInt("feed.home.count");
+    public static final int FEED_HOME_RANDOMIZE_MULTIPLIER = Play.application().configuration().getInt("feed.home.randomize.multiplier");
     public static final int FEED_PRODUCT_SUGGEST_COUNT = Play.application().configuration().getInt("feed.product.suggest.count");
+    public static final int FEED_PRODUCT_SUGGEST_RANDOMIZE_MULTIPLIER = Play.application().configuration().getInt("feed.product.suggest.randomize.multiplier");
     public static final int FEED_SNAPSHOT_EXPIRY_SECS = Play.application().configuration().getInt("feed.snapshot.expiry.secs");
     public static final int FEED_SNAPSHOT_LONG_EXPIRY_SECS = Play.application().configuration().getInt("feed.snapshot.long.expiry.secs");
-    public static final int FEED_RANDOMIZE_MULTIPLIER = Play.application().configuration().getInt("feed.randomize.multiplier");
     public static final int FEED_SOLD_CLEANUP_DAYS = Play.application().configuration().getInt("feed.sold.cleanup.days");
     public static final int FEED_RETRIEVAL_COUNT = DefaultValues.FEED_INFINITE_SCROLL_COUNT;
     public static final int FEED_CATEGORY_RATIO_FROM_DAYS_BEFORE = Play.application().configuration().getInt("feed.category.ratio.from.days.before");
@@ -576,8 +577,10 @@ public class CalcServer {
             }
 
             int catPostSize = FEED_HOME_COUNT * percentage / 100;
-            Set<String> values = jedisCache.getSortedSetDscStartEnd(getKey(FeedType.CATEGORY_POPULAR,category.id), 0L, catPostSize - 1);
+            List<Long> catPostIds = getCategoryPopularRandomFeed(category.id, catPostSize, FEED_HOME_RANDOMIZE_MULTIPLIER);
             
+            /*
+            Set<String> values = jedisCache.getSortedSetDscStartEnd(getKey(FeedType.CATEGORY_POPULAR,category.id), 0L, catPostSize - 1);
             List<Long> catPostIds = new ArrayList<>();
             for (String value : values) {
                 try {
@@ -585,6 +588,7 @@ public class CalcServer {
                 } catch (Exception e) {
                 }
             }
+            */
             
             logger.underlyingLogger().debug(
                     String.format("[cat=%d name=%s minPercent=%d maxPercent=%d percent=%d catPostSize=%d catPostIds.size=%d]", 
@@ -672,7 +676,7 @@ public class CalcServer {
         logger.underlyingLogger().debug("buildSuggestedProductQueue starts - p="+postId);
         
         Post post = Post.findById(postId);
-        List<Long> suggestedPostIds = getCategoryPopularRandomFeed(post.category.id, FEED_PRODUCT_SUGGEST_COUNT);
+        List<Long> suggestedPostIds = getCategoryPopularRandomFeed(post.category.id, FEED_PRODUCT_SUGGEST_COUNT, FEED_PRODUCT_SUGGEST_RANDOMIZE_MULTIPLIER);
         
         /*
         // what other users liked
@@ -834,8 +838,8 @@ public class CalcServer {
         return postIds;
     }
     
-    public List<Long> getCategoryPopularRandomFeed(Long id, int count) {
-        Set<String> values = jedisCache.getSortedSetDsc(getKey(FeedType.CATEGORY_POPULAR,id), 0D, count * FEED_RANDOMIZE_MULTIPLIER);
+    public List<Long> getCategoryPopularRandomFeed(Long id, int count, int randomizeMultiplier) {
+        Set<String> values = jedisCache.getSortedSetDsc(getKey(FeedType.CATEGORY_POPULAR,id), 0D, count * randomizeMultiplier);
         
         final List<String> allPostIds = new ArrayList<>(values);
         final List<Long> postIds = new ArrayList<>();
