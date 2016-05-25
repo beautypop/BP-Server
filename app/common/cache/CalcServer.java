@@ -3,6 +3,7 @@ package common.cache;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
@@ -560,23 +561,46 @@ public class CalcServer {
         NanoSecondStopWatch sw = new NanoSecondStopWatch();
         logger.underlyingLogger().debug("buildUserExploreFeedQueue starts - u="+id);
         
-        User user = User.findById(id);
         Map<Long, Integer> map = new HashMap<>();
-        if (user != null) {
-            map = user.getUserCategoriesRatioForFeed(FEED_CATEGORY_RATIO_FROM_DAYS_BEFORE);
+        if (User.isLoggedIn(id)) {
+            User user = User.findById(id);
+            if (user != null) {
+                map = user.getUserCategoriesRatioForFeed(FEED_CATEGORY_RATIO_FROM_DAYS_BEFORE);
+                
+                // calc parent cat view percent from subcat view percent
+                Set<Long> subCatIds = new HashSet<Long>(map.keySet());
+                for (Long subCatId : subCatIds) {
+                    Category subCategory = CategoryCache.getCategory(subCatId);
+                    Integer subCatViewPercent = map.get(subCatId);
+                    if (subCategory != null && subCategory.parent != null) {
+                        Integer catViewPercent = map.get(subCategory.parent.id);
+                        if (catViewPercent == null) {
+                            catViewPercent = 0;
+                        }
+                        map.put(subCategory.parent.id, catViewPercent + subCatViewPercent);
+                        
+                        logger.underlyingLogger().debug(
+                                String.format("[subCat=%d(%s)   cat=%d(%s)   percent=%d(%d-%d)]", 
+                                        subCategory.id, subCategory.name, subCategory.parent.id, subCategory.parent.name, 
+                                        subCatViewPercent, subCategory.minPercentFeedExposure, subCategory.maxPercentFeedExposure));
+                    }
+                }
+            }
         }
         
+        // build home feed from cat feed
+        int defaultMinViewPercent = 100 / Category.getCategories().size();
         for (Category category : Category.getCategories()) {
-            int percentage = category.minPercentFeedExposure;
+            int viewPercent = map.size() == 0? defaultMinViewPercent : category.minPercentFeedExposure;
             Integer catViewPercentage = map.get(category.getId());
-            if (catViewPercentage != null && catViewPercentage > percentage) {
-                percentage = catViewPercentage;
+            if (catViewPercentage != null && catViewPercentage > viewPercent) {
+                viewPercent = catViewPercentage;
             }
-            if (percentage > category.maxPercentFeedExposure) {
-                percentage = category.maxPercentFeedExposure;
+            if (viewPercent > category.maxPercentFeedExposure) {
+                viewPercent = category.maxPercentFeedExposure;
             }
 
-            int catPostSize = FEED_HOME_COUNT * percentage / 100;
+            int catPostSize = FEED_HOME_COUNT * viewPercent / 100;
             List<Long> catPostIds = getCategoryPopularRandomFeed(category.id, catPostSize, FEED_HOME_RANDOMIZE_MULTIPLIER);
             
             /*
@@ -591,9 +615,10 @@ public class CalcServer {
             */
             
             logger.underlyingLogger().debug(
-                    String.format("[cat=%d name=%s minPercent=%d maxPercent=%d percent=%d catPostSize=%d catPostIds.size=%d]", 
-                            category.id, category.name, category.minPercentFeedExposure, category.maxPercentFeedExposure, 
-                            percentage, catPostSize, catPostIds.size()));
+                    String.format("[cat=%d(%s)   percent=%d(%d-%d)   catPostSize=%d   catPostIds.size=%d]", 
+                            category.id, category.name, 
+                            viewPercent, category.minPercentFeedExposure, category.maxPercentFeedExposure, 
+                            catPostSize, catPostIds.size()));
             
             for (Long postId : catPostIds) {
                 Post post = Post.findById(postId);

@@ -102,7 +102,7 @@ public class CalcFormula {
         int max = 100 + FEED_SCORE_RANDOMIZE_PERCENT;
         Double percent = (random.nextInt(max - min) + min) / 100D;
         Double randomizedScore = timeScore * percent;
-        logger.underlyingLogger().debug("randomizeScore completed with timeScore="+timeScore+" %="+percent+" randomizedScore="+randomizedScore);
+        //logger.underlyingLogger().debug("randomizeScore completed with timeScore="+timeScore+" %="+percent+" randomizedScore="+randomizedScore);
         return randomizedScore;
     }
 	

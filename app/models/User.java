@@ -1210,9 +1210,9 @@ public class User extends SocialObject implements Subject, Followable, Serializa
 	}
 
 	/**
-	 * Select c.id, (count(p.id)/(Select count(*) from ViewSocialRelation vr where vr.actor = ?1))*100 
+	 * Select c.id, (count(p.id)/(Select count(*) from ViewSocialRelation vr where vr.actor = 2 and vr.CREATED_DATE > '2016-05-01')) * 100 
 	 * from ViewSocialRelation vsr, post p, category c 
-	 * where vsr.actor = ?1 and vsr.target = p.id and p.category_id = c.id group by c.id
+	 * where vsr.actor = 2 and vsr.target = p.id and p.category_id = c.id and vsr.CREATED_DATE > '2016-05-1' group by c.id
 	 * @return
 	 */
 	public Map<Long, Integer> getUserCategoriesRatioForFeed(int daysBefore) {
@@ -1222,9 +1222,9 @@ public class User extends SocialObject implements Subject, Followable, Serializa
 	    Map<Long, Integer> result = new HashMap<>();
 	    try {
 	        DateTime daysBeforeDate = (new DateTime()).minusDays(daysBefore);
-    		Query q = JPA.em().createNativeQuery("Select c.id, (count(p.id)/(Select count(*) from ViewSocialRelation vr where vr.actor = ?1 and vr.CREATED_DATE < ?2)) * 100 "
+    		Query q = JPA.em().createNativeQuery("Select c.id, (count(p.id)/(Select count(*) from ViewSocialRelation vr where vr.actor = ?1 and vr.CREATED_DATE > ?2)) * 100 "
     				+ "from ViewSocialRelation vsr, post p, category c "
-    				+ "where vsr.actor = ?1 and vsr.target = p.id and p.category_id = c.id and vsr.CREATED_DATE < ?2 "
+    				+ "where vsr.actor = ?1 and vsr.target = p.id and p.category_id = c.id and vsr.CREATED_DATE > ?2 "
     				+ "group by c.id");
     		q.setParameter(1, this);
     		q.setParameter(2, daysBeforeDate.toDate());
