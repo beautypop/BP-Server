@@ -771,5 +771,18 @@ public class Application extends Controller {
         return ok(views.html.beautypop.web.hello.render());
     }
     
+    public static Result photoguide() {
+        return ok(views.html.beautypop.web.photoguide.render());
+    }
+    
+    public static Result sendMessage() {
+    	DynamicForm form = DynamicForm.form().bindFromRequest();
+        String senderName = form.get("senderName").trim();
+        String senderEmail = form.get("senderEmail").trim();
+        String message = form.get("message").trim();
+        SendgridEmailClient.getInstance().sendHelloMessageMail(senderName, senderEmail, message);
+        return ok("success");
+    }
+    
     
 }

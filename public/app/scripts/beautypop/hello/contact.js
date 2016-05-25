@@ -1,94 +1,104 @@
 var messageDelay = 2000;  // How long to display status messages (in milliseconds)
 
-// Init the form once the document is ready
+//Init the form once the document is ready
 $( init );
 
 
-// Initialize the form
+//Initialize the form
 
 function init() {
 
-  // Hide the form initially.
-  // Make submitForm() the form's submit handler.
-  // Position the form so it sits in the centre of the browser window.
-  $('#contactForm').show().submit( submitForm ).addClass( 'positioned' );
+	// Hide the form initially.
+	// Make submitForm() the form's submit handler.
+	// Position the form so it sits in the centre of the browser window.
+	$('#contactForm').show().submit( submitForm ).addClass( 'positioned' );
 
-  // When the "Send us an email" link is clicked:
-  // 1. Fade the content out
-  // 2. Display the form
-  // 3. Move focus to the first field
-  // 4. Prevent the link being followed
+	// When the "Send us an email" link is clicked:
+	// 1. Fade the content out
+	// 2. Display the form
+	// 3. Move focus to the first field
+	// 4. Prevent the link being followed
 
-  $('a[href="#contactForm"]').click( function() {
-    $('#contactForm').fadeTo( 'slow', .2 );
-    $('#contactForm').fadeIn( 'slow', function() {
-      $('#senderName').focus();
-    } )
+	$('a[href="#contactForm"]').click( function() {
+		$('#contactForm').fadeTo( 'slow', .2 );
+		$('#contactForm').fadeIn( 'slow', function() {
+			$('#senderName').focus();
+		} )
 
-    return false;
-  } );
-  
+		return false;
+	} );
+
 }
 
 
-// Submit the form via Ajax
+//Submit the form via Ajax
 
 function submitForm() {
-  var contactForm = $(this);
+	var contactForm = $(this);
 
-  // Are all the fields filled in?
+	// Are all the fields filled in?
 
-  if ( !$('#senderName').val() || !$('#senderEmail').val() || !$('#message').val() ) {
+	if ( !$('#senderName').val() || !$('#senderEmail').val() || !$('#message').val() ) {
 
-    // No; display a warning message and return to the form
-    $('#incompleteMessage').fadeIn().delay(messageDelay).fadeOut();
-    contactForm.fadeOut().delay(messageDelay).fadeIn();
+		// No; display a warning message and return to the form
+		$('#incompleteMessage').fadeIn().delay(messageDelay).fadeOut();
+		contactForm.fadeOut().delay(messageDelay).fadeIn();
 
-  } else {
+	} else {
 
-    // Yes; submit the form to the PHP script via Ajax
+		// Yes; submit the form to the PHP script via Ajax
 
-    $('#sendingMessage').fadeIn();
-    contactForm.fadeOut();
+		$('#sendingMessage').fadeIn();
+		contactForm.fadeOut();
 
-    $.ajax( {
-      url: contactForm.attr( 'action' ) + "?ajax=true",
-      type: contactForm.attr( 'method' ),
-      data: contactForm.serialize(),
-      success: submitFinished
-    } );
-  }
+		$.ajax( {
+			url: contactForm.attr( 'action' ) + "?ajax=true",
+			type: contactForm.attr( 'method' ),
+			data: contactForm.serialize(),
+			success: function(data, status) {
+				console.log(data, status);
+				submitFinished(data);
+			},
+			error: function(jqXHR, textStatus, errorThrown) {
+				$('#failureMessage').fadeIn().delay(messageDelay).fadeOut();
+				$('#contactForm').delay(messageDelay+500).fadeIn();
 
-  // Prevent the default form submission occurring
-  return false;
+			}
+		} );
+	}
+
+	// Prevent the default form submission occurring
+	return false;
 }
 
 
-// Handle the Ajax response
+//Handle the Ajax response
 
 function submitFinished( response ) {
-  response = $.trim( response );
-  $('#sendingMessage').fadeOut();
 
-  if ( response == "success" ) {
+	response = $.trim( response );
+	console.log(response);
+	$('#sendingMessage').fadeOut();
 
-    // Form submitted successfully:
-    // 1. Display the success message
-    // 2. Clear the form fields
-    // 3. Fade the content back in
+	if ( response == "success" ) {
 
-    $('#successMessage').fadeIn().delay(messageDelay).fadeOut();
-    $('#senderName').val( "" );
-    $('#senderEmail').val( "" );
-    $('#message').val( "" );
+		// Form submitted successfully:
+		// 1. Display the success message
+		// 2. Clear the form fields
+		// 3. Fade the content back in
 
-    $('#contactForm').delay(messageDelay+500).fadeIn();
+		$('#successMessage').fadeIn().delay(messageDelay).fadeOut();
+		$('#senderName').val( "" );
+		$('#senderEmail').val( "" );
+		$('#message').val( "" );
 
-  } else {
+		$('#contactForm').delay(messageDelay+500).fadeIn();
 
-    // Form submission failed: Display the failure message,
-    // then redisplay the form
-    $('#failureMessage').fadeIn().delay(messageDelay).fadeOut();
-    $('#contactForm').delay(messageDelay+500).fadeIn();
-  }
+	} else {
+
+		// Form submission failed: Display the failure message,
+		// then redisplay the form
+		$('#failureMessage').fadeIn().delay(messageDelay).fadeOut();
+		$('#contactForm').delay(messageDelay+500).fadeIn();
+	}
 }
