@@ -42,7 +42,8 @@ public class PushNotificationSender {
     public static enum NotificationType {
         CONVERSATION,
         COMMENT,
-        FOLLOW
+        FOLLOW,
+        REVIEW
     }
 
     public static void sendNewCommentNotification(Long userId, String actor, String message, Long postId) {
@@ -79,6 +80,18 @@ public class PushNotificationSender {
         map.put(ACTOR, actor);
         map.put(MESSAGE, "");
         map.put(MESSAGE_TYPE, NotificationType.FOLLOW.name());
+        sendNotification(userId, map);
+    }
+    
+    public static void sendNewReviewNotification(Long userId, String actor, String message) {
+        if (StringUtils.isEmpty(actor)) {
+            return;
+        }
+        
+        Map<String, String> map = new HashMap<>();
+        map.put(ACTOR, actor);
+        map.put(MESSAGE, StringUtil.shortMessage(message));
+        map.put(MESSAGE_TYPE, NotificationType.REVIEW.name());
         sendNotification(userId, map);
     }
     

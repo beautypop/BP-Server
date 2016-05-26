@@ -5,6 +5,7 @@ import models.Comment;
 import models.Conversation;
 import models.Message;
 import models.Post;
+import models.Review;
 import models.Story;
 import models.User;
 import events.handler.EventHandler;
@@ -17,6 +18,7 @@ import events.map.FollowEvent;
 import events.map.LikeEvent;
 import events.map.MessageEvent;
 import events.map.PostEvent;
+import events.map.ReviewEvent;
 import events.map.SoldEvent;
 import events.map.StoryEvent;
 import events.map.TouchEvent;
@@ -142,5 +144,12 @@ public class SocialRelationHandler {
 	    touchEvent.put("post", post);
 	    touchEvent.put("user", localUser);
         EventHandler.getInstance().getEventBus().post(touchEvent);
+    }
+	
+	public static void recordNewReview(Review review, User localUser) {
+        ReviewEvent reviewEvent = new ReviewEvent();
+        reviewEvent.put("user", localUser);
+        reviewEvent.put("review", review);
+        EventHandler.getInstance().getEventBus().post(reviewEvent);
     }
 }

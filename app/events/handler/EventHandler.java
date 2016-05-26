@@ -6,6 +6,7 @@ import events.listener.FollowEventListener;
 import events.listener.LikeEventListener;
 import events.listener.MessageEventListener;
 import events.listener.PostEventListener;
+import events.listener.ReviewEventListener;
 import events.listener.SoldEventListener;
 import events.listener.StoryEventListener;
 import events.listener.ViewEventListener;
@@ -23,7 +24,8 @@ public class EventHandler {
 			StoryEventListener.class,
 			SoldEventListener.class,
 			ConversationEventListener.class,
-			MessageEventListener.class
+			MessageEventListener.class,
+			ReviewEventListener.class
 			};
 	
 	private static EventHandler eventHandler = new EventHandler();

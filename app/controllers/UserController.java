@@ -1391,6 +1391,8 @@ public class UserController extends Controller {
             otherUser.totalReviewScore += score;
             otherUser.save();
             
+            SocialRelationHandler.recordNewReview(review, localUser);
+            
             sw.stop();
             if (logger.underlyingLogger().isDebugEnabled()) {
             	logger.underlyingLogger().debug("[u="+localUser.getId()+"][order="+review.conversationOrder.id+"][review="+review.id+"] addReview(). Took "+sw.getElapsedMS()+"ms");
