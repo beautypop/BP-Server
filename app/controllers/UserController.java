@@ -1375,15 +1375,20 @@ public class UserController extends Controller {
             if (localUser.id == review.buyer.id) {
                 if (review.buyerReviewDate == null) {
                     otherUser.numReviews++;
+                } else {
+                    otherUser.totalReviewScore -= review.buyerScore;    // reset
                 }
                 addBuyerReview(review, score, reviewBody, otherUser);
             } else {
                 if (review.sellerReviewDate == null) {
                     otherUser.numReviews++;
+                } else {
+                    otherUser.totalReviewScore -= review.sellerScore;   // reset
                 }
                 addSellerReview(review, score, reviewBody, otherUser);            	
             }
-            otherUser.totalReviewScore = otherUser.totalReviewScore + score;
+            
+            otherUser.totalReviewScore += score;
             otherUser.save();
             
             sw.stop();
@@ -1399,7 +1404,6 @@ public class UserController extends Controller {
     }
 	
 	private static Result addBuyerReview(Review review, Double score, String body, User otherUser) {
-		otherUser.totalReviewScore = otherUser.totalReviewScore - review.buyerScore;
 		review.buyerReview = body;
 		review.buyerScore = score;
 		review.buyerReviewDate = new Date();
@@ -1408,7 +1412,6 @@ public class UserController extends Controller {
 	}
 
 	private static Result addSellerReview(Review review, Double score, String body, User otherUser) {
-		otherUser.totalReviewScore = otherUser.totalReviewScore - review.sellerScore;
 		review.sellerReview = body;
 		review.sellerScore = score;
 		review.sellerReviewDate = new Date();
