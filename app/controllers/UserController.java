@@ -1391,7 +1391,7 @@ public class UserController extends Controller {
             otherUser.totalReviewScore += score;
             otherUser.save();
             
-            SocialRelationHandler.recordNewReview(review, localUser);
+            //SocialRelationHandler.recordNewReview(review, localUser);
             
             sw.stop();
             if (logger.underlyingLogger().isDebugEnabled()) {
