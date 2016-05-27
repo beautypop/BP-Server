@@ -9,7 +9,7 @@ app.config(function($stateProvider, $urlRouterProvider, $ocLazyLoadProvider){
 $urlRouterProvider.otherwise("/");
     $stateProvider
 	    .state('home', {
-	        url: "/",
+	        url: "/home",
 	        templateUrl: "home.html",
 	        controller: "homeController",
 	        resolve: {

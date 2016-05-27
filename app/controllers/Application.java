@@ -169,7 +169,7 @@ public class Application extends Controller {
     
     @Transactional
     public Result index() {
-        return home();
+        return hello();
     }   
     
     //

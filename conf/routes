@@ -38,10 +38,12 @@ GET     /profile                                    controllers.Application.prof
 
 # Main
 GET     /                                           @controllers.Application.index
+GET     /hello                                      controllers.Application.hello
+GET     /photoguide                                 controllers.Application.photoguide
+GET     /marketplace                                @controllers.Application.home
 GET     /home                                       @controllers.Application.home
 GET     /login                                      controllers.Application.login
 GET     /signup                                     controllers.Application.signup
-GET     /hello                                      controllers.Application.hello
 
 # Instagram
 GET     /instagram                                  @controllers.InstagramController.index
