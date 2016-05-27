@@ -205,20 +205,36 @@ public class SendgridEmailClient implements TransactionalEmailClient {
                 template);
     }
 	
+	public void sendMailOnHelloMessage(String senderName, String senderEmail, String message) {
+        if (StringUtils.isEmpty(senderName) || StringUtils.isEmpty(senderEmail) || StringUtils.isEmpty(message)) {
+            return;
+        }
+        
+        String template = getEmailTemplate(
+                "views.html.account.email.sendgrid.hello_message_mail",
+                senderName,
+                senderEmail,
+                "",
+                message);
+        
+        sendMail(
+                SENDGRID_MAIL_FROM_ADDRESS,     // to
+                SENDGRID_MAIL_FROM_ADDRESS,     // from
+                SENDGRID_MAIL_FROM_NAME, 
+                formatSubject("Hello message from - "+senderName), 
+                template);
+    }
+	
 	protected String getEmailTemplate(final String template, final String actor, final String target) {
 	    return getEmailTemplate(template, actor, target, "", "");
 	}
 	
-	protected String getEmailTemplate(final String template, final String actor, final String target, final String product) {
-        return getEmailTemplate(template, actor, target, product, "");
+	protected String getEmailTemplate(final String template, final String actor, final String target, final String title) {
+        return getEmailTemplate(template, actor, target, title, "");
     }
 	
-	protected String getHelloMessageEmailTemplate(final String template, final String senderName, final String senderEmail, final String body) {
-	    return getEmailTemplate(template, senderName, senderEmail, "", body);
-	}
-	
 	protected String getEmailTemplate(final String template, 
-	        final String actor, final String target, final String product, final String body) {
+	        final String actor, final String target, final String title, final String body) {
 	    
 		Class<?> cls = null;
 		String ret = null;
@@ -232,7 +248,7 @@ public class SendgridEmailClient implements TransactionalEmailClient {
 			Method htmlRender = null;
 			try {
 				htmlRender = cls.getMethod("render",String.class,String.class,String.class,String.class);
-				ret = htmlRender.invoke(null, actor, target, product, body).toString();
+				ret = htmlRender.invoke(null, actor, target, title, body).toString();
 			} catch (NoSuchMethodException e) {
 				e.printStackTrace();
 			} catch (IllegalAccessException e) {
@@ -274,24 +290,5 @@ public class SendgridEmailClient implements TransactionalEmailClient {
         }
 
         return sb.toString();
-    }
-	
-	public void sendHelloMessageMail(String senderName, String senderEmail, String message) {
-	    if (StringUtils.isEmpty(senderName) || StringUtils.isEmpty(senderEmail) || StringUtils.isEmpty(message)) {
-            return;
-        }
-        
-        String template = getHelloMessageEmailTemplate(
-                "views.html.account.email.sendgrid.hello_message_mail",
-                senderName,
-                senderEmail,
-                message);
-        
-        sendMail(
-        		SENDGRID_MAIL_FROM_ADDRESS, 
-                SENDGRID_MAIL_FROM_ADDRESS, 
-                senderName+" - "+SENDGRID_MAIL_FROM_NAME, 
-                formatSubject("You have got hello message from : "+senderName), 
-                template);
     }
 }

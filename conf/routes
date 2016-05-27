@@ -94,6 +94,8 @@ POST    /accounts/merge                             controllers.Account.doMerge
 GET     /login/password/forgot                      controllers.Signup.forgotPassword(email: String ?= "")
 POST    /login/password/forgot                      controllers.Signup.doForgotPassword
 
+POST    /sendHelloMessage                           controllers.Application.sendHelloMessage
+
 # Category
 GET     /category/:id/:catagoryFilter               @controllers.CategoryController.viewCategory(id:Long, catagoryFilter:String)
 
