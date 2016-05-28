@@ -6,7 +6,6 @@ import handler.FeedHandler;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -28,7 +27,6 @@ import models.Post.ConditionType;
 import models.Resource;
 import models.Story;
 import models.User;
-import play.Play;
 import play.data.DynamicForm;
 import play.db.jpa.Transactional;
 import play.libs.Json;
@@ -46,7 +44,6 @@ import viewmodel.ReportedPostVM;
 import viewmodel.ResponseStatusVM;
 import viewmodel.UserVM;
 import common.model.FeedFilter.FeedType;
-import common.utils.HtmlUtil;
 import common.utils.HttpUtil;
 import common.utils.ImageFileUtil;
 import common.utils.NanoSecondStopWatch;
@@ -793,6 +790,30 @@ public class ProductController extends Controller{
 		return ok(Json.toJson(vms));
 	}
 
+	@Transactional
+    public static Result getLatestProducts(Long offset) {
+        final User localUser = Application.getLocalUser(session());
+        if (!localUser.isLoggedIn()) {
+            logger.underlyingLogger().error(String.format("[u=%d] User not logged in", localUser.id));
+            return notFound();
+        }
+        
+        if (!localUser.isSuperAdmin()) {
+            logger.underlyingLogger().error(String.format("[u=%d] User is not super admin. Failed to get latest products by created date !!", localUser.id));
+            return badRequest();
+        }
+        
+        List<Post> posts = Post.getPostsByCreatedDate(offset);
+        List<PostVMLite> vms = new ArrayList<>();
+        for (Post post : posts) {
+            if (post != null) {
+                PostVMLite vm = new PostVMLite(post, localUser);
+                vms.add(vm);
+            }
+        }
+        return ok(Json.toJson(vms));
+    }
+	
 	public static List<CommentVM> getComments(User user, Post post, Long offset){
 		List<CommentVM> comments = new ArrayList<CommentVM>();
 		for (Comment comment : post.getPostComments(offset)) {

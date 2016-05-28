@@ -1,5 +1,4 @@
 import java.util.Arrays;
-import java.util.concurrent.TimeUnit;
 
 import models.Activity;
 import models.Category;
@@ -23,6 +22,7 @@ import com.feth.play.module.pa.exceptions.AuthException;
 import common.cache.CalcServer;
 import common.cache.FeaturedItemCache;
 import common.category.custom.PostMarker;
+import common.schedule.AdminReporter;
 import common.schedule.CommandChecker;
 import common.schedule.JobScheduler;
 import common.thread.ThreadLocalOverride;
@@ -155,8 +155,6 @@ public class Global extends GlobalSettings {
                     }
                 }, DateTimeUtil.MINUTE_MILLIS);
         
-        
-        
         //
         // Daily scheduled jobs
         //
@@ -197,6 +195,24 @@ public class Global extends GlobalSettings {
                     }
                 });
 
+        // schedule to run admin daily reports at 5:00am HKT
+        JobScheduler.getInstance().schedule("adminDailyReports", "0 00 5 ? * *",
+                new Runnable() {
+                    public void run() {
+                        try {
+                           JPA.withTransaction(new play.libs.F.Callback0() {
+                                public void invoke() {
+                                    logger.underlyingLogger().info("[JobScheduler] adminDailyReports starts...");
+                                    AdminReporter.runReports();
+                                    logger.underlyingLogger().info("[JobScheduler] adminDailyReports completed !");
+                                }
+                            });
+                        } catch (Exception e) {
+                            logger.underlyingLogger().error("[JobScheduler] adminDailyReports failed...");
+                        }
+                    }
+                });
+        
         //
         // Interval scheduled jobs
         //

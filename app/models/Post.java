@@ -22,6 +22,7 @@ import javax.persistence.TemporalType;
 
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.joda.time.DateTime;
 
 import models.Country.CountryCode;
 import play.db.jpa.JPA;
@@ -305,6 +306,27 @@ public class Post extends SocialObject implements Likeable, Commentable {
 			return null;
 		}
 	}
+	
+	public static List<Post> getPostsByCreatedDate(DateTime date) {
+        Query q = JPA.em().createQuery("Select p from Post p where CREATED_DATE > ?1 and deleted = false order by CREATED_DATE desc");
+        try {
+            q.setParameter(1, date.toDate());
+            return (List<Post>) q.getResultList();
+        } catch (NoResultException e) {
+            return new ArrayList<>();
+        }
+	}
+	
+	public static List<Post> getPostsByCreatedDate(Long offset) {
+	    Query q = JPA.em().createQuery("Select p from Post p where deleted = false order by CREATED_DATE desc");
+        try {
+            q.setFirstResult((int) (offset * DefaultValues.DEFAULT_INFINITE_SCROLL_COUNT));
+            q.setMaxResults(DefaultValues.DEFAULT_INFINITE_SCROLL_COUNT);
+            return (List<Post>) q.getResultList();
+        } catch (NoResultException e) {
+            return new ArrayList<>();
+        }
+    }
 	
 	public static List<Post> getEligiblePostsForFeeds() {
 		try {
