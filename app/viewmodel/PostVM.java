@@ -11,8 +11,6 @@ import models.Post;
 import models.User;
 
 public class PostVM extends PostVMLite {
-	@JsonProperty("createdDate") public Long createdDate;
-	@JsonProperty("updatedDate") public Long updatedDate;
 	@JsonProperty("ownerNumProducts") public Long ownerNumProducts;
 	@JsonProperty("ownerNumFollowers") public Long ownerNumFollowers;
 	@JsonProperty("ownerLastLogin") public Long ownerLastLogin;
@@ -40,8 +38,6 @@ public class PostVM extends PostVMLite {
         this.ownerLastLogin = 
                 post.owner.lastLogin == null? 
                         post.getUpdatedDate().getTime() : post.owner.lastLogin.getTime();
-        this.createdDate = post.getCreatedDate().getTime();
-        this.updatedDate = post.getUpdatedDate().getTime();
         this.body = post.body;
         if (post.category.parent == null) {
             this.categoryId = post.category.id;
@@ -90,22 +86,6 @@ public class PostVM extends PostVMLite {
         this.ownerNumFollowers = ownerNumFollowers;
     }
     
-    public Long getCreatedDate() {
-        return createdDate;
-    }
-
-    public void setCreatedDate(Long createdDate) {
-        this.createdDate = createdDate;
-    }
-
-    public Long getUpdatedDate() {
-        return updatedDate;
-    }
-
-    public void setUpdatedDate(Long updatedDate) {
-        this.updatedDate = updatedDate;
-    }
-
     public String getBody() {
         return body;
     }

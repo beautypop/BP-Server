@@ -19,7 +19,9 @@ public class DateTimeUtil {
 
     private static DateTime TODAY;
     
-    private static SimpleDateFormat formatter = new SimpleDateFormat("MM-dd-yyyy HH:mm");
+    private static SimpleDateFormat toNamePartFormatter = new SimpleDateFormat("yyyyMMdd_HHmm");
+    
+    private static SimpleDateFormat toStringFormatter = new SimpleDateFormat("MM-dd-yyyy HH:mm");
     
     public static boolean withinSecs(long start, long end, long secs) {
         return Math.abs(end - start) < secs * SECOND_MILLIS;
@@ -109,7 +111,11 @@ public class DateTimeUtil {
         return new DateTime(y, m ,d, 12, 0);
     }
     
+    public static String toNamePart(Date date) {
+        return toNamePartFormatter.format(date);
+    }
+    
     public static String toString(Date date) {
-        return formatter.format(date);
+        return toStringFormatter.format(date);
     }
 }

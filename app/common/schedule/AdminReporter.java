@@ -1,11 +1,16 @@
 package common.schedule;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
+import org.apache.commons.lang3.StringUtils;
 import org.joda.time.DateTime;
 
-import controllers.Application;
+import common.utils.DateTimeUtil;
+import common.utils.HtmlUtil;
+import common.utils.StringUtil;
+import common.utils.UrlUtil;
 import email.SendgridEmailClient;
 import models.Post;
 import models.User;
@@ -21,42 +26,108 @@ public class AdminReporter extends Controller {
     public static final String ADMIN_REPORTS_RECIPIENTS = Play.application().configuration().getString("admin.reports.recipients");
     public static final String ADMIN_REPORTS_SKIP_USER_EMAIL_PREFIXES = Play.application().configuration().getString("admin.reports.skip.user.email.prefixes");
     
+    public static final int DAYS_AGO = 1;
+    
+    private static List<String> skipUserEmailPrefixes = StringUtil.parseValues(ADMIN_REPORTS_SKIP_USER_EMAIL_PREFIXES);
+    
     public static void runReports() {
+        runNewUsersTodayReport();
+        runLoginUsersTodayReport();
+        runNewProductsTodayReport();
+    }
+    
+    private static String printHeader(String title) {
+        String header = "-----" + HtmlUtil.appendBr();
+        header += title + HtmlUtil.appendBr();
+        header += "-----" + HtmlUtil.appendBr();
+        header += HtmlUtil.appendBr();
+        header += HtmlUtil.appendBr();
+        return header;
+    }
+    
+    private static void runNewUsersTodayReport() {
+        String subject = ADMIN_REPORTS_SUBJECT + DateTimeUtil.toNamePart(new Date()) + " NEW USERS";
         String body = "";
         
         List<UserVMLite> users = getNewUsersToday();
+        body += printHeader("NEW USERS="+users.size());
         
-        logger.underlyingLogger().info(String.format("getNewUsersToday=%d", users.size()));
+        for (UserVMLite user : users) {
+            if (!StringUtils.isEmpty(user.email) && 
+                    StringUtil.startsWithPrefixes(user.email, skipUserEmailPrefixes)) {
+                continue;
+            }
+            
+            String t = HtmlUtil.convertNewlineToHtml(user.shortInfo()) + HtmlUtil.appendBr();
+            t += UrlUtil.createSellerUrl(user) + HtmlUtil.appendBr();
+            t += HtmlUtil.appendBr();
+            body += t + HtmlUtil.appendBr();
+        }
+        logger.underlyingLogger().info(String.format("runNewUsersTodayReport users=%d", users.size()));    
         
-        users = getLoginUsersToday();
+        body = HtmlUtil.appendP(body);
+        String response = SendgridEmailClient.getInstance().sendMail(ADMIN_REPORTS_RECIPIENTS, subject, body);
+        logger.underlyingLogger().info("send mail response: "+response);
+    }
+    
+    private static void runLoginUsersTodayReport() {
+        String subject = ADMIN_REPORTS_SUBJECT + DateTimeUtil.toNamePart(new Date()) + " LOGIN USERS";
+        String body = "";
         
-        logger.underlyingLogger().info(String.format("getLoginUsersToday=%d", users.size()));
+        List<UserVMLite> users = getLoginUsersToday();
+        body += printHeader("LOGIN USERS="+users.size());
+        
+        for (UserVMLite user : users) {
+            if (!StringUtils.isEmpty(user.email) &&
+                    StringUtil.startsWithPrefixes(user.email, skipUserEmailPrefixes)) {
+                continue;
+            }
+            
+            // skip new signups
+            if (DateTimeUtil.withinADay(user.createdDate, user.lastLogin)) {
+                continue;
+            }
+            
+            String t = HtmlUtil.convertNewlineToHtml(user.shortInfo()) + HtmlUtil.appendBr();
+            t += UrlUtil.createSellerUrl(user) + HtmlUtil.appendBr();
+            t += HtmlUtil.appendBr();
+            body += t + HtmlUtil.appendBr();
+        }
+        logger.underlyingLogger().info(String.format("runLoginUsersTodayReport users=%d", users.size()));    
+        
+        body = HtmlUtil.appendP(body);
+        String response = SendgridEmailClient.getInstance().sendMail(ADMIN_REPORTS_RECIPIENTS, subject, body);
+        logger.underlyingLogger().info("send mail response: "+response);
+    }
+    
+    private static void runNewProductsTodayReport() {
+        String subject = ADMIN_REPORTS_SUBJECT + DateTimeUtil.toNamePart(new Date()) + " NEW PRODUCTS";
+        String body = "";
         
         List<PostVMLite> posts = getNewProductsToday();
+        body += printHeader("NEW PRODUCTS="+posts.size());
         
-        logger.underlyingLogger().info(String.format("getNewProductsToday=%d", posts.size()));
+        for (PostVMLite post : posts) {
+            String t = HtmlUtil.appendImage(UrlUtil.POST_IMAGE_BY_ID_URL+post.images[0], 150, 150) + HtmlUtil.appendBr();
+            t += HtmlUtil.convertNewlineToHtml(post.shortInfo()) + HtmlUtil.appendBr();
+            t += UrlUtil.createProductUrl(post) + HtmlUtil.appendBr();
+            t += HtmlUtil.appendBr();
+            body += t + HtmlUtil.appendBr();
+        }
+        logger.underlyingLogger().info(String.format("runLoginUsersTodayReport users=%d", posts.size()));    
         
-        SendgridEmailClient.getInstance().sendMail(ADMIN_REPORTS_RECIPIENTS, ADMIN_REPORTS_SUBJECT, body);
+        body = HtmlUtil.appendP(body);
+        String response = SendgridEmailClient.getInstance().sendMail(ADMIN_REPORTS_RECIPIENTS, subject, body);
+        logger.underlyingLogger().info("send mail response: "+response);
     }
     
     private static List<UserVMLite> getNewUsersToday() {
-        final User localUser = Application.getLocalUser(session());
-        if (!localUser.isLoggedIn()) {
-            logger.underlyingLogger().error(String.format("[u=%d] User not logged in", localUser.id));
-            return null;
-        }
-        
-        if (!localUser.isSuperAdmin()) {
-            logger.underlyingLogger().error(String.format("[u=%d] User is not super admin. Failed to get new users today !!", localUser.id));
-            return null;
-        }
-        
-        DateTime daysBefore = (new DateTime()).minusDays(1);
+        DateTime daysBefore = (new DateTime()).minusDays(DAYS_AGO);
         List<User> users = User.getUsersBySignup(daysBefore);
         List<UserVMLite> vms = new ArrayList<>();
         for (User user : users) {
             if (user != null) {
-                UserVMLite vm = new UserVMLite(user, localUser);
+                UserVMLite vm = new UserVMLite(user);
                 vms.add(vm);
             }
         }
@@ -64,23 +135,12 @@ public class AdminReporter extends Controller {
     }
     
     private static List<UserVMLite> getLoginUsersToday() {
-        final User localUser = Application.getLocalUser(session());
-        if (!localUser.isLoggedIn()) {
-            logger.underlyingLogger().error(String.format("[u=%d] User not logged in", localUser.id));
-            return null;
-        }
-        
-        if (!localUser.isSuperAdmin()) {
-            logger.underlyingLogger().error(String.format("[u=%d] User is not super admin. Failed to get login users today !!", localUser.id));
-            return null;
-        }
-        
-        DateTime daysBefore = (new DateTime()).minusDays(1);
+        DateTime daysBefore = (new DateTime()).minusDays(DAYS_AGO);
         List<User> users = User.getUsersByLogin(daysBefore);
         List<UserVMLite> vms = new ArrayList<>();
         for (User user : users) {
             if (user != null) {
-                UserVMLite vm = new UserVMLite(user, localUser);
+                UserVMLite vm = new UserVMLite(user);
                 vms.add(vm);
             }
         }
@@ -88,18 +148,7 @@ public class AdminReporter extends Controller {
     }
     
     private static List<PostVMLite> getNewProductsToday() {
-        final User localUser = Application.getLocalUser(session());
-        if (!localUser.isLoggedIn()) {
-            logger.underlyingLogger().error(String.format("[u=%d] User not logged in", localUser.id));
-            return null;
-        }
-        
-        if (!localUser.isSuperAdmin()) {
-            logger.underlyingLogger().error(String.format("[u=%d] User is not super admin. Failed to get new products today !!", localUser.id));
-            return null;
-        }
-        
-        DateTime daysBefore = (new DateTime()).minusDays(1);
+        DateTime daysBefore = (new DateTime()).minusDays(DAYS_AGO);
         List<Post> posts = Post.getPostsByCreatedDate(daysBefore);
         List<PostVMLite> vms = new ArrayList<>();
         for (Post post : posts) {

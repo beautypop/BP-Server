@@ -1,7 +1,10 @@
 package viewmodel;
 
+import java.util.Date;
+
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import common.utils.DateTimeUtil;
 import models.User;
 
 public class UserVMLite {
@@ -42,6 +45,10 @@ public class UserVMLite {
     @JsonProperty("isPromotedSeller") public boolean isPromotedSeller = false;
     @JsonProperty("isVerifiedSeller") public boolean isVerifiedSeller = false;
     @JsonProperty("isRecommendedSeller") public boolean isRecommendedSeller = false;
+    
+    public UserVMLite(User user) {
+        this(user, null);
+    }
     
     public UserVMLite(User user, User localUser) {
         this.id = user.id;
@@ -310,6 +317,21 @@ public class UserVMLite {
     
     public void setIsRecommendedSeller(boolean isRecommendedSeller) {
         this.isRecommendedSeller = isRecommendedSeller;
+    }
+    
+    public String shortInfo() {
+        return displayName + "\n" +
+                "id=" + id + "\n" +
+                "name=" + lastName + " " + firstName + "\n" +
+                "email=" + email + "\n" +
+                "fbLogin=" + isFbLogin + "\n" +
+                "signupDate=" + DateTimeUtil.toString(new Date(createdDate)) + "\n" +
+                "lastLogin=" + DateTimeUtil.toString(new Date(lastLogin)) + "\n" +
+                "totalLogin=" + totalLogin + "\n" +
+                "numViews=" + numViews + " | " + "numLikes=" + numLikes + "\n" +
+                "numFollowers=" + numFollowers + " | " + "numFollowings=" + numFollowings + "\n" +
+                "numProducts=" + numProducts + " | " + "numComments=" + numComments + "\n" +
+                "numConversationsAsSender=" + numConversationsAsSender + " | " + "numConversationsAsRecipient=" + numConversationsAsRecipient;
     }
     
     @Override

@@ -1,7 +1,10 @@
 package viewmodel;
 
+import java.util.Date;
+
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import common.utils.DateTimeUtil;
 import models.Country;
 import models.Country.CountryCode;
 import models.Post;
@@ -9,6 +12,8 @@ import models.User;
 
 public class PostVMLite {
 	@JsonProperty("id") public Long id;
+	@JsonProperty("createdDate") public Long createdDate;
+    @JsonProperty("updatedDate") public Long updatedDate;
 	@JsonProperty("ownerId") public Long ownerId;
     @JsonProperty("ownerName") public String ownerName;
 
@@ -45,6 +50,8 @@ public class PostVMLite {
 	
     public PostVMLite(Post post, User user) {
         this.id = post.id;
+        this.createdDate = post.getCreatedDate().getTime();
+        this.updatedDate = post.getUpdatedDate().getTime();
         this.ownerId = post.owner.id;
         this.ownerName = post.owner.displayName;
         this.title = post.title;
@@ -95,6 +102,22 @@ public class PostVMLite {
         this.id = id;
     }
 
+    public Long getCreatedDate() {
+        return createdDate;
+    }
+
+    public void setCreatedDate(Long createdDate) {
+        this.createdDate = createdDate;
+    }
+
+    public Long getUpdatedDate() {
+        return updatedDate;
+    }
+
+    public void setUpdatedDate(Long updatedDate) {
+        this.updatedDate = updatedDate;
+    }
+    
     public Long getOwnerId() {
         return ownerId;
     }
@@ -229,5 +252,12 @@ public class PostVMLite {
 
     public void setCountryIcon(String countryIcon) {
         this.countryIcon = countryIcon;
+    }
+    
+    public String shortInfo() {
+        return title + "\n" +
+                "$" + price + "\n" +
+                "id=" + id + "\n" +
+                "createdDate=" + DateTimeUtil.toString(new Date(createdDate));
     }
 }

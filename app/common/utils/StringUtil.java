@@ -18,6 +18,25 @@ public class StringUtil {
 
     /**
      * 
+     * @param str
+     * @param prefixes
+     * @return
+     */
+    public static boolean startsWithPrefixes(String str, List<String> prefixes) {
+        if (str == null) {
+            return false;
+        }
+        
+        for (String prefix : prefixes) {
+            if (str.startsWith(prefix)) {
+                return true;
+            }
+        }
+        return false;
+    }
+    
+    /**
+     * 
      * @param text
      * @return
      */
@@ -128,7 +147,7 @@ public class StringUtil {
     }
     
     public static List<String> parseValues(String values) {
-        return parseValues(DefaultValues.DELIMITER_COMMA);
+        return parseValues(values, DefaultValues.DELIMITER_COMMA);
     }
     
     public static List<String> parseValues(String values, String delimiter) {

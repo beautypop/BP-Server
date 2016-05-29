@@ -16,6 +16,10 @@ public class HtmlUtil {
     private static final Pattern TAGWORD_REGEX = Pattern.compile("(\\s?|^)"+TAGWORD_MARKER+"(.+?)(\\s|$)");
     private static final int URL_TRUNCATE_LEN = 60;
 
+    public static String convertNewlineToHtml(String text) {
+        return text.replace("\n", "<br>");
+    }
+    
     /**
      * Convert the given text to Html, with href links.
      * @param text
@@ -70,11 +74,14 @@ public class HtmlUtil {
         return new Pair<>(resultText, resultTagWords);
     }
 
-
     private static String escapeHtmlSpecialChars(String text) {
         return text.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;").replace("\"", "&quot;").replace("'", "&apos;");
     }
-
+    
+    public static String appendHref(String url, String text) {
+        return "<a href='"+url+"'>"+text+"</img>";
+    }
+    
     public static String appendImage(String src, int width, int height) {
         return "<img src='"+src+"' width='"+width+"' height='"+height+"' border='0' style='display:block;border:none;outline:none;text-decoration:none'></img>";
     }
@@ -85,6 +92,10 @@ public class HtmlUtil {
     
     public static String appendP(String text) {
         return "<p>"+text+"</p>";
+    }
+    
+    public static String appendB(String text) {
+        return "<b>"+text+"</b>";
     }
     
     public static String appendTitle(String title) {

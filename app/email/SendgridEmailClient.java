@@ -15,6 +15,8 @@ import com.sendgrid.SendGridException;
 
 import common.schedule.JobScheduler;
 import common.utils.HtmlUtil;
+import common.utils.StringUtil;
+import common.utils.UrlUtil;
 import controllers.Application;
 
 public class SendgridEmailClient implements TransactionalEmailClient {
@@ -33,8 +35,6 @@ public class SendgridEmailClient implements TransactionalEmailClient {
             Play.application().configuration().getString("sendgrid.authen.password");
     
     public static final String WELCOME_IMAGE_URL = Application.APPLICATION_BASE_URL + "/image/static/welcome.jpg";
-    
-    public static final String POST_IMAGE_BY_ID_URL = Application.APPLICATION_BASE_URL + "/image/get-post-image-by-id/";
     
     private SendGrid sendgrid;
     
@@ -65,16 +65,19 @@ public class SendgridEmailClient implements TransactionalEmailClient {
 	@Override
 	public String sendMail(String to, String from, String fromName, String subject, String body) {
 	    if (!Application.isProd()) {
-	        logger.underlyingLogger().info("[email="+to+"][isProd=false] sendMail skipped... body="+body);
+	        logger.underlyingLogger().info("[email="+to+"][isProd=false] sendMail skipped... body="+body.substring(0, 1000));
 	        return "";
 	    }
 	    
 	    SendGrid.Email email = new SendGrid.Email();
-	    email.addTo(to);
 	    email.setFrom(from);
 	    email.setFromName(fromName);
 	    email.setSubject(subject);
 	    email.setHtml(body);
+	    
+	    for (String toEmail : StringUtil.parseValues(to)) {
+	        email.addTo(toEmail);
+	    }
 	    
 	    try {
 	        SendGrid.Response response = sendgrid.send(email);
@@ -186,7 +189,7 @@ public class SendgridEmailClient implements TransactionalEmailClient {
         }
         
         String htmlBody = 
-                HtmlUtil.appendImage(POST_IMAGE_BY_ID_URL+post.getImage(), 150, 150)+HtmlUtil.appendBr()+ 
+                HtmlUtil.appendImage(UrlUtil.POST_IMAGE_BY_ID_URL+post.getImage(), 150, 150)+HtmlUtil.appendBr()+ 
                 post.title+HtmlUtil.appendBr()+HtmlUtil.appendBr()+ 
                 "價格: $" + post.price.longValue();
         
