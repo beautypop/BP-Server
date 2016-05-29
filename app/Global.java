@@ -177,8 +177,8 @@ public class Global extends GlobalSettings {
                     }
                 });
         
-        // schedule to purge sold posts daily at 4:30am HKT
-        JobScheduler.getInstance().schedule("cleanupSoldPosts", "0 30 4 ? * *",
+        // schedule to purge sold posts daily at 4:15am HKT
+        JobScheduler.getInstance().schedule("cleanupSoldPosts", "0 15 4 ? * *",
                 new Runnable() {
                     public void run() {
                         try {
@@ -195,6 +195,24 @@ public class Global extends GlobalSettings {
                     }
                 });
 
+        // schedule to rebuild category popular queues Activity daily at 4:30am HKT
+        JobScheduler.getInstance().schedule("rebuildCategoryPopularQueues", "0 30 4 ? * *",
+                new Runnable() {
+                    public void run() {
+                        try {
+                           JPA.withTransaction(new play.libs.F.Callback0() {
+                                public void invoke() {
+                                    logger.underlyingLogger().info("[JobScheduler] rebuildCategoryPopularQueues starts...");
+                                    CalcServer.instance().buildCategoryPopularQueues();
+                                    logger.underlyingLogger().info("[JobScheduler] rebuildCategoryPopularQueues completed !");
+                                }
+                            });
+                        } catch (Exception e) {
+                            logger.underlyingLogger().error("[JobScheduler] rebuildCategoryPopularQueues failed...");
+                        }
+                    }
+                });
+        
         // schedule to run admin daily reports at 5:00am HKT
         JobScheduler.getInstance().schedule("adminDailyReports", "0 00 5 ? * *",
                 new Runnable() {

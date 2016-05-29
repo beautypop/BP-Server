@@ -82,8 +82,9 @@ public class CalcServer {
         //buildQueuesFromUsers();
         buildQueuesFromPosts();
         
+        /*
         JobScheduler.getInstance().schedule(
-                "buildCategoryPopularQueue", 
+                "buildCategoryPopularQueues", 
                 FEED_SCORE_COMPUTE_SCHEDULE,  // initial delay 
                 FEED_SCORE_COMPUTE_SCHEDULE,  // interval
                 TimeUnit.HOURS,
@@ -101,6 +102,7 @@ public class CalcServer {
                         }
                     }
                 });
+        */
         
         sw.stop();
         logger.underlyingLogger().debug("warmUpActivity completed. Took "+sw.getElapsedSecs()+"s");
@@ -363,7 +365,7 @@ public class CalcServer {
         addToCachedProductsQueue(post);
     }
     
-    private void buildCategoryPopularQueues() {
+    public void buildCategoryPopularQueues() {
         NanoSecondStopWatch sw = new NanoSecondStopWatch();
         logger.underlyingLogger().debug("buildCategoryPopularQueue starts");
         
