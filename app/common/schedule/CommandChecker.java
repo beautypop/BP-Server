@@ -65,6 +65,10 @@ public class CommandChecker {
         if (commandLine.startsWith("rebuildElasticIndexes")) {
             rebuildElasticIndexes(params);
         }
+        // runAdminReports
+        else if (commandLine.startsWith("runAdminReports")) {
+            runAdminReports(params);
+        }
         // exportUserEmails
         else if (commandLine.startsWith("exportUserEmails")) {
             exportUserEmails(params);
@@ -87,7 +91,6 @@ public class CommandChecker {
                 user.numViews = ViewSocialRelation.getUserViewsCount(user.id);
             }
         }
-        
         
 
         /* 
@@ -144,6 +147,11 @@ public class CommandChecker {
         for(User user : User.getEligibleUsersForFeed()){
             ElasticSearchController.addUserElasticSearch(user);
         }
+    }
+    
+    private static void runAdminReports(String[] params) {
+        logger.underlyingLogger().info("runAdminReports()");
+        AdminReporter.runReports();
     }
     
     private static void exportUserEmails(String[] params) {
