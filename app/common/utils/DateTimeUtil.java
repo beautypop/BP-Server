@@ -19,7 +19,7 @@ public class DateTimeUtil {
 
     private static DateTime TODAY;
     
-    private static SimpleDateFormat toNamePartFormatter = new SimpleDateFormat("yyyyMMdd_HHmm");
+    private static SimpleDateFormat toNamePartFormatter = new SimpleDateFormat("yyyyMMdd");
     
     private static SimpleDateFormat toStringFormatter = new SimpleDateFormat("MM-dd-yyyy HH:mm");
     
