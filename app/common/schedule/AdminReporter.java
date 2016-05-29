@@ -126,7 +126,7 @@ public class AdminReporter extends Controller {
         List<User> users = User.getUsersBySignup(daysBefore);
         List<UserVMLite> vms = new ArrayList<>();
         for (User user : users) {
-            if (user != null) {
+            if (user != null && !user.isNewUser() && !StringUtils.isEmpty(user.displayName)) {
                 UserVMLite vm = new UserVMLite(user);
                 vms.add(vm);
             }
@@ -139,7 +139,7 @@ public class AdminReporter extends Controller {
         List<User> users = User.getUsersByLogin(daysBefore);
         List<UserVMLite> vms = new ArrayList<>();
         for (User user : users) {
-            if (user != null) {
+            if (user != null && !user.isNewUser() && !StringUtils.isEmpty(user.displayName)) {
                 UserVMLite vm = new UserVMLite(user);
                 vms.add(vm);
             }
