@@ -103,6 +103,10 @@ $(document).ready(function() {
             }, 5000);
         });
     });
+    
+    $('#home a').click(function(evt) {
+    	window.location = this.href;
+    });
 
 });
 
