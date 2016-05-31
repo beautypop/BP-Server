@@ -8,7 +8,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.Set;
-import java.util.concurrent.TimeUnit;
 
 import javax.inject.Inject;
 
@@ -23,7 +22,6 @@ import models.User;
 import org.joda.time.DateTime;
 
 import play.Play;
-import play.db.jpa.JPA;
 
 import com.google.inject.Singleton;
 
@@ -273,7 +271,10 @@ public class CalcServer {
             return;
         }
         if(post.hasHashtag(hashtag)) {
-            Double timeScore = calculateTimeScore(post, true);
+            Double timeScore = post.timeScore;
+            if (!post.sold) {
+                timeScore = calculateTimeScore(post, true);
+            }
             jedisCache.putToSortedSet(getKey(FeedType.HASHTAG_POPULAR,hashtag.id), timeScore.doubleValue() * FEED_SCORE_HIGH_BASE, post.id.toString());
             if (post.isNewCondition()) {
                 jedisCache.putToSortedSet(getKey(FeedType.HASHTAG_POPULAR_NEW,hashtag.id), timeScore.doubleValue() * FEED_SCORE_HIGH_BASE, post.id.toString());    
@@ -367,7 +368,7 @@ public class CalcServer {
     
     public void buildCategoryPopularQueues() {
         NanoSecondStopWatch sw = new NanoSecondStopWatch();
-        logger.underlyingLogger().debug("buildCategoryPopularQueue starts");
+        logger.underlyingLogger().debug("buildCategoryPopularQueues starts");
         
         for (Post post : Post.getEligiblePostsForFeeds()) {
             if (post.soldMarked) {
@@ -377,7 +378,7 @@ public class CalcServer {
         }
         
         sw.stop();
-        logger.underlyingLogger().debug("buildCategoryPopularQueue completed. Took "+sw.getElapsedSecs()+"s");
+        logger.underlyingLogger().debug("buildCategoryPopularQueues completed. Took "+sw.getElapsedSecs()+"s");
     }
     
     private void buildProductLikesQueue(Post post) {
@@ -440,7 +441,10 @@ public class CalcServer {
         if (post.soldMarked) {
             return;
         }
-        Double timeScore = calculateTimeScore(post, true);
+        Double timeScore = post.timeScore;
+        if (!post.sold) {
+            timeScore = calculateTimeScore(post, true);
+        }
         jedisCache.putToSortedSet(getKey(FeedType.CATEGORY_POPULAR,category.id), timeScore.doubleValue() * FEED_SCORE_HIGH_BASE, post.id.toString());
         if (post.isNewCondition()) {
             jedisCache.putToSortedSet(getKey(FeedType.CATEGORY_POPULAR_NEW,category.id), timeScore.doubleValue() * FEED_SCORE_HIGH_BASE, post.id.toString());    

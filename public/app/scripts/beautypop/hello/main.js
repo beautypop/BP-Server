@@ -104,9 +104,9 @@ $(document).ready(function() {
         });
     });
     
-    $('#home a').click(function(evt) {
-    	window.location = this.href;
+    $('#marketplace a').click(function(evt) {
+    	window.open(this.href, '_blank');
+    	//window.location = this.href;
     });
-
 });
 

@@ -258,6 +258,7 @@ public class PostVMLite {
         return title + "\n" +
                 "$" + price + "\n" +
                 "id=" + id + "\n" +
-                "createdDate=" + DateTimeUtil.toString(new Date(createdDate));
+                "seller=" + ownerName + "\n" +
+                "listed on=" + DateTimeUtil.toString(new Date(createdDate));
     }
 }

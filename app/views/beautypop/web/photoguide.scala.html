@@ -41,13 +41,6 @@
 		<link rel="stylesheet" href=@routes.Assets.versioned("app/custom-css/css/hello/normalize.css")>
 		<link rel="stylesheet" href=@routes.Assets.versioned("app/custom-css/css/hello/style.css")>
 		<link rel="stylesheet" href=@routes.Assets.versioned("app/custom-css/css/hello/photoguide.css")>
-		
-		<script type="text/javascript" src="@routes.Assets.versioned("app/scripts/tracking.js")"></script>
-		<script>
-		    ga_send_pv();
-		</script>
-
-		
     </head>
   
 <body>
@@ -152,8 +145,10 @@ Keep this photo uncluttred.</p>
   </div>
   <div class="foot">
   </div>
-
-
-	
 </body>
 </html>
+
+<script type="text/javascript" src="@routes.Assets.versioned("app/scripts/tracking.js")"></script>
+<script>
+    ga_send_pv();
+</script>
