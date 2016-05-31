@@ -22,7 +22,7 @@ import viewmodel.UserVMLite;
 public class AdminReporter extends Controller {
     private static final play.api.Logger logger = play.api.Logger.apply(AdminReporter.class);
 
-    public static final int ADMIN_REPORTS_ANALYZE_DAYS_AGO = Play.application().configuration().getInt("admin.reports.analyze.days.ago");
+    public static final int ADMIN_REPORTS_RUN_DAYS_AGO = Play.application().configuration().getInt("admin.reports.run.days.ago");
     public static final String ADMIN_REPORTS_SUBJECT = Play.application().configuration().getString("admin.reports.subject");
     public static final String ADMIN_REPORTS_RECIPIENTS = Play.application().configuration().getString("admin.reports.recipients");
     public static final String ADMIN_REPORTS_SKIP_USER_EMAIL_PREFIXES = Play.application().configuration().getString("admin.reports.skip.user.email.prefixes");
@@ -121,7 +121,7 @@ public class AdminReporter extends Controller {
     }
     
     private static List<UserVMLite> getNewUsersToday() {
-        DateTime daysBefore = (new DateTime()).minusDays(ADMIN_REPORTS_ANALYZE_DAYS_AGO);
+        DateTime daysBefore = (new DateTime()).minusDays(ADMIN_REPORTS_RUN_DAYS_AGO);
         List<User> users = User.getUsersBySignup(daysBefore);
         List<UserVMLite> vms = new ArrayList<>();
         for (User user : users) {
@@ -134,7 +134,7 @@ public class AdminReporter extends Controller {
     }
     
     private static List<UserVMLite> getLoginUsersToday() {
-        DateTime daysBefore = (new DateTime()).minusDays(ADMIN_REPORTS_ANALYZE_DAYS_AGO);
+        DateTime daysBefore = (new DateTime()).minusDays(ADMIN_REPORTS_RUN_DAYS_AGO);
         List<User> users = User.getUsersByLogin(daysBefore);
         List<UserVMLite> vms = new ArrayList<>();
         for (User user : users) {
@@ -147,7 +147,7 @@ public class AdminReporter extends Controller {
     }
     
     private static List<PostVMLite> getNewProductsToday() {
-        DateTime daysBefore = (new DateTime()).minusDays(ADMIN_REPORTS_ANALYZE_DAYS_AGO);
+        DateTime daysBefore = (new DateTime()).minusDays(ADMIN_REPORTS_RUN_DAYS_AGO);
         List<Post> posts = Post.getPostsByCreatedDate(daysBefore);
         List<PostVMLite> vms = new ArrayList<>();
         for (Post post : posts) {
