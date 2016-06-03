@@ -1427,7 +1427,7 @@ public class UserController extends Controller {
 			User localUser = Application.getLocalUser(session());
 			Review review = Review.getByConversationOrderId(conversationOrderId);
 			if (review == null) {
-			    return notFound();
+			    return ok();
 			}
 			ReviewVM reviewVM = new ReviewVM(review, localUser);
 			return ok(Json.toJson(reviewVM));

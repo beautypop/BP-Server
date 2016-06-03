@@ -36,8 +36,9 @@ public class AdminReporter extends Controller {
     }
     
     private static String printHeader(String title) {
-        String header = "-----" + HtmlUtil.appendBr();
-        header += title + HtmlUtil.appendBr();
+        String header = "";
+        header += "-----" + HtmlUtil.appendBr();
+        header += title;
         header += "-----" + HtmlUtil.appendBr();
         header += HtmlUtil.appendBr();
         header += HtmlUtil.appendBr();
@@ -46,16 +47,19 @@ public class AdminReporter extends Controller {
     
     private static void runNewUsersTodayReport() {
         String subject = ADMIN_REPORTS_SUBJECT + DateTimeUtil.toNamePart(new Date()) + " NEW USERS";
+        String header = "";
         String body = "";
         
         List<UserVMLite> users = getNewUsersToday();
-        body += printHeader("NEW USERS="+users.size());
         
+        int total = 0;
         for (UserVMLite user : users) {
             if (!StringUtils.isEmpty(user.email) && 
                     StringUtil.startsWithPrefixes(user.email, skipUserEmailPrefixes)) {
                 continue;
             }
+            
+            total++;
             
             String t = HtmlUtil.convertNewlineToHtml(user.shortInfo()) + HtmlUtil.appendBr();
             t += UrlUtil.createSellerUrl(user) + HtmlUtil.appendBr();
@@ -63,19 +67,23 @@ public class AdminReporter extends Controller {
             body += t + HtmlUtil.appendBr();
         }
         logger.underlyingLogger().info(String.format("runNewUsersTodayReport users=%d", users.size()));    
+
+        // header
+        header += "NEW USERS=" + total + HtmlUtil.appendBr();
         
-        body = HtmlUtil.appendP(body);
+        body = printHeader(header) + HtmlUtil.appendP(body);
         String response = SendgridEmailClient.getInstance().sendMail(ADMIN_REPORTS_RECIPIENTS, subject, body);
         logger.underlyingLogger().info("send mail response: "+response);
     }
     
     private static void runLoginUsersTodayReport() {
         String subject = ADMIN_REPORTS_SUBJECT + DateTimeUtil.toNamePart(new Date()) + " LOGIN USERS";
+        String header = "";
         String body = "";
         
         List<UserVMLite> users = getLoginUsersToday();
-        body += printHeader("LOGIN USERS="+users.size());
         
+        int total = 0, ios = 0, android = 0, buyers = 0, sellers = 0;
         for (UserVMLite user : users) {
             if (!StringUtils.isEmpty(user.email) &&
                     StringUtil.startsWithPrefixes(user.email, skipUserEmailPrefixes)) {
@@ -87,6 +95,24 @@ public class AdminReporter extends Controller {
                 continue;
             }
             
+            total++;
+            
+            // ios / android
+            if (user.lastLoginUserAgent != null && 
+                    user.lastLoginUserAgent.toLowerCase().startsWith("ios")) {
+                ios++;
+            } else if (user.lastLoginUserAgent != null && 
+                    user.lastLoginUserAgent.toLowerCase().startsWith("android")) {
+                android++;
+            } 
+
+            // buyer / seller
+            if (user.numProducts > 0) {
+                sellers++;
+            } else {
+                buyers++;
+            }
+            
             String t = HtmlUtil.convertNewlineToHtml(user.shortInfo()) + HtmlUtil.appendBr();
             t += UrlUtil.createSellerUrl(user) + HtmlUtil.appendBr();
             t += HtmlUtil.appendBr();
@@ -94,19 +120,26 @@ public class AdminReporter extends Controller {
         }
         logger.underlyingLogger().info(String.format("runLoginUsersTodayReport users=%d", users.size()));    
         
-        body = HtmlUtil.appendP(body);
+        // header
+        header += "TOTAL LOGIN USERS=" + total + HtmlUtil.appendBr();
+        header += "iOS=" + ios + " | Android=" + android + HtmlUtil.appendBr();
+        header += "Buyers=" + buyers + " | Sellers=" + sellers + HtmlUtil.appendBr();
+        
+        body = printHeader(header) + HtmlUtil.appendP(body);
         String response = SendgridEmailClient.getInstance().sendMail(ADMIN_REPORTS_RECIPIENTS, subject, body);
         logger.underlyingLogger().info("send mail response: "+response);
     }
     
     private static void runNewProductsTodayReport() {
         String subject = ADMIN_REPORTS_SUBJECT + DateTimeUtil.toNamePart(new Date()) + " NEW PRODUCTS";
+        String header = "";
         String body = "";
         
         List<PostVMLite> posts = getNewProductsToday();
-        body += printHeader("NEW PRODUCTS="+posts.size());
         
+        int total = 0;
         for (PostVMLite post : posts) {
+            total++;
             String t = HtmlUtil.appendImage(UrlUtil.POST_IMAGE_BY_ID_URL+post.images[0], 150, 150) + HtmlUtil.appendBr();
             t += HtmlUtil.convertNewlineToHtml(post.shortInfo()) + HtmlUtil.appendBr();
             t += UrlUtil.createProductUrl(post) + HtmlUtil.appendBr();
@@ -115,7 +148,10 @@ public class AdminReporter extends Controller {
         }
         logger.underlyingLogger().info(String.format("runLoginUsersTodayReport users=%d", posts.size()));    
         
-        body = HtmlUtil.appendP(body);
+        // header
+        header += "NEW PRODUCTS=" + total + HtmlUtil.appendBr();
+        
+        body = printHeader(header) + HtmlUtil.appendP(body);
         String response = SendgridEmailClient.getInstance().sendMail(ADMIN_REPORTS_RECIPIENTS, subject, body);
         logger.underlyingLogger().info("send mail response: "+response);
     }

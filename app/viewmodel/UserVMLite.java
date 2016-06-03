@@ -327,7 +327,7 @@ public class UserVMLite {
                 "fbLogin=" + isFbLogin + "\n" +
                 "signupDate=" + DateTimeUtil.toString(new Date(createdDate)) + "\n" +
                 "lastLogin=" + DateTimeUtil.toString(new Date(lastLogin)) + "\n" +
-                "totalLogin=" + totalLogin + "\n" +
+                "lastLoginUserAgent=" + lastLoginUserAgent + "\n" +
                 "numViews=" + numViews + " | " + "numLikes=" + numLikes + "\n" +
                 "numFollowers=" + numFollowers + " | " + "numFollowings=" + numFollowings + "\n" +
                 "numProducts=" + numProducts + " | " + "numComments=" + numComments + "\n" +
@@ -345,7 +345,7 @@ public class UserVMLite {
                 "fbLogin=" + isFbLogin + "\n" +
                 "signupDate=" + createdDate + "\n" +
                 "lastLogin=" + lastLogin + "\n" +
-                "totalLogin=" + totalLogin + "\n" +
+                "lastLoginUserAgent=" + lastLoginUserAgent + "\n" +
                 "numViews=" + numViews + "\n" +
                 "numLikes=" + numLikes + "\n" +
                 "numFollowers=" + numFollowers + "\n" +
