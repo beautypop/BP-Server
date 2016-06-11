@@ -104,7 +104,7 @@ public class PushNotificationSender {
         PushNotificationToken token = PushNotificationToken.findByUserId(userId);
         if (token != null) {
             if (Application.DeviceType.IOS.equals(token.deviceType)) {
-                //sendToApn(userId, token.token, map);
+                sendToApn(userId, token.token, map);
             } else if (Application.DeviceType.ANDROID.equals(token.deviceType)) {
                 sendToGcm(userId, token.token, map);
             }
