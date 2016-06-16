@@ -1,14 +1,36 @@
+Mac
+=======
 1. Install python https://www.python.org/ftp/python/2.7.11/python-2.7.11.msi
-2. Install pip
-	python -m pip install -U pip (windows cmd)
+    brew install python
+2. Install xcode-select
+    xcode-select --install
 3. Install scrapy
-	pip install Scrapy (windows cmd)
+    pip install Scrapy
 4. Create new scrapy project 
-	scrapy startproject demo ( demo ~ project name )
+    Scrapy startproject demo ( demo ~ project name )
 5. Copy time_crawler.py under demo/spiders folder
-6. change ROBOTSTXT_OBEY to false(ROBOTSTXT_OBEY=false) in demo/settings.py
+6. Update ROBOTSTXT_OBEY=False in demo/settings.py
 7. Run project
-	scrapy crawl time
+    Scrapy crawl time
 8. you will get buyer.csv and seller.csv at project location folder
 
-(TIPS : If you want to change the location of file,change buyer_file and seller_file varibles in time_crawler.py to your preferred location)
+(TIPS : If you want to change the location of file, change buyer_file and seller_file varibles in time_crawler.py to your preferred location)
+
+
+Windows
+=======
+1. Install python https://www.python.org/ftp/python/2.7.11/python-2.7.11.msi
+2. Install pip
+	python -m pip install -U pip
+3. Install scrapy
+	pip install Scrapy
+4. Create new scrapy project 
+	Scrapy startproject demo ( demo ~ project name )
+5. Copy time_crawler.py under demo/spiders folder
+6. Update ROBOTSTXT_OBEY to False in demo/settings.py
+7. Run project
+	Scrapy crawl time
+8. you will get buyer.csv and seller.csv at project location folder
+
+(TIPS : If you want to change the location of file, change buyer_file and seller_file varibles in time_crawler.py to your preferred location)
+
