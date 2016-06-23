@@ -43,7 +43,8 @@ public class PushNotificationSender {
         CONVERSATION,
         COMMENT,
         FOLLOW,
-        REVIEW
+        BUYER_REVIEW,
+        SELLER_REVIEW
     }
 
     public static void sendNewCommentNotification(Long userId, String actor, String message, Long postId) {
@@ -82,8 +83,8 @@ public class PushNotificationSender {
         map.put(MESSAGE_TYPE, NotificationType.FOLLOW.name());
         sendNotification(userId, map);
     }
-    
-    public static void sendNewReviewNotification(Long userId, String actor, String message) {
+
+    public static void sendNewBuyerReviewNotification(Long userId, String actor, String message) {
         if (StringUtils.isEmpty(actor)) {
             return;
         }
@@ -91,10 +92,27 @@ public class PushNotificationSender {
         Map<String, String> map = new HashMap<>();
         map.put(ACTOR, actor);
         map.put(MESSAGE, StringUtil.shortMessage(message));
-        map.put(MESSAGE_TYPE, NotificationType.REVIEW.name());
+        map.put(MESSAGE_TYPE, NotificationType.BUYER_REVIEW.name());
         sendNotification(userId, map);
     }
     
+    public static void sendNewSellerReviewNotification(Long userId, String actor, String message) {
+        if (StringUtils.isEmpty(actor)) {
+            return;
+        }
+        
+        Map<String, String> map = new HashMap<>();
+        map.put(ACTOR, actor);
+        map.put(MESSAGE, StringUtil.shortMessage(message));
+        map.put(MESSAGE_TYPE, NotificationType.SELLER_REVIEW.name());
+        sendNotification(userId, map);
+    }
+    
+    /**
+     * 
+     * @param userId
+     * @param map
+     */
     private static void sendNotification(Long userId,  Map<String, String> map) {
         if (!Application.isProd()) {
             logger.underlyingLogger().info("[u="+userId+"][isProd=false] sendNotification skipped...");
@@ -113,6 +131,16 @@ public class PushNotificationSender {
         }
     }
 
+    /**
+     * Test notification...
+     * 
+     * {"aps":{"content-available":1,"sound":"default","actor":"BuyBuyer","postId":"2000","messageType":"CONVERSATION","alert":"How much???"}}
+     * 
+     * @param userId
+     * @param token
+     * @param map
+     * @return
+     */
     private static boolean sendToApn(Long userId, String token, Map<String, String> map) {
     	try {
 			String pass = APN_API_PASS;
@@ -144,6 +172,13 @@ public class PushNotificationSender {
 		}
     }
     
+    /**
+     * 
+     * @param userId
+     * @param token
+     * @param map
+     * @return
+     */
     private static boolean sendToGcm(Long userId, String token, Map<String, String> map) {
         try {
             String content = Json.stringify(Json.toJson(map));

@@ -82,7 +82,8 @@ public class Activity  extends domain.Entity implements Serializable, Creatable,
 		SOLD,
 		NEW_GAME_BADGE,
 		TIPS_NEW_USER,
-		REVIEW
+		BUYER_REVIEW,
+		SELLER_REVIEW
 	}
 
 	public Activity() {

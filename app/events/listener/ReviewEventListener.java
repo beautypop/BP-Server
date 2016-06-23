@@ -10,6 +10,7 @@ import events.map.ReviewEvent;
 import com.google.common.eventbus.Subscribe;
 
 import common.thread.TransactionalRunnableTask;
+import common.utils.StringUtil;
 
 public class ReviewEventListener extends EventListener {
     private static final play.api.Logger logger = play.api.Logger.apply(ReviewEventListener.class);
@@ -23,6 +24,8 @@ public class ReviewEventListener extends EventListener {
     		final boolean isBuyer = review.buyer != null && review.buyer.id == localUser.id;
     		
     		// activity / notif to seller
+    		final Long postId = review.conversationOrder.conversation.post.id;
+    		final Long postImageId = review.conversationOrder.conversation.post.getImage();
             executeAsync(
                     new TransactionalRunnableTask() {
                         @Override
@@ -31,38 +34,38 @@ public class ReviewEventListener extends EventListener {
                             if (isBuyer) {
                                 // activity
                                 Activity activity = new Activity(
-                                        ActivityType.REVIEW, 
+                                        ActivityType.BUYER_REVIEW, 
                                         review.seller.id,
                                         false, 
                                         review.buyer.id,
                                         review.buyer.id,
                                         review.buyer.displayName,
-                                        review.id,
-                                        null,
-                                        review.buyerReview);
+                                        postId,
+                                        postImageId,
+                                        StringUtil.shortMessage(review.buyerReview));
                                 activity.ensureUniqueAndCreate();
                                 
                                 // Push notification
-                                PushNotificationSender.sendNewReviewNotification(
+                                PushNotificationSender.sendNewBuyerReviewNotification(
                                         review.seller.id, 
                                         review.buyer.displayName,
                                         review.buyerReview);
                             } else {
                                 // activity
                                 Activity activity = new Activity(
-                                        ActivityType.REVIEW, 
+                                        ActivityType.SELLER_REVIEW, 
                                         review.buyer.id,
                                         false, 
                                         review.seller.id,
                                         review.seller.id,
                                         review.seller.displayName,
-                                        review.id,
-                                        null,
-                                        review.sellerReview);
+                                        postId,
+                                        postImageId,
+                                        StringUtil.shortMessage(review.sellerReview));
                                 activity.ensureUniqueAndCreate();
                                 
                                 // Push notification
-                                PushNotificationSender.sendNewReviewNotification(
+                                PushNotificationSender.sendNewSellerReviewNotification(
                                         review.buyer.id, 
                                         review.seller.displayName,
                                         review.sellerReview);
