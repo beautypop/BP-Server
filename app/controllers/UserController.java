@@ -1368,8 +1368,10 @@ public class UserController extends Controller {
             
             Review review = Review.getByConversationOrderId(conversationOrderId);
             User otherUser = order.conversation.otherUser(localUser);
+            boolean newReview = false;
             if (review == null) {
             	review = new Review(ConversationOrder.findById(conversationOrderId));
+            	newReview = true;
             }
             
             if (localUser.id == review.buyer.id) {
@@ -1391,7 +1393,9 @@ public class UserController extends Controller {
             otherUser.totalReviewScore += score;
             otherUser.save();
             
-            SocialRelationHandler.recordNewReview(review, localUser);
+            if (newReview) {
+                SocialRelationHandler.recordNewReview(review, localUser);
+            }
             
             sw.stop();
             if (logger.underlyingLogger().isDebugEnabled()) {

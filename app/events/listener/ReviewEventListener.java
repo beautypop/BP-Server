@@ -46,10 +46,12 @@ public class ReviewEventListener extends EventListener {
                                 activity.ensureUniqueAndCreate();
                                 
                                 // Push notification
+                                /*
                                 PushNotificationSender.sendNewBuyerReviewNotification(
                                         review.seller.id, 
                                         review.buyer.displayName,
                                         review.buyerReview);
+                                        */
                             } else {
                                 // activity
                                 Activity activity = new Activity(
@@ -65,10 +67,12 @@ public class ReviewEventListener extends EventListener {
                                 activity.ensureUniqueAndCreate();
                                 
                                 // Push notification
+                                /*
                                 PushNotificationSender.sendNewSellerReviewNotification(
                                         review.buyer.id, 
                                         review.seller.displayName,
                                         review.sellerReview);
+                                        */
                             }
                         }
                     });
