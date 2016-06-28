@@ -1368,15 +1368,15 @@ public class UserController extends Controller {
             
             Review review = Review.getByConversationOrderId(conversationOrderId);
             User otherUser = order.conversation.otherUser(localUser);
-            boolean newReview = false;
             if (review == null) {
             	review = new Review(ConversationOrder.findById(conversationOrderId));
-            	newReview = true;
             }
-            
+
+            boolean newReview = false;
             if (localUser.id == review.buyer.id) {
                 if (review.buyerReviewDate == null) {
                     otherUser.numReviews++;
+                    newReview = true;
                 } else {
                     otherUser.totalReviewScore -= review.buyerScore;    // reset
                 }
@@ -1384,6 +1384,7 @@ public class UserController extends Controller {
             } else {
                 if (review.sellerReviewDate == null) {
                     otherUser.numReviews++;
+                    newReview = true;
                 } else {
                     otherUser.totalReviewScore -= review.sellerScore;   // reset
                 }
