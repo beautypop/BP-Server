@@ -39,6 +39,9 @@ public class Category extends SocialObject implements Likeable, Postable, Compar
     @ManyToOne
     public Category parent;
     
+    @Column(nullable = false, columnDefinition = "TINYINT(1)")
+    public boolean featured = false;
+    
     public int seq;
 
     public int minPercentFeedExposure = 0;
@@ -61,7 +64,9 @@ public class Category extends SocialObject implements Likeable, Postable, Compar
     
     public static enum CategoryType {
         PUBLIC,
-        CUSTOM
+        CUSTOM,
+        THEME,
+        TREND
     }
     
     public Category() {
@@ -109,9 +114,21 @@ public class Category extends SocialObject implements Likeable, Postable, Compar
     }
     
     public static List<Category> loadCustomCategories() {
+        return loadCategories(CategoryType.CUSTOM);
+    }
+    
+    public static List<Category> loadThemeCategories() {
+        return loadCategories(CategoryType.THEME);
+    }
+    
+    public static List<Category> loadTrendCategories() {
+        return loadCategories(CategoryType.TREND);
+    }
+    
+    public static List<Category> loadCategories(CategoryType categoryType) {
         try {
             Query q = JPA.em().createQuery("SELECT c FROM Category c where categoryType = ?1 and deleted = 0 order by seq");
-            q.setParameter(1, CategoryType.CUSTOM);
+            q.setParameter(1, categoryType);
             return (List<Category>) q.getResultList();
         } catch (NoResultException nre) {
             return null;
@@ -139,6 +156,14 @@ public class Category extends SocialObject implements Likeable, Postable, Compar
     
     public static List<Category> getSubCategories(Long categoryId) {
         return CategoryCache.getSubCategories(categoryId);
+    }
+    
+    public static List<Category> getThemeCategories() {
+        return CategoryCache.getThemeCategories();
+    }
+    
+    public static List<Category> getTrendCategories() {
+        return CategoryCache.getTrendCategories();
     }
     
     public static List<Category> getCustomCategories() {

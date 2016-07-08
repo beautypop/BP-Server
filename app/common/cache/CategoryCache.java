@@ -15,9 +15,12 @@ public class CategoryCache {
 
     private static List<Category> categories;
     private static final Map<Long, List<Category>> categoryToSubCategoryiesMap = new HashMap<>();
-    private static List<Category> customCategories;
     private static final Map<Long, Category> allCategoriesMap = new HashMap<>();
 
+    private static List<Category> themeCategories;
+    private static List<Category> trendCategories;
+    private static List<Category> customCategories;
+    
     static {
         categories = Category.loadCategories();
         for (Category category : categories) {
@@ -35,6 +38,16 @@ public class CategoryCache {
             }
         }
         
+        themeCategories = Category.loadThemeCategories();
+        for (Category themeCategory : themeCategories) {
+            allCategoriesMap.put(themeCategory.id, themeCategory);
+        }
+        
+        trendCategories = Category.loadTrendCategories();
+        for (Category trendCategory : trendCategories) {
+            allCategoriesMap.put(trendCategory.id, trendCategory);
+        }
+        
         customCategories = Category.loadCustomCategories();
         for (Category customCategory : customCategories) {
             allCategoriesMap.put(customCategory.id, customCategory);
@@ -47,6 +60,14 @@ public class CategoryCache {
     
     public static List<Category> getSubCategories(Long categoryId) {
         return categoryToSubCategoryiesMap.get(categoryId);
+    }
+    
+    public static List<Category> getThemeCategories() {
+        return themeCategories;
+    }
+    
+    public static List<Category> getTrendCategories() {
+        return trendCategories;
     }
     
     public static List<Category> getCustomCategories() {
