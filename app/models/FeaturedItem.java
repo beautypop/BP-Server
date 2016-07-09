@@ -68,6 +68,7 @@ public class FeaturedItem extends domain.Entity  implements Serializable, Creata
 	}
 	
 	public static enum DestinationType {
+	    NO_ACTION,
         CATEGORY,
         POST,
         USER,
