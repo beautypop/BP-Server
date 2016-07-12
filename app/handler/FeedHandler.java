@@ -2,6 +2,7 @@ package handler;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import javax.inject.Inject;
 
@@ -199,5 +200,10 @@ public class FeedHandler {
         }
         
         return vms;
+    }
+    
+    public Map<Long, PostVMLite> getFeedPreviewPosts(User localUser, FeedType feedType) {
+        
+        return null;
     }
 }

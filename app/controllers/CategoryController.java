@@ -4,6 +4,7 @@ import handler.FeedHandler;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import com.google.inject.Inject;
 
@@ -25,6 +26,13 @@ public class CategoryController extends Controller{
 	@Inject
     FeedHandler feedHandler;
     
+	@Transactional 
+    public Result getTrendPreviewFeeds(){
+	    final User localUser = Application.getLocalUser(session());
+        Map<Long, PostVMLite> vms = feedHandler.getFeedPreviewPosts(localUser, FeedType.CATEGORY_POPULAR);
+        return ok(Json.toJson(vms));
+    }
+	
 	@Transactional 
 	public Result getCategoryPopularFeed(Long id, String conditionType, Long offset){
 		final User localUser = Application.getLocalUser(session());
