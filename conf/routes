@@ -187,6 +187,9 @@ GET     /api/get-hashtag-newest-feed/:id/:postType/:offset              @control
 GET     /api/get-hashtag-price-low-high-feed/:id/:postType/:offset      @controllers.HashtagController.getHashtagPriceLowHighFeed(id :Long, postType: String, offset: Long)
 GET     /api/get-hashtag-price-high-low-feed/:id/:postType/:offset      @controllers.HashtagController.getHashtagPriceHighLowFeed(id :Long, postType: String, offset: Long)
 
+GET		/get-trend-preview-feeds										@controllers.CategoryController.getTrendPreviewFeeds()
+GET		/api/get-trend-preview-feeds									@controllers.CategoryController.getTrendPreviewFeeds()
+
 # User
 GET     /api/get-user-info                          @controllers.UserController.getUserInfo
 GET     /get-user-info                              @controllers.UserController.getUserInfo

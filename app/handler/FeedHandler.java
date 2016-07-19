@@ -1,6 +1,7 @@
 package handler;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -8,8 +9,10 @@ import javax.inject.Inject;
 
 import com.google.inject.Singleton;
 
+import models.Category;
 import models.Post;
 import models.User;
+import viewmodel.CategoryVM;
 import viewmodel.PostVMLite;
 import viewmodel.SellerVM;
 import viewmodel.UserVMLite;
@@ -202,8 +205,11 @@ public class FeedHandler {
         return vms;
     }
     
-    public Map<Long, PostVMLite> getFeedPreviewPosts(User localUser, FeedType feedType) {
-        
-        return null;
+    public Map<Long, List<PostVMLite>> getTrendPreviewFeeds(User localUser, FeedType feedType) {
+    	Map<Long, List<PostVMLite>> trendFeeds = new HashMap<Long, List<PostVMLite>>();
+    	 for (Category category : Category.getTrendCategories()) {
+    		 trendFeeds.put(category.getId(), getFeedPosts(category.getId(), 0L, localUser, FeedType.CATEGORY_POPULAR));
+    	}
+        return trendFeeds;
     }
 }

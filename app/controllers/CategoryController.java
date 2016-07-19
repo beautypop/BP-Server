@@ -29,7 +29,7 @@ public class CategoryController extends Controller{
 	@Transactional 
     public Result getTrendPreviewFeeds(){
 	    final User localUser = Application.getLocalUser(session());
-        Map<Long, PostVMLite> vms = feedHandler.getFeedPreviewPosts(localUser, FeedType.CATEGORY_POPULAR);
+        Map<Long, List<PostVMLite>> vms = feedHandler.getTrendPreviewFeeds(localUser, FeedType.CATEGORY_POPULAR);
         return ok(Json.toJson(vms));
     }
 	
