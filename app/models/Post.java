@@ -65,6 +65,13 @@ public class Post extends SocialObject implements Likeable, Commentable {
 	@ManyToOne
 	public Category category;
 
+	@ManyToOne
+	public Category theme;
+
+	@ManyToOne
+	public Category trend;
+
+	
 	@Enumerated(EnumType.STRING)
     public ConditionType conditionType;
 	
@@ -141,6 +148,13 @@ public class Post extends SocialObject implements Likeable, Commentable {
 		this.countryCode = countryCode;
 		this.objectType = SocialObjectType.POST;
 		this.deviceType = deviceType;
+	}
+	
+	public Post(User owner, String title, String body, Category category, Double price, ConditionType conditionType, 
+	        Double originalPrice, boolean freeDelivery, Country.CountryCode countryCode, DeviceType deviceType, Category theme, Category trend) {
+		this(owner, title, body, category, price, conditionType, originalPrice, freeDelivery, countryCode, deviceType);
+		this.theme = theme;
+		this.trend = trend;
 	}
 
 	public boolean isNewCondition() {

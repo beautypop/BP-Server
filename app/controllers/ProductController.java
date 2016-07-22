@@ -63,6 +63,8 @@ public class ProductController extends Controller{
 	public static Result newProductWithForm() {
 		DynamicForm dynamicForm = DynamicForm.form().bindFromRequest();
 		String catId = dynamicForm.get("catId");
+		String themeId = dynamicForm.get("themeId");
+		String trendId = dynamicForm.get("trendId");
 	    String title = dynamicForm.get("title");
 	    String body = dynamicForm.get("body");
 	    String price = dynamicForm.get("price");
@@ -89,7 +91,7 @@ public class ProductController extends Controller{
         try {
             return newProduct(
                     title, body, Long.parseLong(catId), Double.parseDouble(price), Post.parseConditionType(conditionType), images, 
-                    Double.parseDouble(originalPrice), freeDelivery, Post.parseCountryCode(countryCode), hashtags, Application.parseDeviceType(deviceType));    
+                    Double.parseDouble(originalPrice), freeDelivery, Post.parseCountryCode(countryCode), hashtags, Application.parseDeviceType(deviceType), Long.parseLong(themeId), Long.parseLong(trendId));    
         } catch (Exception e) {
             return badRequest();
         }
@@ -99,6 +101,8 @@ public class ProductController extends Controller{
 	public static Result newProduct() {
 	    Http.MultipartFormData multipartFormData = request().body().asMultipartFormData();
         Long catId = HttpUtil.getMultipartFormDataLong(multipartFormData, "catId");
+        Long themeId = HttpUtil.getMultipartFormDataLong(multipartFormData, "themeId");
+        Long trendId = HttpUtil.getMultipartFormDataLong(multipartFormData, "trendId");
         String title = HttpUtil.getMultipartFormDataString(multipartFormData, "title");
 	    String body = HttpUtil.getMultipartFormDataString(multipartFormData, "body");
 	    Double price = HttpUtil.getMultipartFormDataDouble(multipartFormData, "price");
@@ -112,6 +116,14 @@ public class ProductController extends Controller{
 	    
 	    if (catId == null) {
 	        catId = -1L;
+	    }
+	    
+	    if (themeId == null) {
+	    	themeId = -1L;
+	    }
+	    
+	    if (trendId == null) {
+	    	trendId = -1L;
 	    }
 	    
 	    if (originalPrice == null) {
@@ -128,12 +140,12 @@ public class ProductController extends Controller{
 	   
 		return newProduct(
 		        title, body, catId, price, Post.parseConditionType(conditionType), images, 
-		        originalPrice, freeDelivery, Post.parseCountryCode(countryCode), hashtags, Application.parseDeviceType(deviceType));
+		        originalPrice, freeDelivery, Post.parseCountryCode(countryCode), hashtags, Application.parseDeviceType(deviceType), themeId, trendId);
 	}
 
 	private static Result newProduct(
 	        String title, String body, Long catId, Double price, ConditionType conditionType, List<FilePart> images, 
-	        Double originalPrice, Boolean freeDelivery, CountryCode countryCode, String hashtags, DeviceType deviceType) {
+	        Double originalPrice, Boolean freeDelivery, CountryCode countryCode, String hashtags, DeviceType deviceType, Long themeId, Long trendId) {
 	    
 	    NanoSecondStopWatch sw = new NanoSecondStopWatch();
 	    
@@ -148,11 +160,13 @@ public class ProductController extends Controller{
             logger.underlyingLogger().debug("[u="+localUser.getId()+"][catId="+catId+"] createProduct() Invalid catId");
             return badRequest("Failed to create product. Invalid catId="+catId);
         }
+        Category theme = Category.findById(catId);
+        Category trend = Category.findById(catId);
         
 		try {
 			Post newPost = localUser.createProduct(
 			        title, body, category, price, conditionType, 
-			        originalPrice, freeDelivery, countryCode, deviceType);
+			        originalPrice, freeDelivery, countryCode, deviceType, theme, trend);
 			if (newPost == null) {
 			    logger.underlyingLogger().debug("[u="+localUser.getId()+"][catId="+catId+"][title="+title+"][body="+body+"][price="+price+"][conditionType="+conditionType+"] createProduct() Invalid catId");
 				return badRequest("Failed to create product. Invalid parameters.");

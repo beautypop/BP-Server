@@ -385,7 +385,7 @@ public class User extends SocialObject implements Subject, Followable, Serializa
 	@Transactional
 	public Post createProduct(
 	        String title, String body, Category category, Double price, ConditionType conditionType, 
-	        Double originalPrice, boolean freeDelivery, CountryCode countryCode, DeviceType deviceType) {
+	        Double originalPrice, boolean freeDelivery, CountryCode countryCode, DeviceType deviceType, Category theme, Category trend) {
 	    
 		if (Strings.isNullOrEmpty(title) || category == null || price == -1D) {
 			logger.underlyingLogger().warn("Missing parameters to createProduct");
@@ -394,7 +394,7 @@ public class User extends SocialObject implements Subject, Followable, Serializa
 		
 		Post post = new Post(
 		        this, title, body, category, price, conditionType, 
-		        originalPrice, freeDelivery, countryCode, deviceType);
+		        originalPrice, freeDelivery, countryCode, deviceType, theme, trend);
 		post.save();
 		
 		recordPostProduct(this, post);

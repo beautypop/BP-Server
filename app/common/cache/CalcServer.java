@@ -429,6 +429,8 @@ public class CalcServer {
     
     public void addToCategoryQueues(Post post) {
         addToCategoryQueues(post, post.category);
+        addToCategoryPopularQueue(post, post.trend);
+        addToCategoryPopularQueue(post, post.theme);
     }
     
     public void addToCategoryQueues(Post post, Category category) {
