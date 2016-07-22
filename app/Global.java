@@ -38,6 +38,7 @@ public class Global extends GlobalSettings {
     // Configurations
     private static final String STARTUP_BOOTSTRAP_PROP = "startup.data.bootstrap";
     private static final String RUN_BACKGROUND_TASKS_PROP = "run.backgroundtasks";
+    private static final String RUN_WARMUP_ACTIVITY = "run.warmupactivity";
 
     /**
      * @param app
@@ -325,7 +326,10 @@ public class Global extends GlobalSettings {
         DataBootstrap.bootstrap();
         
         // cache warm up
-        CalcServer.instance().warmUpActivity();
+        final boolean runWarmUpActivity = Play.application().configuration().getBoolean(RUN_WARMUP_ACTIVITY, false);
+        if(runWarmUpActivity){
+	        CalcServer.instance().warmUpActivity();
+        }
         
         // init event handler
         EventHandler.getInstance();
