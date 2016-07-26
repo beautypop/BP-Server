@@ -359,7 +359,9 @@ public class CalcServer {
         }
         
         addToCategoryQueues(post);
-        addToHashtagQueues(post);
+        addToThemeAndTrendQueue(post);
+        //addToHashtagQueues(post);
+        
         buildProductLikesQueue(post);
         
         // mark cached
@@ -429,10 +431,15 @@ public class CalcServer {
     
     public void addToCategoryQueues(Post post) {
         addToCategoryQueues(post, post.category);
-        if(post.trend != null)
-        	addToCategoryPopularQueue(post, post.trend);
-        if(post.theme != null)
-        	addToCategoryPopularQueue(post, post.theme);
+    }
+    
+    public void addToThemeAndTrendQueue(Post post) {
+        if (post.theme != null) {
+            addToCategoryPopularQueue(post, post.theme);
+        }
+        if (post.trend != null) {
+            addToCategoryPopularQueue(post, post.trend);
+        }
     }
     
     public void addToCategoryQueues(Post post, Category category) {
