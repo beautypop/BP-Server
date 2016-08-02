@@ -16,6 +16,8 @@ public class PostVM extends PostVMLite {
 	@JsonProperty("ownerLastLogin") public Long ownerLastLogin;
 	@JsonProperty("body") public String body;
 	@JsonProperty("categoryId") public Long categoryId;
+	@JsonProperty("themeId") public Long themeId;
+	@JsonProperty("trendId") public Long trendId;
 	@JsonProperty("categoryName") public String categoryName;
 	@JsonProperty("categoryIcon") public String categoryIcon;
 	@JsonProperty("categoryType") public String categoryType;
@@ -39,6 +41,11 @@ public class PostVM extends PostVMLite {
                 post.owner.lastLogin == null? 
                         post.getUpdatedDate().getTime() : post.owner.lastLogin.getTime();
         this.body = post.body;
+        if(post.theme != null)
+        	this.themeId = post.theme.id;
+        if(post.trend != null)
+        	this.trendId = post.trend.id;
+        
         if (post.category.parent == null) {
             this.categoryId = post.category.id;
             this.categoryName = post.category.name;

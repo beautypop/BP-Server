@@ -425,7 +425,7 @@ public class User extends SocialObject implements Subject, Followable, Serializa
 	@Transactional
     public Post editProduct(
             Post post, String title, String body, Category category, Double price, Post.ConditionType conditionType, 
-            Double originalPrice, boolean freeDelivery, CountryCode countryCode) {
+            Double originalPrice, boolean freeDelivery, CountryCode countryCode, Category theme, Category trend) {
 	    
 	    if (post == null || Strings.isNullOrEmpty(title) || category == null || price == -1D) {
             logger.underlyingLogger().warn("Missing parameters to editProduct");
@@ -435,6 +435,8 @@ public class User extends SocialObject implements Subject, Followable, Serializa
         post.title = title;
         post.body = body;
         post.category = category;
+        post.theme = theme;
+        post.trend = trend;
         post.price = price;
         post.conditionType = conditionType;
         post.originalPrice = originalPrice;
