@@ -160,8 +160,8 @@ public class ProductController extends Controller{
             logger.underlyingLogger().debug("[u="+localUser.getId()+"][catId="+catId+"] createProduct() Invalid catId");
             return badRequest("Failed to create product. Invalid catId="+catId);
         }
-        Category theme = Category.findById(catId);
-        Category trend = Category.findById(catId);
+        Category theme = Category.findById(themeId);
+        Category trend = Category.findById(trendId);
         
 		try {
 			Post newPost = localUser.createProduct(
@@ -260,6 +260,8 @@ public class ProductController extends Controller{
         DynamicForm dynamicForm = DynamicForm.form().bindFromRequest();
         String id = dynamicForm.get("id");
         String catId = dynamicForm.get("catId");
+        String themeId = dynamicForm.get("themeId");
+        String trendId = dynamicForm.get("trendId");
         String title = dynamicForm.get("title");
         String body = dynamicForm.get("body");
         String price = dynamicForm.get("price");
@@ -270,7 +272,7 @@ public class ProductController extends Controller{
         String hashtags = dynamicForm.get("hashtags");
         return editProduct(Long.parseLong(id), title, body, Long.parseLong(catId), 
                 Double.parseDouble(price), Post.parseConditionType(conditionType), 
-                Double.parseDouble(originalPrice), freeDelivery, Post.parseCountryCode(countryCode), hashtags);
+                Double.parseDouble(originalPrice), freeDelivery, Post.parseCountryCode(countryCode), hashtags,  Long.parseLong(themeId),  Long.parseLong(trendId));
     }
     
     @Transactional
@@ -278,6 +280,8 @@ public class ProductController extends Controller{
         Http.MultipartFormData multipartFormData = request().body().asMultipartFormData();
         Long id = HttpUtil.getMultipartFormDataLong(multipartFormData, "id");
         Long catId = HttpUtil.getMultipartFormDataLong(multipartFormData, "catId");
+        Long themeId = HttpUtil.getMultipartFormDataLong(multipartFormData, "themeId");
+        Long trendId = HttpUtil.getMultipartFormDataLong(multipartFormData, "trendId");
         String title = HttpUtil.getMultipartFormDataString(multipartFormData, "title");
         String body = HttpUtil.getMultipartFormDataString(multipartFormData, "body");
         Double price = HttpUtil.getMultipartFormDataDouble(multipartFormData, "price");
@@ -293,6 +297,14 @@ public class ProductController extends Controller{
 
         if (catId == null) {
             catId = -1L;
+        }
+        
+        if (themeId == null) {
+        	themeId = -1L;
+        }
+        
+        if (trendId == null) {
+        	trendId = -1L;
         }
 
         if (price == null) {
@@ -312,12 +324,12 @@ public class ProductController extends Controller{
         }
         
         return editProduct(id, title, body, catId, price, Post.parseConditionType(conditionType), 
-                originalPrice, freeDelivery, Post.parseCountryCode(countryCode), hashtags);
+                originalPrice, freeDelivery, Post.parseCountryCode(countryCode), hashtags, themeId, trendId);
     }
 
     private static Result editProduct(
             Long id, String title, String body, Long catId, Double price, Post.ConditionType conditionType, 
-            Double originalPrice, Boolean freeDelivery, CountryCode countryCode, String hashtags) {
+            Double originalPrice, Boolean freeDelivery, CountryCode countryCode, String hashtags, Long themeId, Long trendId) {
         
         NanoSecondStopWatch sw = new NanoSecondStopWatch();
         
@@ -339,10 +351,13 @@ public class ProductController extends Controller{
             logger.underlyingLogger().error(String.format("[u=%d][p=%d][cat=%d] editProduct() Category not found", localUser.id, id, catId));
             return notFound();
         }
+        Category theme = Category.findById(themeId);
+        Category trend = Category.findById(trendId);
+        
         
         post = localUser.editProduct(
                 post, title, body, category, price, conditionType, 
-                originalPrice, freeDelivery, countryCode);
+                originalPrice, freeDelivery, countryCode, theme, trend);
         if (post == null) {
             logger.underlyingLogger().error(String.format("[u=%d][p=%d] editProduct() Failed to edit post", localUser.id, id));
             return badRequest();
