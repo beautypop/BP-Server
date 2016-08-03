@@ -32,6 +32,7 @@ public class PostEventListener extends EventListener {
 
     		// CalcServer
     		CalcServer.instance().addToCategoryQueues(post);
+    		CalcServer.instance().addToThemeAndTrendQueue(post);
             CalcServer.instance().addToUserPostedQueue(post);
             
             if (user.isRecommendedSeller()) {
@@ -89,6 +90,8 @@ public class PostEventListener extends EventListener {
 	    try {
             final Post post = (Post) map.get("post");
             final Category oldCategory = (Category) map.get("category");
+            final Category oldTheme = (Category) map.get("theme");
+            final Category oldTrend = (Category) map.get("trend");
             
             // category/subcategory change
             if (oldCategory != null) {
@@ -97,8 +100,21 @@ public class PostEventListener extends EventListener {
                 }
             }
             
+            if (oldTheme != null) {
+                if (post.theme.id != oldTheme.id) {
+                    CalcServer.instance().removeFromCategoryPopularQueus(post, oldTheme);
+                }
+            }
+            
+            if (oldTrend != null) {
+                if (post.trend.id != oldTrend.id) {
+                    CalcServer.instance().removeFromCategoryPopularQueus(post, oldTrend);
+                }
+            }
+            
             // CalcServer
             CalcServer.instance().addToCategoryQueues(post);
+            CalcServer.instance().addToThemeAndTrendQueue(post);
             
             // ES
             ElasticSearchController.removePostElasticSearch(post);

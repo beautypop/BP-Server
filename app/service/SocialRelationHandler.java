@@ -49,10 +49,12 @@ public class SocialRelationHandler {
 		EventHandler.getInstance().getEventBus().post(postEvent);
 	}
 	
-	public static void recordEditPost(Post post, Category category) {
+	public static void recordEditPost(Post post, Category category, Category theme, Category trend) {
 		EditPostEvent postEvent = new EditPostEvent();
 		postEvent.put("post", post);
 		postEvent.put("category", category);
+		postEvent.put("theme", theme);
+		postEvent.put("trend", trend);
 		EventHandler.getInstance().getEventBus().post(postEvent);
 	}
 	

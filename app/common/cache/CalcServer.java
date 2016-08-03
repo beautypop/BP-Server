@@ -499,17 +499,21 @@ public class CalcServer {
     }
         
     public void removeFromCategoryQueues(Post post, Category category){
-        jedisCache.removeMemberFromSortedSet(getKey(FeedType.CATEGORY_POPULAR,category.id), post.id.toString());
         jedisCache.removeMemberFromSortedSet(getKey(FeedType.CATEGORY_NEWEST,category.id), post.id.toString());
         jedisCache.removeMemberFromSortedSet(getKey(FeedType.CATEGORY_PRICE_LOW_HIGH,category.id), post.id.toString());
-    
-        // no need to check post condition type, try to clear from both queues
-        jedisCache.removeMemberFromSortedSet(getKey(FeedType.CATEGORY_POPULAR_NEW,category.id), post.id.toString());
-        jedisCache.removeMemberFromSortedSet(getKey(FeedType.CATEGORY_POPULAR_USED,category.id), post.id.toString());
+        removeFromCategoryPopularQueus(post, category);
         
         if (category.parent != null) {
             removeFromCategoryQueues(post, category.parent);
         }
+    }
+    
+    public void removeFromCategoryPopularQueus(Post post, Category category){
+    	jedisCache.removeMemberFromSortedSet(getKey(FeedType.CATEGORY_POPULAR,category.id), post.id.toString());
+    	
+    	// no need to check post condition type, try to clear from both queues
+        jedisCache.removeMemberFromSortedSet(getKey(FeedType.CATEGORY_POPULAR_NEW,category.id), post.id.toString());
+        jedisCache.removeMemberFromSortedSet(getKey(FeedType.CATEGORY_POPULAR_USED,category.id), post.id.toString());
     }
     
     public void addToUserLikedQueue(Post post, User user){

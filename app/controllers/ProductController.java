@@ -346,6 +346,8 @@ public class ProductController extends Controller{
         }
         
         Category oldCategory = post.category;
+        Category oldTheme = post.theme;
+        Category oldTrend = post.trend;
         Category category = Category.findById(catId);
         if (category == null) {
             logger.underlyingLogger().error(String.format("[u=%d][p=%d][cat=%d] editProduct() Category not found", localUser.id, id, catId));
@@ -364,7 +366,7 @@ public class ProductController extends Controller{
         }
         
         addHashtagsToPost(hashtags, post);
-        SocialRelationHandler.recordEditPost(post, oldCategory);
+        SocialRelationHandler.recordEditPost(post, oldCategory, oldTheme, oldTrend);
         ResponseStatusVM response = new ResponseStatusVM(SocialObjectType.POST, post.id, localUser.id, true);
         
         sw.stop();
@@ -421,6 +423,8 @@ public class ProductController extends Controller{
         }
         
         Category oldCategory = post.category;
+        Category oldTheme = post.theme;
+        Category oldTrend = post.trend;
         Category category = Category.findById(catId);
         if (category == null) {
             logger.underlyingLogger().error(String.format("[u=%d][p=%d][cat=%d] editStory() Category not found", localUser.id, id, catId));
@@ -434,7 +438,7 @@ public class ProductController extends Controller{
         }
         
         addHashtagsToPost(hashtags, post);
-        SocialRelationHandler.recordEditPost(post, oldCategory);
+        SocialRelationHandler.recordEditPost(post, oldCategory, oldTheme, oldTrend);
         ResponseStatusVM response = new ResponseStatusVM(SocialObjectType.POST, post.id, localUser.id, true);
         
         sw.stop();
