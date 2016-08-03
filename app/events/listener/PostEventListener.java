@@ -101,15 +101,11 @@ public class PostEventListener extends EventListener {
             }
             
             if (oldTheme != null) {
-                if (post.theme.id != oldTheme.id) {
-                    CalcServer.instance().removeFromCategoryPopularQueus(post, oldTheme);
-                }
+            	CalcServer.instance().removeFromCategoryPopularQueus(post, oldTheme);
             }
-            
+
             if (oldTrend != null) {
-                if (post.trend.id != oldTrend.id) {
-                    CalcServer.instance().removeFromCategoryPopularQueus(post, oldTrend);
-                }
+            	CalcServer.instance().removeFromCategoryPopularQueus(post, oldTrend);
             }
             
             // CalcServer
