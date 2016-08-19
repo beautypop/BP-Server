@@ -17,6 +17,7 @@ import play.mvc.Result;
 import viewmodel.CategoryVM;
 import viewmodel.PostVMLite;
 import viewmodel.UserVM;
+import common.cache.CategoryCache;
 import common.model.FeedFilter;
 import common.model.FeedFilter.FeedType;
 
@@ -75,21 +76,57 @@ public class CategoryController extends Controller{
 	}
 	
 	@Transactional
+    public static Result getAllCategories(){
+        List<CategoryVM> categories = new ArrayList<CategoryVM>();
+        for (Category category : CategoryCache.getCategories()) {
+            CategoryVM vm = new CategoryVM(category);
+            categories.add(vm);
+        }
+        for (Category category : CategoryCache.getThemeCategories()) {
+            CategoryVM vm = new CategoryVM(category);
+            categories.add(vm);
+        }
+        for (Category category : CategoryCache.getTrendCategories()) {
+            CategoryVM vm = new CategoryVM(category);
+            categories.add(vm);
+        }
+        return ok(Json.toJson(categories));
+    }
+
+	@Transactional
     public static Result getCategories(){
         List<CategoryVM> categories = new ArrayList<CategoryVM>();
-        for (Category category : Category.getCategories()) {
+        for (Category category : CategoryCache.getCategories()) {
             CategoryVM vm = new CategoryVM(category);
             categories.add(vm);
         }
-        for (Category category : Category.getThemeCategories()) {
+        return ok(Json.toJson(categories));
+    }
+    
+	@Transactional
+    public static Result getThemeCategories(){
+        List<CategoryVM> categories = new ArrayList<CategoryVM>();
+        for (Category category : CategoryCache.getThemeCategories()) {
             CategoryVM vm = new CategoryVM(category);
             categories.add(vm);
         }
-        for (Category category : Category.getTrendCategories()) {
-            CategoryVM vm = new CategoryVM(category);
-            categories.add(vm);
-        }
-        for (Category category : Category.getCustomCategories()) {
+        return ok(Json.toJson(categories));
+    }
+
+	@Transactional
+	public static Result getTrendCategories(){
+	    List<CategoryVM> categories = new ArrayList<CategoryVM>();
+	    for (Category category : CategoryCache.getTrendCategories()) {
+	        CategoryVM vm = new CategoryVM(category);
+	        categories.add(vm);
+	    }
+	    return ok(Json.toJson(categories));
+	}
+	
+	@Transactional
+    public static Result getCustomCategories(){
+        List<CategoryVM> categories = new ArrayList<CategoryVM>();
+        for (Category category : CategoryCache.getCustomCategories()) {
             CategoryVM vm = new CategoryVM(category);
             categories.add(vm);
         }

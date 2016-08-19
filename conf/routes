@@ -187,8 +187,7 @@ GET     /api/get-hashtag-newest-feed/:id/:postType/:offset              @control
 GET     /api/get-hashtag-price-low-high-feed/:id/:postType/:offset      @controllers.HashtagController.getHashtagPriceLowHighFeed(id :Long, postType: String, offset: Long)
 GET     /api/get-hashtag-price-high-low-feed/:id/:postType/:offset      @controllers.HashtagController.getHashtagPriceHighLowFeed(id :Long, postType: String, offset: Long)
 
-GET		/get-trend-preview-feeds										@controllers.CategoryController.getTrendPreviewFeeds()
-GET		/api/get-trend-preview-feeds									@controllers.CategoryController.getTrendPreviewFeeds()
+GET     /api/get-trend-preview-feeds									@controllers.CategoryController.getTrendPreviewFeeds()
 
 # User
 GET     /api/get-user-info                          @controllers.UserController.getUserInfo
@@ -240,9 +239,11 @@ GET    	/api/get-buyer-reviews-for/:userId		    controllers.UserController.getBu
 GET    	/api/get-seller-reviews-for/:userId  		controllers.UserController.getSellerReviewsFor(userId:Long)
 
 # Category
+GET     /api/get-all-categories                     controllers.CategoryController.getAllCategories()
 GET     /api/get-categories                         controllers.CategoryController.getCategories()
-GET     /get-categories                             controllers.CategoryController.getCategories()
-GET     /categories                                 controllers.CategoryController.getCategories()
+GET     /api/get-theme-categories                   controllers.CategoryController.getThemeCategories()
+GET     /api/get-trend-categories                   controllers.CategoryController.getTrendCategories()
+GET     /api/get-custom-categories                  controllers.CategoryController.getCustomCategories()
 
 GET     /api/get-category/:id                       controllers.CategoryController.getCategory(id:Long)
 GET     /get-category/:id                           controllers.CategoryController.getCategory(id:Long)

@@ -10,6 +10,7 @@ import models.Category;
 public class CategoryVM {
 	@JsonProperty("id") public Long id;
 	@JsonProperty("icon") public String icon;
+	@JsonProperty("thumbnail") public String thumbnail;
 	@JsonProperty("name") public String name;
 	@JsonProperty("description") public String description;
 	@JsonProperty("categoryType") public String categoryType;
@@ -21,6 +22,7 @@ public class CategoryVM {
     public CategoryVM(Category category) {
     	this.id = category.id;
     	this.icon = category.icon;
+    	this.thumbnail = category.thumbnail;
     	this.name = category.name;
     	this.description = category.description;
     	this.categoryType = category.categoryType.name();

@@ -23,12 +23,21 @@ import domain.SocialObjectType;
 import play.db.jpa.JPA;
 
 /**
- * insert into category (CREATED_DATE,deleted,name,objectType,system,categoryType,description,icon,seq,owner_id) values (now(),0,'Fashion','CATEGORY',1,'PUBLIC','Fashion','http://www.beautypop.hk/image/static/category/fashion.jpg',1,1);
+ * CATEGORY
+ * insert into category (CREATED_DATE,deleted,name,objectType,system,categoryType,description,icon,seq,owner_id,maxPercentFeedExposure,minPercentFeedExposure,run,featured) values (now(),0,'Fashion','CATEGORY',1,'PUBLIC','Fashion','http://www.beautypop.hk/image/static/category/fashion.jpg',1,1,50,5,0,0);
+ * 
+ * THEME
+ * insert into category (CREATED_DATE,deleted,name,objectType,system,categoryType,description,icon,seq,owner_id,maxPercentFeedExposure,minPercentFeedExposure,run,featured) values (now(),0,'Carnival','CATEGORY',1,'THEME','This summer, it is time to get playful. Our collection features a selection of clothing that is as fun as a carnival! Happy shopping, girls!','http://www.beautypop.hk/image/static/category/fashion.jpg',1,1,0,0,0,0);
+ * 
+ * TREND
+ * insert into category (CREATED_DATE,deleted,name,objectType,system,categoryType,description,icon,seq,owner_id,maxPercentFeedExposure,minPercentFeedExposure,run,featured) values (now(),0,'Fresh Arrivals','CATEGORY',1,'TREND','Get ready for a new and exciting fashion experience as we bring some smashing brands for you to shop from! From clothes to accessories - we have you covered with brands like Adro, Blinglane, Trendy Diva, Splendent and Vajor. So see what is in store for you. Shop away!','http://www.beautypop.hk/image/static/category/fashion.jpg',1,1,0,0,0,0);
  */
 @Entity
 public class Category extends SocialObject implements Likeable, Postable, Comparable<Category> {
 
     public String icon;
+    
+    public String thumbnail;
 
     @Column(length=2000)
     public String description;

@@ -21,6 +21,11 @@ import common.utils.NanoSecondStopWatch;
 public class CalcFormula {
 	private static play.api.Logger logger = play.api.Logger.apply(CalcFormula.class);
 	
+	public static final int CALC_FORMULA_POINTS_VIEWS = Play.application().configuration().getInt("calc.formula.points.views");
+	public static final int CALC_FORMULA_POINTS_LIKES = Play.application().configuration().getInt("calc.formula.points.likes");
+	public static final int CALC_FORMULA_POINTS_CONVERSATIONS = Play.application().configuration().getInt("calc.formula.points.conversations");
+	public static final int CALC_FORMULA_POINTS_BUYS = Play.application().configuration().getInt("calc.formula.points.buys");
+	
 	public static final Long FEED_SCORE_HIGH_BASE = Play.application().configuration().getLong("feed.score.high.base");
 	public static final int FEED_SCORE_COMPUTE_BASE = Play.application().configuration().getInt("feed.score.compute.base");
 	public static final int FEED_SCORE_COMPUTE_DECAY_START = Play.application().configuration().getInt("feed.score.compute.decay.start");
@@ -44,10 +49,10 @@ public class CalcFormula {
         
         post.baseScore = (long) (
                 post.numComments 
-                + 2 * post.numViews 
-                + 2 * post.numLikes 
-                + 5 * post.numConversations 
-                + 5 * post.numBuys 
+                + CALC_FORMULA_POINTS_VIEWS * post.numViews 
+                + CALC_FORMULA_POINTS_LIKES * post.numLikes 
+                + CALC_FORMULA_POINTS_CONVERSATIONS * post.numConversations 
+                + CALC_FORMULA_POINTS_BUYS * post.numBuys 
                 + FEED_SCORE_COMPUTE_BASE);
         
         post.save();

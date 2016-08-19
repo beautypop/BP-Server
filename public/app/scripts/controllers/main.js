@@ -67,7 +67,7 @@ beautypop.controller('HomeController',
 		$scope.homeFollowing = false;
 	};
 
-	$scope.categories = categoryService.getAllCategories.get();
+	$scope.categories = categoryService.getCategories.get();
 	$scope.getHomeExploreProducts();
 	
 	var loadingMore = false;

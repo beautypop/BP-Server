@@ -13,14 +13,38 @@ beautypop.run(function($rootScope, $window) {
 });
 
 beautypop.service('categoryService',function($resource){
-	this.getAllCategories = $resource(
+	this.getCategories = $resource(
             '/api/get-categories',
             {alt:'json',callback:'JSON_CALLBACK'},
             {
                 get: {method:'get' ,isArray:true}
             }
     );
-	
+
+	this.getThemeCategories = $resource(
+            '/api/get-theme-categories',
+            {alt:'json',callback:'JSON_CALLBACK'},
+            {
+                get: {method:'get' ,isArray:true}
+            }
+    );
+
+	this.getTrendCategories = $resource(
+            '/api/get-trend-categories',
+            {alt:'json',callback:'JSON_CALLBACK'},
+            {
+                get: {method:'get' ,isArray:true}
+            }
+    );
+
+	this.getCustomCategories = $resource(
+            '/api/get-custom-categories',
+            {alt:'json',callback:'JSON_CALLBACK'},
+            {
+                get: {method:'get' ,isArray:true}
+            }
+    );
+
     this.getCategoryPopularFeed = $resource(
             '/api/get-category-popular-feed/:id/:conditionType/:offset',
             {alt:'json',callback:'JSON_CALLBACK'},
