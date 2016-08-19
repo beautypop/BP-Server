@@ -370,6 +370,8 @@ GET     /api/get-latest-products/:offset            controllers.ProductControlle
 GET     /api/get-latest-comments/:offset            controllers.ProductController.getLatestComments(offset:Long)
 GET     /api/get-latest-conversations/:offset       controllers.UserController.getLatestConversations(offset:Long)
 GET     /api/get-messages-for-admin/:conversationId/:offset   controllers.UserController.getMessagesForAdmin(conversationId: Long, offset: Long)
+GET     /api/set-product-theme/:id/:themeId         controllers.ProductController.setTheme(id:Long, themeId:Long)
+GET     /api/set-product-trend/:id/:trendId         controllers.ProductController.setTrend(id:Long, trendId:Long)
 
 # Dead Links
 GET     /*path                                      controllers.Application.pathNotFound(path: String)

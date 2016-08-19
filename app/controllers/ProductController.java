@@ -60,6 +60,62 @@ public class ProductController extends Controller{
     FeedHandler feedHandler;
     
 	@Transactional
+    public static Result setTheme(Long id, Long themeId) {
+	    final User localUser = Application.getLocalUser(session());
+        if (!localUser.isLoggedIn()) {
+            logger.underlyingLogger().error(String.format("[u=%d] User not logged in", localUser.id));
+            return notFound();
+        }
+        
+        if (!localUser.isSuperAdmin()) {
+            logger.underlyingLogger().error(String.format("[u=%d][pid=%d][tid=%d] User is not super admin. Failed to set theme to product !!", localUser.id, id, themeId));
+            return badRequest();
+        }
+        
+        Category theme = Category.findById(themeId);
+        Post product = Post.findById(id);
+        
+        Category oldTheme = product.theme;
+        
+        product.theme = theme;
+        product.save();
+        
+        SocialRelationHandler.recordEditPost(product, null, oldTheme, null);
+        
+        logger.underlyingLogger().debug(String.format("[u=%d][pid=%d][tid=%d] Set theme to product", localUser.id, id, themeId));
+        
+        return ok();
+	}
+	
+	@Transactional
+    public static Result setTrend(Long id, Long trendId) {
+        final User localUser = Application.getLocalUser(session());
+        if (!localUser.isLoggedIn()) {
+            logger.underlyingLogger().error(String.format("[u=%d] User not logged in", localUser.id));
+            return notFound();
+        }
+        
+        if (!localUser.isSuperAdmin()) {
+            logger.underlyingLogger().error(String.format("[u=%d][pid=%d][tid=%d] User is not super admin. Failed to set trend to product !!", localUser.id, id, trendId));
+            return badRequest();
+        }
+        
+        Category trend = Category.findById(trendId);
+        Post product = Post.findById(id);
+        
+        Category oldTrend = product.theme;
+        
+        product.trend = trend;
+        product.save();
+        
+        SocialRelationHandler.recordEditPost(product, null, null, oldTrend);
+        
+        logger.underlyingLogger().debug(String.format("[u=%d][pid=%d][tid=%d] Set trend to product", localUser.id, id, trendId));
+        
+        return ok();
+    }
+	
+	@Transactional
 	public static Result newProductWithForm() {
 		DynamicForm dynamicForm = DynamicForm.form().bindFromRequest();
 		String catId = dynamicForm.get("catId");
@@ -160,6 +216,7 @@ public class ProductController extends Controller{
             logger.underlyingLogger().debug("[u="+localUser.getId()+"][catId="+catId+"] createProduct() Invalid catId");
             return badRequest("Failed to create product. Invalid catId="+catId);
         }
+        
         Category theme = Category.findById(themeId);
         Category trend = Category.findById(trendId);
         
