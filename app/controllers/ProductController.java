@@ -103,7 +103,7 @@ public class ProductController extends Controller{
         Category trend = Category.findById(trendId);
         Post product = Post.findById(id);
         
-        Category oldTrend = product.theme;
+        Category oldTrend = product.trend;
         
         product.trend = trend;
         product.save();
