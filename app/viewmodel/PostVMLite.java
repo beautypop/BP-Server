@@ -24,6 +24,11 @@ public class PostVMLite {
 	@JsonProperty("images") public Long[] images;
 	@JsonProperty("hasImage") public boolean hasImage = false;
 	
+	@JsonProperty("categoryId") public Long categoryId;
+	@JsonProperty("subCategoryId") public Long subCategoryId;
+	@JsonProperty("themeId") public Long themeId;
+    @JsonProperty("trendId") public Long trendId;
+    
 	@JsonProperty("numLikes") public int numLikes;
 	@JsonProperty("numConversations") public int numConversations;
 	@JsonProperty("numBuys") public int numBuys;
@@ -65,6 +70,22 @@ public class PostVMLite {
         if (images != null && images.length > 0) {
             this.hasImage = true;
             this.images = images;
+        }
+        
+        if (post.category.parent == null) {
+            this.categoryId = post.category.id;
+            this.subCategoryId = -1L;
+        } else {
+            this.categoryId = post.category.parent.id;
+            this.subCategoryId = post.category.id;
+        }
+
+        if (post.theme != null) {
+            this.themeId = post.theme.id;
+        }
+        
+        if (post.trend != null) {
+            this.trendId = post.trend.id;
         }
         
         this.numLikes = post.numLikes;
@@ -206,6 +227,38 @@ public class PostVMLite {
 		this.hasImage = hasImage;
 	}
 	
+	public Long getCategoryId() {
+        return categoryId;
+    }
+
+    public void setCategoryId(Long categoryId) {
+        this.categoryId = categoryId;
+    }
+    
+    public Long getSubCategoryId() {
+        return subCategoryId;
+    }
+
+    public void setSubCategoryId(Long subCategoryId) {
+        this.subCategoryId = subCategoryId;
+    }
+
+    public Long getThemeId() {
+        return themeId;
+    }
+
+    public void setThemeId(Long themeId) {
+        this.themeId = themeId;
+    }
+    
+    public Long getTrendId() {
+        return trendId;
+    }
+
+    public void setTrendId(Long trendId) {
+        this.trendId = trendId;
+    }
+    
     public int getNumViews() {
         return numViews;
     }

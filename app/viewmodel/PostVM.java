@@ -15,13 +15,9 @@ public class PostVM extends PostVMLite {
 	@JsonProperty("ownerNumFollowers") public Long ownerNumFollowers;
 	@JsonProperty("ownerLastLogin") public Long ownerLastLogin;
 	@JsonProperty("body") public String body;
-	@JsonProperty("categoryId") public Long categoryId;
-	@JsonProperty("themeId") public Long themeId;
-	@JsonProperty("trendId") public Long trendId;
 	@JsonProperty("categoryName") public String categoryName;
 	@JsonProperty("categoryIcon") public String categoryIcon;
 	@JsonProperty("categoryType") public String categoryType;
-	@JsonProperty("subCategoryId") public Long subCategoryId;
     @JsonProperty("subCategoryName") public String subCategoryName;
     @JsonProperty("subCategoryIcon") public String subCategoryIcon;
     @JsonProperty("subCategoryType") public String subCategoryType;
@@ -41,10 +37,6 @@ public class PostVM extends PostVMLite {
                 post.owner.lastLogin == null? 
                         post.getUpdatedDate().getTime() : post.owner.lastLogin.getTime();
         this.body = post.body;
-        if(post.theme != null)
-        	this.themeId = post.theme.id;
-        if(post.trend != null)
-        	this.trendId = post.trend.id;
         
         if (post.category.parent == null) {
             this.categoryId = post.category.id;
@@ -125,22 +117,7 @@ public class PostVM extends PostVMLite {
         this.categoryIcon = categoryIcon;
     }
 
-    public Long getCategoryId() {
-        return categoryId;
-    }
-
-    public void setCategoryId(Long categoryId) {
-        this.categoryId = categoryId;
-    }
     
-    public Long getSubCategoryId() {
-        return subCategoryId;
-    }
-
-    public void setSubCategoryId(Long subCategoryId) {
-        this.subCategoryId = subCategoryId;
-    }
-
     public String getSubCategoryName() {
         return subCategoryName;
     }
