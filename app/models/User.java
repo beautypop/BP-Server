@@ -19,6 +19,8 @@ import java.util.Set;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.NoResultException;
@@ -32,6 +34,7 @@ import javax.persistence.criteria.Root;
 
 import org.apache.commons.lang3.StringUtils;
 
+import models.Category.CategoryType;
 import models.Country.CountryCode;
 import models.Post.ConditionType;
 import models.TokenAction.Type;
@@ -193,6 +196,15 @@ public class User extends SocialObject implements Subject, Followable, Serializa
 
 	@JsonIgnore
 	public String lastLoginUserAgent;
+	
+	@Enumerated(EnumType.STRING)
+    public AccessLevel accessLevel = AccessLevel.FULL;
+    
+	public static enum AccessLevel {
+        FULL,
+        SUSPENDED,
+        SUSPENDED_LIMITED
+    }
 	
 	@Override
 	@JsonIgnore
@@ -1045,6 +1057,18 @@ public class User extends SocialObject implements Subject, Followable, Serializa
 		this.active = active;
 	}
 
+	public AccessLevel getAccessLevel() {
+	    return accessLevel;
+	}
+	
+	public void setAccessLevel(AccessLevel accessLevel) {
+	    this.accessLevel = accessLevel;
+	}
+	
+	public boolean isSuspended() {
+        return accessLevel == AccessLevel.SUSPENDED || accessLevel == AccessLevel.SUSPENDED_LIMITED;
+    }
+	
 	public boolean isEmailProvidedOnSignup() {
         return emailProvidedOnSignup;
     }

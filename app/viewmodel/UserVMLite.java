@@ -25,6 +25,7 @@ public class UserVMLite {
     @JsonProperty("numCollections") public Long numCollections = 0L;
     @JsonProperty("numReviews") public Long numReviews;
     @JsonProperty("averageReviewScore") public Double averageReviewScore;
+    @JsonProperty("accessLevel") public String accessLevel;
     @JsonProperty("isFollowing") public boolean isFollowing = false;
 
     // for feed
@@ -76,9 +77,11 @@ public class UserVMLite {
         this.numReviews = user.numReviews;
 
         this.averageReviewScore = 0.0;
-        if (user.numReviews != 0) {
+        if (user.numReviews > 0) {
             this.averageReviewScore = user.totalReviewScore / user.numReviews;
         }
+        
+        this.accessLevel = user.accessLevel.name();
         
         if (localUser != null && !user.equals(localUser)) {
         	this.isFollowing = user.isFollowedBy(localUser);

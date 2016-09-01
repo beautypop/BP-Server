@@ -6,6 +6,8 @@ public class DefaultValues {
 	public static final int DEFAULT_INFINITE_SCROLL_COUNT = 20;
 	public static final int FEED_INFINITE_SCROLL_COUNT = 40;
 	
+	public static final Double REVIEW_SCORE_LOW = 2.0;
+	
 	public static final int MAX_POST_IMAGES = 4;
 	public static final int MAX_MESSAGE_IMAGES = 1;
 	public static final int MAX_TREND_PRODUCTS_FOR_FEED = 10;

@@ -8,6 +8,7 @@ import models.User;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import domain.DefaultValues;
 import domain.HighlightColor;
 
 public class ConversationVM {
@@ -22,6 +23,8 @@ public class ConversationVM {
 	@JsonProperty("postSold") public boolean postSold;
 	@JsonProperty("userId") public Long userId;
 	@JsonProperty("userName") public String userName;
+	@JsonProperty("userSuspended") public boolean userSuspended;
+	@JsonProperty("userLowReviewScore") public boolean userLowReviewScore;
 	@JsonProperty("lastMessage") public String lastMessage;
 	@JsonProperty("lastMessageHasImage") public boolean lastMessageHasImage;
 	@JsonProperty("lastMessageDate") public Long lastMessageDate;
@@ -49,6 +52,14 @@ public class ConversationVM {
 		this.lastMessageDate = conversation.lastMessageDate.getTime();
 		this.unread = conversation.getUnreadCount(localUser);
 		
+		Double averageReviewScore = 0.0;
+        if (otherUser.numReviews > 0) {
+            averageReviewScore = otherUser.totalReviewScore / otherUser.numReviews;
+        }
+        
+        this.userSuspended = otherUser.isSuspended();
+        this.userLowReviewScore = averageReviewScore > 0.0 && averageReviewScore < DefaultValues.REVIEW_SCORE_LOW;
+                
 		// Seller order management
 		if (this.postOwner) {
 		    this.note = conversation.note;
