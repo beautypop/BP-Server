@@ -46,6 +46,7 @@ public class PostVMLite {
 	@JsonProperty("countryIcon") public String countryIcon;
 	
 	// admin fields
+	@JsonProperty("baseScoreAdjust") public Long baseScoreAdjust = 0L;
 	@JsonProperty("baseScore") public Long baseScore = 0L;
 	@JsonProperty("timeScore") public Double timeScore = 0D;
 
@@ -98,6 +99,7 @@ public class PostVMLite {
             this.isLiked = post.isLikedBy(user);
             
             if (user.isSuperAdmin()) {
+                this.baseScoreAdjust = post.baseScoreAdjust;
                 this.baseScore = post.baseScore;
                 this.timeScore = post.timeScore;
             }
