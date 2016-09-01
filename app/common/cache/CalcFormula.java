@@ -28,6 +28,7 @@ public class CalcFormula {
 	
 	public static final Long FEED_SCORE_HIGH_BASE = Play.application().configuration().getLong("feed.score.high.base");
 	public static final int FEED_SCORE_COMPUTE_BASE = Play.application().configuration().getInt("feed.score.compute.base");
+	public static final Double FEED_SCORE_COMPUTE_MIN = Play.application().configuration().getDouble("feed.score.compute.min");
 	public static final int FEED_SCORE_COMPUTE_DECAY_START = Play.application().configuration().getInt("feed.score.compute.decay.start");
 	public static final int FEED_SCORE_COMPUTE_DECAY_VELOCITY = Play.application().configuration().getInt("feed.score.compute.decay.velocity");
 	public static final int FEED_SCORE_RANDOMIZE_PERCENT = Play.application().configuration().getInt("feed.score.randomize.percent");
@@ -79,6 +80,9 @@ public class CalcFormula {
         } else {
             logger.underlyingLogger().debug("timeDecay timeDiff="+timeDiff+" => NO discountFactor");
         }
+        
+        // make sure at least min score before adjust
+        timeScore = (double) Math.max(timeScore, FEED_SCORE_COMPUTE_MIN);
         
         // adjust score
         if (post.baseScoreAdjust != null) {

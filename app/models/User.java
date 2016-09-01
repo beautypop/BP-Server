@@ -34,7 +34,6 @@ import javax.persistence.criteria.Root;
 
 import org.apache.commons.lang3.StringUtils;
 
-import models.Category.CategoryType;
 import models.Country.CountryCode;
 import models.Post.ConditionType;
 import models.TokenAction.Type;
